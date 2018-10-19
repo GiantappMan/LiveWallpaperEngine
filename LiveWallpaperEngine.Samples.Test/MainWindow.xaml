@@ -15,6 +15,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
                 <ListBox x:Name="lstBoxProcess">
                     <ListBox.ItemTemplate>
@@ -34,7 +35,32 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <CheckBox Grid.Row="1" Content="DisableOSWallpaper" x:Name="chkDisableOSWallpaper" IsChecked="False" />
+                <CheckBox
+                    x:Name="chkDisableOSWallpaper"
+                    Grid.Row="1"
+                    Margin="5"
+                    Content="DisableOSWallpaper"
+                    IsChecked="False" />
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="5"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">自定义Handle</TextBlock>
+                    <TextBox
+                        Margin="5,0"
+                        x:Name="txtCustomHandle"
+                        Width="200"
+                        VerticalAlignment="Center" />
+                    <Button
+                        VerticalAlignment="Center"
+                        Click="btnShowCustomHandle_Click"
+                        Content="Show" />
+                    <Button
+                        VerticalAlignment="Center"
+                        Click="btnCloseCustomHandle_Click"
+                        Content="Close" />
+                </StackPanel>
             </Grid>
         </TabItem>
         <TabItem Header="视频" />

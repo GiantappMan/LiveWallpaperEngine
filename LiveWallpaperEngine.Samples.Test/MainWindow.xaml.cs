@@ -60,6 +60,17 @@ namespace LiveWallpaperEngine.Samples.Test
             var process = btn.DataContext as Process;
             LWECore.SendToBackground(process.MainWindowHandle, chkDisableOSWallpaper.IsChecked.Value);
         }
+
+        private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
+        {
+            var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
+            LWECore.SendToBackground(handle, chkDisableOSWallpaper.IsChecked.Value);
+        }
+
+        private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)
+        {
+            LWECore.RestoreParent();
+        }
         #endregion
 
     }

@@ -39,24 +39,6 @@ namespace LiveWallpaperEngine
             UnshownEvent?.Invoke(null, _targeHandler);
         }
 
-        //public static void Close(bool restoreParent = false)
-        //{
-        //    if (!Shown)
-        //        return;
-
-        //    if (!_initlized)
-        //        Initlize();
-
-        //    if (restoreParent)
-        //    {
-        //        var desktop = User32Wrapper.GetDesktopWindow();
-        //        User32Wrapper.SetParent(_targeHandler, desktop);
-        //    }
-        //    _desktopWallpaperAPI.Enable(true);
-        //    Shown = false;
-        //    UnshownEvent?.Invoke(null, _targeHandler);
-        //}
-
         public static bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true)
         {
             if (handler == IntPtr.Zero || Shown)
@@ -73,6 +55,8 @@ namespace LiveWallpaperEngine
                     return false;
             }
             _parentHandler = User32Wrapper.GetParent(_targeHandler);
+            if (_parentHandler == IntPtr.Zero)
+                _parentHandler = User32Wrapper.GetAncestor(_targeHandler, GetAncestorFlags.GetParent);
             User32Wrapper.SetParent(_targeHandler, _workerw);
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(false);
