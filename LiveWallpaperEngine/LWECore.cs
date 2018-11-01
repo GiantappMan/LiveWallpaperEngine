@@ -18,6 +18,7 @@ namespace LiveWallpaperEngine
         static IntPtr _parentHandler;
         static IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
         static bool _disableOSWallpaper;
+        static RECT? _originalRect;
 
         public static bool Shown { get; private set; }
         public static event EventHandler<IntPtr> ShownEvent;
@@ -34,6 +35,9 @@ namespace LiveWallpaperEngine
                 Initlize();
 
             User32Wrapper.SetParent(_targeHandler, _parentHandler);
+
+            if (_originalRect != null)
+                User32Wrapper.SetWindowPos(_targeHandler, _originalRect.Value);
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(true);
             Shown = false;
@@ -62,7 +66,7 @@ namespace LiveWallpaperEngine
             User32Wrapper.SetParent(_targeHandler, _workerw);
 
             if (fullScreen)
-                FullScreen(_targeHandler);
+                _originalRect = FullScreen(_targeHandler);
 
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(false);
@@ -70,16 +74,19 @@ namespace LiveWallpaperEngine
             return true;
         }
 
-        private static void FullScreen(IntPtr targeHandler)
+        private static RECT? FullScreen(IntPtr targeHandler)
         {
             var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
             MONITORINFO info = new MONITORINFO();
 
             bool ok = User32Wrapper.GetMonitorInfo(tmp, info);
             if (!ok)
-                return;
+                return null;
 
-            ok = User32Wrapper.SetWindowPos(targeHandler, IntPtr.Zero, info.rcMonitor.Left, info.rcMonitor.Top, info.rcMonitor.Width, info.rcMonitor.Height, 0);
+            ok = User32Wrapper.GetWindowRect(_targeHandler, out RECT react);
+
+            ok = User32Wrapper.SetWindowPos(targeHandler, info.rcMonitor);
+            return react;
         }
 
         private static bool Initlize()
