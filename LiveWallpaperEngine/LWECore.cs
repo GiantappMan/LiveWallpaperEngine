@@ -7,7 +7,7 @@ using System;
 namespace LiveWallpaperEngine
 {
     /// <summary>
-    /// 
+    /// 动态壁纸最最最最最核心的逻辑，请大胆食用
     /// </summary>
     public static class LWECore
     {
@@ -21,10 +21,10 @@ namespace LiveWallpaperEngine
         static RECT? _originalRect;
 
         public static bool Shown { get; private set; }
-        public static event EventHandler<IntPtr> ShownEvent;
-        public static event EventHandler<IntPtr> UnshownEvent;
 
         #endregion
+
+        #region  public methods
 
         public static void RestoreParent()
         {
@@ -41,7 +41,6 @@ namespace LiveWallpaperEngine
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(true);
             Shown = false;
-            UnshownEvent?.Invoke(null, _targeHandler);
         }
 
         public static bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true)
@@ -70,9 +69,11 @@ namespace LiveWallpaperEngine
 
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(false);
-            ShownEvent?.Invoke(null, _targeHandler);
             return true;
         }
+        #endregion
+
+        #region private
 
         private static RECT? FullScreen(IntPtr targeHandler)
         {
@@ -121,5 +122,8 @@ namespace LiveWallpaperEngine
             _initlized = enumWindowResult;
             return enumWindowResult;
         }
+
+        #endregion
+
     }
 }
