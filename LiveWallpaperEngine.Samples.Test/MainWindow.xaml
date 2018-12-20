@@ -40,7 +40,7 @@
                     Grid.Row="1"
                     Margin="5"
                     Content="DisableOSWallpaper"
-                    IsChecked="False" />
+                    IsChecked="True" />
                 <StackPanel
                     Grid.Row="2"
                     Margin="5"
