@@ -12,7 +12,7 @@ namespace LiveWallpaperEngine
     public class LWECore
     {
         #region fields
-        IntPtr _workerw;
+        IntPtr _workerw = IntPtr.Zero;
         IntPtr _targeHandler;
         IntPtr _parentHandler;
         IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
@@ -30,7 +30,28 @@ namespace LiveWallpaperEngine
         /// </summary>
         public static void RestoreAllHandles()
         {
+            var desktop = User32Wrapper.GetDesktopWindow();
             var workw = GetWorkerW();
+            var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
+             {
+
+                 var txt = User32Wrapper.GetWindowText(tophandle);
+                 if (!string.IsNullOrEmpty(txt))
+                 {
+                     User32Wrapper.SetParent(tophandle, desktop);
+                 }
+
+                 return true;
+             }), IntPtr.Zero);
+
+            try
+            {
+                var desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+                desktopWallpaperAPI.Enable(true);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public static IntPtr GetWorkerW()

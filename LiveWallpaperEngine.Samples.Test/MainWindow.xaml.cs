@@ -21,7 +21,7 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        LWECore LWECore = new LWECore();
+        LWECore _LWECore = new LWECore();
         public MainWindow()
         {
             InitializeComponent();
@@ -52,27 +52,31 @@ namespace LiveWallpaperEngine.Samples.Test
         private void btnCloseProcess_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            LWECore.RestoreParent();
+            _LWECore.RestoreParent();
         }
 
         private void btnShowProcess_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
             var process = btn.DataContext as Process;
-            LWECore.SendToBackground(process.MainWindowHandle, chkDisableOSWallpaper.IsChecked.Value);
+            _LWECore.SendToBackground(process.MainWindowHandle, chkDisableOSWallpaper.IsChecked.Value);
         }
 
         private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
         {
             var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
-            LWECore.SendToBackground(handle, chkDisableOSWallpaper.IsChecked.Value);
+            _LWECore.SendToBackground(handle, chkDisableOSWallpaper.IsChecked.Value);
         }
 
         private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)
         {
-            LWECore.RestoreParent();
+            _LWECore.RestoreParent();
         }
         #endregion
 
+        private void btnRestoreAllHandles_Click(object sender, RoutedEventArgs e)
+        {
+            LWECore.RestoreAllHandles();
+        }
     }
 }

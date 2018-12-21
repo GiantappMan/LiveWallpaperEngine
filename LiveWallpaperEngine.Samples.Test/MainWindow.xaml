@@ -48,9 +48,9 @@
                     Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">自定义Handle</TextBlock>
                     <TextBox
-                        Margin="5,0"
                         x:Name="txtCustomHandle"
                         Width="200"
+                        Margin="5,0"
                         VerticalAlignment="Center" />
                     <Button
                         VerticalAlignment="Center"
@@ -60,6 +60,10 @@
                         VerticalAlignment="Center"
                         Click="btnCloseCustomHandle_Click"
                         Content="Close" />
+                    <Button
+                        VerticalAlignment="Center"
+                        Click="btnRestoreAllHandles_Click"
+                        Content="RestoreAllHandles" />
                 </StackPanel>
             </Grid>
         </TabItem>
