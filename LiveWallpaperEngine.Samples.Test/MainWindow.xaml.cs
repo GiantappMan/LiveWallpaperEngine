@@ -21,6 +21,7 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
+        LWECore LWECore = new LWECore();
         public MainWindow()
         {
             InitializeComponent();
