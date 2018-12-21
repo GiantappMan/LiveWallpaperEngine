@@ -9,30 +9,69 @@ namespace LiveWallpaperEngine
     /// <summary>
     /// 动态壁纸最最最最最核心的逻辑，请大胆食用
     /// </summary>
-    public static class LWECore
+    public class LWECore
     {
         #region fields
-        static IntPtr _workerw;
-        static bool _initlized;
-        static IntPtr _targeHandler;
-        static IntPtr _parentHandler;
-        static IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-        static bool _disableOSWallpaper;
-        static RECT? _originalRect;
+        IntPtr _workerw;
+        IntPtr _targeHandler;
+        IntPtr _parentHandler;
+        IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+        bool _disableOSWallpaper;
+        RECT? _originalRect;
 
-        public static bool Shown { get; private set; }
+        public bool Shown { get; private set; }
 
         #endregion
 
         #region  public methods
 
-        public static void RestoreParent()
+        /// <summary>
+        /// 恢复WorkerW中的所有句柄到桌面
+        /// </summary>
+        public static void RestoreAllHandles()
+        {
+            var workw = GetWorkerW();
+        }
+
+        public static IntPtr GetWorkerW()
+        {
+            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
+            User32Wrapper.SendMessageTimeout(progman,
+                                   0x052C,
+                                   new IntPtr(0),
+                                   IntPtr.Zero,
+                                   SendMessageTimeoutFlags.SMTO_NORMAL,
+                                   1000,
+                                   out IntPtr unusefulResult);
+            IntPtr workerw = IntPtr.Zero;
+            var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
+            {
+                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
+                                            IntPtr.Zero,
+                                            "SHELLDLL_DefView",
+                                            IntPtr.Zero);
+
+                if (p != IntPtr.Zero)
+                {
+                    workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
+                                             tophandle,
+                                             "WorkerW",
+                                             IntPtr.Zero);
+                    return false;
+                }
+
+                return true;
+            }), IntPtr.Zero);
+            return workerw;
+        }
+
+        public void RestoreParent()
         {
             if (!Shown)
                 return;
 
-            if (!_initlized)
-                Initlize();
+            if (_workerw == IntPtr.Zero)
+                _workerw = GetWorkerW();
 
             User32Wrapper.SetParent(_targeHandler, _parentHandler);
 
@@ -43,7 +82,7 @@ namespace LiveWallpaperEngine
             Shown = false;
         }
 
-        public static bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true)
+        public bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
@@ -52,12 +91,9 @@ namespace LiveWallpaperEngine
             _disableOSWallpaper = disableOSWallpaper;
             _targeHandler = handler;
 
-            if (!_initlized)
-            {
-                bool isOk = Initlize();
-                if (!isOk)
-                    return false;
-            }
+            if (_workerw == IntPtr.Zero)
+                _workerw = GetWorkerW();
+
             _parentHandler = User32Wrapper.GetParent(_targeHandler);
             if (_parentHandler == IntPtr.Zero)
                 _parentHandler = User32Wrapper.GetAncestor(_targeHandler, GetAncestorFlags.GetParent);
@@ -75,7 +111,7 @@ namespace LiveWallpaperEngine
 
         #region private
 
-        private static RECT? FullScreen(IntPtr targeHandler)
+        private RECT? FullScreen(IntPtr targeHandler)
         {
             var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
             MONITORINFO info = new MONITORINFO();
@@ -88,39 +124,6 @@ namespace LiveWallpaperEngine
 
             ok = User32Wrapper.SetWindowPos(targeHandler, info.rcMonitor);
             return react;
-        }
-
-        private static bool Initlize()
-        {
-            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
-            IntPtr result = IntPtr.Zero;
-            User32Wrapper.SendMessageTimeout(progman,
-                                   0x052C,
-                                   new IntPtr(0),
-                                   IntPtr.Zero,
-                                   SendMessageTimeoutFlags.SMTO_NORMAL,
-                                   1000,
-                                   out result);
-            _workerw = IntPtr.Zero;
-            var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
-            {
-                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
-                                            IntPtr.Zero,
-                                            "SHELLDLL_DefView",
-                                            IntPtr.Zero);
-
-                if (p != IntPtr.Zero)
-                {
-                    _workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
-                                             tophandle,
-                                             "WorkerW",
-                                             IntPtr.Zero);
-                }
-
-                return true;
-            }), IntPtr.Zero);
-            _initlized = enumWindowResult;
-            return enumWindowResult;
         }
 
         #endregion
