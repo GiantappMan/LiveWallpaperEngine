@@ -3,6 +3,7 @@
 using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
+using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
 {
@@ -18,6 +19,7 @@ namespace LiveWallpaperEngine
         IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
         bool _disableOSWallpaper;
         RECT? _originalRect;
+        uint _slideshowTick;
 
         public bool Shown { get; private set; }
         public object Screen { get; private set; }
@@ -48,6 +50,9 @@ namespace LiveWallpaperEngine
             try
             {
                 var desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+
+                //刷新壁纸
+                desktopWallpaperAPI.Enable(false);
                 desktopWallpaperAPI.Enable(true);
             }
             catch (Exception)
@@ -92,6 +97,10 @@ namespace LiveWallpaperEngine
             if (!Shown)
                 return;
 
+            //刷新壁纸
+            _desktopWallpaperAPI.Enable(false);
+            _desktopWallpaperAPI.Enable(true);
+
             if (_workerw == IntPtr.Zero)
                 _workerw = GetWorkerW();
 
@@ -99,15 +108,25 @@ namespace LiveWallpaperEngine
 
             if (_originalRect != null)
                 User32Wrapper.SetWindowPos(_targeHandler, _originalRect.Value);
+
             if (_disableOSWallpaper)
-                _desktopWallpaperAPI.Enable(true);
+            {
+                _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
+            }
             Shown = false;
         }
 
-        public bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true, int displayIndex = 0)
+        public async Task<bool> SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true, int displayIndex = 0)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
+
+            if (_disableOSWallpaper)
+            {
+                _desktopWallpaperAPI.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
+                _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+                //_desktopWallpaperAPI.Enable(false);
+            }
 
             var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
             if (ok)
@@ -124,14 +143,14 @@ namespace LiveWallpaperEngine
             if (_parentHandler == IntPtr.Zero)
                 _parentHandler = User32Wrapper.GetAncestor(_targeHandler, GetAncestorFlags.GetParent);
 
+            await Task.Delay(1300);//等待系统壁纸动画完成
             User32Wrapper.SetParent(_targeHandler, _workerw);
 
             if (fullScreen)
             {
                 FullScreen(_targeHandler, displayIndex);
             }
-            if (_disableOSWallpaper)
-                _desktopWallpaperAPI.Enable(false);
+
             return true;
         }
         #endregion
