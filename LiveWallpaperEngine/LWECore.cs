@@ -20,6 +20,7 @@ namespace LiveWallpaperEngine
         RECT? _originalRect;
 
         public bool Shown { get; private set; }
+        public object Screen { get; private set; }
 
         #endregion
 
@@ -103,10 +104,14 @@ namespace LiveWallpaperEngine
             Shown = false;
         }
 
-        public bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true)
+        public bool SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true, int displayIndex = 0)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
+
+            var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
+            if (ok)
+                _originalRect = react;
 
             Shown = true;
             _disableOSWallpaper = disableOSWallpaper;
@@ -122,8 +127,9 @@ namespace LiveWallpaperEngine
             User32Wrapper.SetParent(_targeHandler, _workerw);
 
             if (fullScreen)
-                _originalRect = FullScreen(_targeHandler);
-
+            {
+                FullScreen(_targeHandler, displayIndex);
+            }
             if (_disableOSWallpaper)
                 _desktopWallpaperAPI.Enable(false);
             return true;
@@ -132,22 +138,29 @@ namespace LiveWallpaperEngine
 
         #region private
 
-        private RECT? FullScreen(IntPtr targeHandler)
+        private void FullScreen(IntPtr targeHandler, int displayIndex = 0)
         {
-            var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
-            MONITORINFO info = new MONITORINFO();
+            //var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
+            //MONITORINFO info = new MONITORINFO();
 
-            bool ok = User32Wrapper.GetMonitorInfo(tmp, info);
-            if (!ok)
-                return null;
+            //bool ok = User32Wrapper.GetMonitorInfo(tmp, info);
+            //if (!ok)
+            //    return null;
 
-            ok = User32Wrapper.GetWindowRect(_targeHandler, out RECT react);
+            //ok = User32Wrapper.GetWindowRect(_targeHandler, out RECT react);
 
-            ok = User32Wrapper.SetWindowPos(targeHandler, info.rcMonitor);
-            return react;
+            //ok = User32Wrapper.SetWindowPos(targeHandler, info.rcMonitor);
+            //return react;
+
+            var displays = User32Wrapper.GetDisplays();
+            if (displays == null)
+                return;
+            var display = displays[displayIndex];
+            User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref display.rcMonitor, 2);
+            var ok = User32Wrapper.SetWindowPos(targeHandler, display.rcMonitor);
+            return;
         }
 
         #endregion
-
     }
 }
