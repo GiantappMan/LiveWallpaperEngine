@@ -37,12 +37,12 @@
                 </ListBox>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     
-                <CheckBox
+                <!--<CheckBox
                     x:Name="chkDisableOSWallpaper"
                     Grid.Row="1"
                     Margin="5"
                     Content="DisableOSWallpaper"
-                    IsChecked="True" />
+                    IsChecked="True" />-->
                     <ComboBox x:Name="cbDisplay" SelectedIndex="0">
                         
                     </ComboBox>
