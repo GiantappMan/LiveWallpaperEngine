@@ -10,19 +10,34 @@ namespace LiveWallpaperEngine
     /// <summary>
     /// 动态壁纸最最最最最核心的逻辑，请大胆食用
     /// </summary>
-    public class LWECore
+    public class LWECore : IDisposable
     {
         #region fields
         IntPtr _workerw = IntPtr.Zero;
         IntPtr _targeHandler;
         IntPtr _parentHandler;
-        IDesktopWallpaper _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-        bool _disableOSWallpaper;
+        IDesktopWallpaper _desktopWallpaperAPI;
         RECT? _originalRect;
         uint _slideshowTick;
 
         public bool Shown { get; private set; }
         public object Screen { get; private set; }
+
+        #endregion
+
+        #region construct
+
+        public LWECore()
+        {
+            _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+            _desktopWallpaperAPI.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
+            _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+        }
+
+        public void Dispose()
+        {
+            _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
+        }
 
         #endregion
 
@@ -108,32 +123,19 @@ namespace LiveWallpaperEngine
 
             if (_originalRect != null)
                 User32Wrapper.SetWindowPos(_targeHandler, _originalRect.Value);
-
-            if (_disableOSWallpaper)
-            {
-                _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
-            }
             Shown = false;
         }
 
-        public async Task<bool> SendToBackground(IntPtr handler, bool disableOSWallpaper = true, bool fullScreen = true, int displayIndex = 0)
+        public bool SendToBackground(IntPtr handler, bool fullScreen = true, int displayIndex = 0)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
-
-            if (_disableOSWallpaper)
-            {
-                _desktopWallpaperAPI.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
-                _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
-                //_desktopWallpaperAPI.Enable(false);
-            }
 
             var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
             if (ok)
                 _originalRect = react;
 
             Shown = true;
-            _disableOSWallpaper = disableOSWallpaper;
             _targeHandler = handler;
 
             if (_workerw == IntPtr.Zero)
@@ -143,7 +145,6 @@ namespace LiveWallpaperEngine
             if (_parentHandler == IntPtr.Zero)
                 _parentHandler = User32Wrapper.GetAncestor(_targeHandler, GetAncestorFlags.GetParent);
 
-            await Task.Delay(1300);//等待系统壁纸动画完成
             User32Wrapper.SetParent(_targeHandler, _workerw);
 
             if (fullScreen)
