@@ -35,12 +35,19 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    
                 <CheckBox
                     x:Name="chkDisableOSWallpaper"
                     Grid.Row="1"
                     Margin="5"
                     Content="DisableOSWallpaper"
                     IsChecked="True" />
+                    <ComboBox x:Name="cbDisplay" SelectedIndex="0">
+                        
+                    </ComboBox>
+                </StackPanel>
+
                 <StackPanel
                     Grid.Row="2"
                     Margin="5"

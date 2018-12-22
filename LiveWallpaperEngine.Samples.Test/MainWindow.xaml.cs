@@ -25,6 +25,10 @@ namespace LiveWallpaperEngine.Samples.Test
         public MainWindow()
         {
             InitializeComponent();
+            System.Windows.Forms.Screen.AllScreens.ToList().ForEach(item =>
+            {
+                cbDisplay.Items.Add(new ComboBoxItem() { Content = item.DeviceName });
+            });
         }
 
         int lastIndex = -1;
@@ -59,13 +63,13 @@ namespace LiveWallpaperEngine.Samples.Test
         {
             var btn = sender as Button;
             var process = btn.DataContext as Process;
-            _LWECore.SendToBackground(process.MainWindowHandle, chkDisableOSWallpaper.IsChecked.Value);
+            _LWECore.SendToBackground(process.MainWindowHandle, chkDisableOSWallpaper.IsChecked.Value, true, cbDisplay.SelectedIndex);
         }
 
         private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
         {
             var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
-            _LWECore.SendToBackground(handle, chkDisableOSWallpaper.IsChecked.Value);
+            _LWECore.SendToBackground(handle, chkDisableOSWallpaper.IsChecked.Value, true, cbDisplay.SelectedIndex);
         }
 
         private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)
