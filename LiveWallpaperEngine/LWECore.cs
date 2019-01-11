@@ -62,17 +62,7 @@ namespace LiveWallpaperEngine
                  return true;
              }), IntPtr.Zero);
 
-            try
-            {
-                var desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-
-                //刷新壁纸
-                desktopWallpaperAPI.Enable(false);
-                desktopWallpaperAPI.Enable(true);
-            }
-            catch (Exception)
-            {
-            }
+            RefreshWallpaper(null);
         }
 
         public static IntPtr GetWorkerW()
@@ -112,9 +102,7 @@ namespace LiveWallpaperEngine
             if (!Shown)
                 return;
 
-            //刷新壁纸
-            _desktopWallpaperAPI.Enable(false);
-            _desktopWallpaperAPI.Enable(true);
+            _desktopWallpaperAPI = RefreshWallpaper(_desktopWallpaperAPI);
 
             if (_workerw == IntPtr.Zero)
                 _workerw = GetWorkerW();
@@ -179,6 +167,29 @@ namespace LiveWallpaperEngine
             User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref display.rcMonitor, 2);
             var ok = User32Wrapper.SetWindowPos(targeHandler, display.rcMonitor);
             return;
+        }
+
+        //刷新壁纸
+        private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
+        {
+            try
+            {
+                if (desktopWallpaperAPI == null)
+                    desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+
+                desktopWallpaperAPI.Enable(false);
+                desktopWallpaperAPI.Enable(true);
+            }
+            catch (Exception)
+            {
+                desktopWallpaperAPI = DesktopWallpaperFactory.Create();
+
+                //刷新壁纸
+                desktopWallpaperAPI.Enable(false);
+                desktopWallpaperAPI.Enable(true);
+            }
+
+            return desktopWallpaperAPI;
         }
 
         #endregion
