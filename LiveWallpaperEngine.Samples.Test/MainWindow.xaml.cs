@@ -63,13 +63,13 @@ namespace LiveWallpaperEngine.Samples.Test
         {
             var btn = sender as Button;
             var process = btn.DataContext as Process;
-            _LWECore.SendToBackground(process.MainWindowHandle, true, cbDisplay.SelectedIndex);
+            _LWECore.SendToBackground(process.MainWindowHandle, cbDisplay.SelectedIndex);
         }
 
         private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
         {
             var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
-            _LWECore.SendToBackground(handle, true, cbDisplay.SelectedIndex);
+            _LWECore.SendToBackground(handle, cbDisplay.SelectedIndex);
         }
 
         private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)

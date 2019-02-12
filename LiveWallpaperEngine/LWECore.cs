@@ -3,7 +3,8 @@
 using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Timers;
 
 namespace LiveWallpaperEngine
 {
@@ -20,8 +21,15 @@ namespace LiveWallpaperEngine
         RECT? _originalRect;
         uint _slideshowTick;
 
+        Process _exploreProcess;
+        Timer _timer;
+
+        //public properties
         public bool Shown { get; private set; }
         public object Screen { get; private set; }
+        //event
+        public event EventHandler TimerElapsed;
+        public event EventHandler NeedReapply;
 
         #endregion
 
@@ -29,14 +37,55 @@ namespace LiveWallpaperEngine
 
         public LWECore()
         {
-            _desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-            _desktopWallpaperAPI.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
-            _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+            _timer = new Timer(1000);
+            _timer.Elapsed += _timer_Elapsed;
+            _timer.Start();
+
+            InnerInit();
+        }
+
+        private void InnerInit()
+        {
+            _exploreProcess = GetExplorer();
+
+            var _desktopWallpaperAPI = GetDesktopWallpaperAPI();
+            _desktopWallpaperAPI?.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
+            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+        }
+
+        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            _timer.Stop();
+
+            //explorer 进程已死
+            if (_exploreProcess == null || _exploreProcess.HasExited)
+            {
+                _workerw = IntPtr.Zero;
+                _exploreProcess = GetExplorer();
+            }
+
+            //重新应用壁纸
+            if (Shown && _exploreProcess != null && _workerw == IntPtr.Zero)
+            {
+                InnerInit();
+                _workerw = GetWorkerW();
+                Shown = false;
+                NeedReapply?.Invoke(this, new EventArgs());
+            }
+
+            TimerElapsed?.Invoke(this, new EventArgs());
+
+            if (_timer == null)
+                return;//disposed
+            _timer.Start();
         }
 
         public void Dispose()
         {
-            _desktopWallpaperAPI.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
+            _timer.Elapsed -= _timer_Elapsed;
+            _timer.Stop();
+            _timer = null;
+            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         }
 
         #endregion
@@ -114,7 +163,7 @@ namespace LiveWallpaperEngine
             Shown = false;
         }
 
-        public bool SendToBackground(IntPtr handler, bool fullScreen = true, int displayIndex = 0)
+        public bool SendToBackground(IntPtr handler, int displayIndex = 0)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
@@ -135,13 +184,43 @@ namespace LiveWallpaperEngine
 
             User32Wrapper.SetParent(_targeHandler, _workerw);
 
-            if (fullScreen)
-            {
-                FullScreen(_targeHandler, displayIndex);
-            }
+            FullScreen(_targeHandler, displayIndex);
 
             return true;
         }
+
+        public static Process GetExplorer()
+        {
+            var explorers = Process.GetProcessesByName("explorer");
+            if (explorers.Length == 0)
+            {
+                //还是不自动启动了，有点像流氓行为
+                //string explorer = string.Format("{0}\\{1}", Environment.GetEnvironmentVariable("WINDIR"), "explorer.exe");
+                //Process process = new Process();
+                //process.StartInfo.FileName = explorer;
+                //process.StartInfo.UseShellExecute = true;
+                //process.Start();
+                //return process;
+                return null;
+            }
+
+            return explorers[0];
+        }
+
+        public static IDesktopWallpaper GetDesktopWallpaperAPI()
+        {
+            try
+            {
+                var result = DesktopWallpaperFactory.Create();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
         #endregion
 
         #region private
@@ -172,23 +251,24 @@ namespace LiveWallpaperEngine
         //刷新壁纸
         private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
         {
+            var explorer = GetExplorer();
+            if (explorer == null)
+                return null;
+
+            if (desktopWallpaperAPI == null)
+                desktopWallpaperAPI = GetDesktopWallpaperAPI();
+
             try
             {
-                if (desktopWallpaperAPI == null)
-                    desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-
                 desktopWallpaperAPI.Enable(false);
                 desktopWallpaperAPI.Enable(true);
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                desktopWallpaperAPI = DesktopWallpaperFactory.Create();
-
-                //刷新壁纸
-                desktopWallpaperAPI.Enable(false);
-                desktopWallpaperAPI.Enable(true);
+                System.Diagnostics.Debug.WriteLine(ex);
+                desktopWallpaperAPI = GetDesktopWallpaperAPI();
             }
-
             return desktopWallpaperAPI;
         }
 
