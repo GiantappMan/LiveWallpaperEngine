@@ -8,12 +8,13 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>LiveWallpaperEngine.Samples.Test</RootNamespace>
     <AssemblyName>LiveWallpaperEngine.Samples.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -100,6 +101,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngineRender\LiveWallpaperEngineRender.csproj">
+      <Project>{a93d8532-c5c1-4246-afef-3cfec2628a0e}</Project>
+      <Name>LiveWallpaperEngineRender</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj">
       <Project>{b81b6b65-081c-4035-99c9-543bda79d05f}</Project>
       <Name>LiveWallpaperEngine</Name>

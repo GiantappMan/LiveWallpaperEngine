@@ -12,31 +12,31 @@ namespace LiveWallpaperEngine
     /// <summary>
     /// 动态壁纸实现原理
     /// </summary>
-    public class LiveWallpaperEngineCore : IDisposable
+    public class LiveWallpaperEngineCore
     {
         #region fields
-        IntPtr _workerw = IntPtr.Zero;
-        IntPtr _targeHandler;
-        IntPtr _parentHandler;
-        IDesktopWallpaper _desktopWallpaperAPI;
-        RECT? _originalRect;
-        uint _slideshowTick;
+        static IntPtr _workerw = IntPtr.Zero;
+        static IntPtr _targeHandler;
+        static IntPtr _parentHandler;
+        static IDesktopWallpaper _desktopWallpaperAPI;
+        static RECT? _originalRect;
+        static uint _slideshowTick;
 
-        Process _exploreProcess;
-        Timer _timer;
+        static Process _exploreProcess;
+        static Timer _timer;
 
         //public properties
-        public bool Shown { get; private set; }
-        public object Screen { get; private set; }
+        public static bool Shown { get; private set; }
+        public static object Screen { get; private set; }
         //event
-        public event EventHandler TimerElapsed;
-        public event EventHandler NeedReapply;
+        public static event EventHandler TimerElapsed;
+        public static event EventHandler NeedReapply;
 
         #endregion
 
         #region construct
 
-        public LiveWallpaperEngineCore()
+        static LiveWallpaperEngineCore()
         {
             _timer = new Timer(1000);
             _timer.Elapsed += _timer_Elapsed;
@@ -45,7 +45,7 @@ namespace LiveWallpaperEngine
             InnerInit();
         }
 
-        private void InnerInit()
+        private static void InnerInit()
         {
             _exploreProcess = GetExplorer();
 
@@ -54,7 +54,7 @@ namespace LiveWallpaperEngine
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
-        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _timer.Stop();
 
@@ -71,17 +71,17 @@ namespace LiveWallpaperEngine
                 InnerInit();
                 _workerw = GetWorkerW();
                 Shown = false;
-                NeedReapply?.Invoke(this, new EventArgs());
+                NeedReapply?.Invoke(null, new EventArgs());
             }
 
-            TimerElapsed?.Invoke(this, new EventArgs());
+            TimerElapsed?.Invoke(null, new EventArgs());
 
             if (_timer == null)
                 return;//disposed
             _timer.Start();
         }
 
-        public void Dispose()
+        public static void Dispose()
         {
             _timer.Elapsed -= _timer_Elapsed;
             _timer.Stop();
@@ -147,7 +147,7 @@ namespace LiveWallpaperEngine
             return workerw;
         }
 
-        public void RestoreParent()
+        public static void RestoreParent()
         {
             if (!Shown)
                 return;
@@ -164,7 +164,7 @@ namespace LiveWallpaperEngine
             Shown = false;
         }
 
-        public bool SendToBackground(IntPtr handler, int displayIndex = 0)
+        public static bool SendToBackground(IntPtr handler, int displayIndex = 0)
         {
             if (handler == IntPtr.Zero || Shown)
                 return false;
@@ -230,7 +230,7 @@ namespace LiveWallpaperEngine
 
         #region private
 
-        private void FullScreen(IntPtr targeHandler, int displayIndex = 0)
+        private static void FullScreen(IntPtr targeHandler, int displayIndex = 0)
         {
             //var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
             //MONITORINFO info = new MONITORINFO();
