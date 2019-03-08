@@ -21,7 +21,7 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        LWECore _LWECore = new LWECore();
+        LiveWallpaperEngineCore _LWECore = new LiveWallpaperEngineCore();
         public MainWindow()
         {
             InitializeComponent();
@@ -49,8 +49,14 @@ namespace LiveWallpaperEngine.Samples.Test
         #region tabitem1
         private void LoadProcess()
         {
-            var allProcesses = Process.GetProcesses().Where(m => !string.IsNullOrEmpty(m.MainWindowTitle) || m.MainWindowHandle != IntPtr.Zero).ToList();
-            lstBoxProcess.ItemsSource = allProcesses;
+            Task.Run(() =>
+           {
+               var allProcesses = Process.GetProcesses().Where(m => !string.IsNullOrEmpty(m.MainWindowTitle) || m.MainWindowHandle != IntPtr.Zero).ToList();
+               Dispatcher.Invoke(() =>
+               {
+                   lstBoxProcess.ItemsSource = allProcesses;
+               });
+           });
         }
 
         private void btnCloseProcess_Click(object sender, RoutedEventArgs e)
@@ -80,7 +86,7 @@ namespace LiveWallpaperEngine.Samples.Test
 
         private void btnRestoreAllHandles_Click(object sender, RoutedEventArgs e)
         {
-            LWECore.RestoreAllHandles();
+            LiveWallpaperEngineCore.RestoreAllHandles();
         }
     }
 }

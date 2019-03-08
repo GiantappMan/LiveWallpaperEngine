@@ -12,7 +12,7 @@ namespace LiveWallpaperEngine
     /// <summary>
     /// 动态壁纸实现原理
     /// </summary>
-    public class LWECore : IDisposable
+    public class LiveWallpaperEngineCore : IDisposable
     {
         #region fields
         IntPtr _workerw = IntPtr.Zero;
@@ -36,7 +36,7 @@ namespace LiveWallpaperEngine
 
         #region construct
 
-        public LWECore()
+        public LiveWallpaperEngineCore()
         {
             _timer = new Timer(1000);
             _timer.Elapsed += _timer_Elapsed;
