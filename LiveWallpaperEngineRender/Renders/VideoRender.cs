@@ -28,12 +28,17 @@ namespace LiveWallpaperEngineRender.Renders
             FormBorderStyle = FormBorderStyle.None;
 
             //mpv
-            string appDir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            _player = new MpvPlayer(Handle, $@"{appDir}\lib\mpv-1.dll")
+            var assembly = Assembly.GetEntryAssembly();
+            //单元测试
+            if (assembly != null)
             {
-                Loop = true,
-                Volume = 0
-            };
+                string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
+                _player = new MpvPlayer(Handle, $@"{appDir}\lib\mpv-1.dll")
+                {
+                    Loop = true,
+                    Volume = 0
+                };
+            }
 
             //callback
             FormClosing += RenderForm_FormClosing;
@@ -65,11 +70,23 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Pause()
         {
+            if (!Playing)
+                return;
+
+            Playing = false;
+            Paused = true;
+
             _player?.Pause();
         }
 
         public void Resume()
         {
+            if (Playing)
+                return;
+
+            Playing = true;
+            Paused = false;
+
             _player?.Resume();
         }
 
@@ -81,6 +98,11 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Play(string path)
         {
+            if (Playing)
+                return;
+
+            Playing = true;
+
             if (_player != null)
             {
                 _player.Pause();
@@ -91,11 +113,16 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Stop()
         {
+            if (!Playing)
+                return;
+
+            Playing = Paused = false;
             _player?.Stop();
         }
 
         public void CloseRender()
         {
+            Stop();
             _player?.Dispose();
             Close();
         }

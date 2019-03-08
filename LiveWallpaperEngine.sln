@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngine.Samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngineRender", "LiveWallpaperEngineRender\LiveWallpaperEngineRender.csproj", "{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{11F316F1-A6C6-478F-A584-4382EDCFF9F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Render", "Test.Render\Test.Render.csproj", "{22F1618F-3EC5-4848-92F4-A58284A3B080}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +33,17 @@ Global
 		{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22F1618F-3EC5-4848-92F4-A58284A3B080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22F1618F-3EC5-4848-92F4-A58284A3B080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22F1618F-3EC5-4848-92F4-A58284A3B080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22F1618F-3EC5-4848-92F4-A58284A3B080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{91DF7138-BED9-4119-BE8B-449278195EDA} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
+		{22F1618F-3EC5-4848-92F4-A58284A3B080} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0CCDD11-AAC6-45FC-883B-0DBE493DA7E9}
