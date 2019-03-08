@@ -1,5 +1,6 @@
-﻿//https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows 动态壁纸核心逻辑，就这么两句。。没什么好藏在噎着的。代码我也是从互联网抄写的-。-
-//https://github.com/Francesco149/weebp/blob/master/src/weebp.c 从时间上来说这个仓库比我后写，但是却有值得学习的地方。毕竟是c语言大佬。。。
+﻿//原理参考
+//https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows 
+//https://github.com/Francesco149/weebp/blob/master/src/weebp.c 
 using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
@@ -9,7 +10,7 @@ using System.Timers;
 namespace LiveWallpaperEngine
 {
     /// <summary>
-    /// 动态壁纸最最最最最核心的逻辑，请大胆食用
+    /// 动态壁纸实现原理
     /// </summary>
     public class LWECore : IDisposable
     {
@@ -176,7 +177,11 @@ namespace LiveWallpaperEngine
             _targeHandler = handler;
 
             if (_workerw == IntPtr.Zero)
+            {
                 _workerw = GetWorkerW();
+                if (_workerw == IntPtr.Zero)
+                    return false;
+            }
 
             _parentHandler = User32Wrapper.GetParent(_targeHandler);
             if (_parentHandler == IntPtr.Zero)
@@ -262,7 +267,6 @@ namespace LiveWallpaperEngine
             {
                 desktopWallpaperAPI.Enable(false);
                 desktopWallpaperAPI.Enable(true);
-
             }
             catch (Exception ex)
             {
