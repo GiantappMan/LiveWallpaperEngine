@@ -1,4 +1,5 @@
-﻿using Mpv.NET.Player;
+﻿using LiveWallpaperEngine;
+using Mpv.NET.Player;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,9 +13,11 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
-    public partial class VideoRender : Form
+    public partial class VideoRender : Form, IRender
     {
         private MpvPlayer _player;
+
+        #region construct
 
         public VideoRender()
         {
@@ -42,6 +45,18 @@ namespace LiveWallpaperEngineRender.Renders
             _player?.Dispose();
         }
 
+        #endregion
+
+        #region properties
+
+        public bool RenderDisposed { private set; get; }
+
+        public bool Paused { private set; get; }
+
+        public bool Playing { private set; get; }
+
+        #endregion
+
         public void Mute(bool mute)
         {
             if (_player != null)
@@ -56,6 +71,33 @@ namespace LiveWallpaperEngineRender.Renders
         public void Resume()
         {
             _player?.Resume();
+        }
+
+        public IntPtr ShowRender()
+        {
+            Show();
+            return Handle;
+        }
+
+        public void Play(string path)
+        {
+            if (_player != null)
+            {
+                _player.Pause();
+                _player.Load(path);
+                _player.Resume();
+            }
+        }
+
+        public void Stop()
+        {
+            _player?.Stop();
+        }
+
+        public void CloseRender()
+        {
+            _player?.Dispose();
+            Close();
         }
     }
 }
