@@ -98,9 +98,6 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Play(string path)
         {
-            if (Playing)
-                return;
-
             Playing = true;
 
             if (_player != null)
@@ -113,7 +110,7 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Stop()
         {
-            if (!Playing)
+            if (!Playing && !Paused)
                 return;
 
             Playing = Paused = false;
@@ -124,6 +121,7 @@ namespace LiveWallpaperEngineRender.Renders
         {
             Stop();
             _player?.Dispose();
+            RenderDisposed = true;
             Close();
         }
     }
