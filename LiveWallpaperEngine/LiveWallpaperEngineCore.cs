@@ -16,7 +16,7 @@ namespace LiveWallpaperEngine
     {
         #region fields
         static IntPtr _workerw = IntPtr.Zero;
-        static IntPtr _targeHandler;
+        static IntPtr _currentHandler;
         static IntPtr _parentHandler;
         static IDesktopWallpaper _desktopWallpaperAPI;
         static RECT? _originalRect;
@@ -147,25 +147,32 @@ namespace LiveWallpaperEngine
             return workerw;
         }
 
-        public static void RestoreParent()
+        public static void RestoreParent(bool refreshWallpaper = true)
         {
             if (!Shown)
                 return;
 
-            _desktopWallpaperAPI = RefreshWallpaper(_desktopWallpaperAPI);
+            if (refreshWallpaper)
+                _desktopWallpaperAPI = RefreshWallpaper(_desktopWallpaperAPI);
 
             if (_workerw == IntPtr.Zero)
                 _workerw = GetWorkerW();
 
-            User32Wrapper.SetParent(_targeHandler, _parentHandler);
+            User32Wrapper.SetParent(_currentHandler, _parentHandler);
 
             if (_originalRect != null)
-                User32Wrapper.SetWindowPos(_targeHandler, _originalRect.Value);
+                User32Wrapper.SetWindowPos(_currentHandler, _originalRect.Value);
             Shown = false;
         }
 
         public static bool SendToBackground(IntPtr handler, int displayIndex = 0)
         {
+            if (Shown && handler != _currentHandler)
+            {
+                //已经换了窗口，恢复上一个窗口
+                RestoreParent(false);
+            }
+
             if (handler == IntPtr.Zero || Shown)
                 return false;
 
@@ -174,7 +181,7 @@ namespace LiveWallpaperEngine
                 _originalRect = react;
 
             Shown = true;
-            _targeHandler = handler;
+            _currentHandler = handler;
 
             if (_workerw == IntPtr.Zero)
             {
@@ -183,13 +190,13 @@ namespace LiveWallpaperEngine
                     return false;
             }
 
-            _parentHandler = User32Wrapper.GetParent(_targeHandler);
+            _parentHandler = User32Wrapper.GetParent(_currentHandler);
             if (_parentHandler == IntPtr.Zero)
-                _parentHandler = User32Wrapper.GetAncestor(_targeHandler, GetAncestorFlags.GetParent);
+                _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
 
-            User32Wrapper.SetParent(_targeHandler, _workerw);
+            User32Wrapper.SetParent(_currentHandler, _workerw);
 
-            FullScreen(_targeHandler, displayIndex);
+            FullScreen(_currentHandler, displayIndex);
 
             return true;
         }
@@ -199,7 +206,7 @@ namespace LiveWallpaperEngine
             var explorers = Process.GetProcessesByName("explorer");
             if (explorers.Length == 0)
             {
-                //还是不自动启动了，有点像流氓行为
+                //不再自动explorer，有点像流氓行为
                 //string explorer = string.Format("{0}\\{1}", Environment.GetEnvironmentVariable("WINDIR"), "explorer.exe");
                 //Process process = new Process();
                 //process.StartInfo.FileName = explorer;

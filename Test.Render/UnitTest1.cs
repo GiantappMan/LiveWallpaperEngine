@@ -9,14 +9,9 @@ namespace Test.Render
     public class UnitTest1
     {
         [TestMethod]
-        public void TestVideoRender()
+        public void TestRenderPause()
         {
             IRender render = GetVideoRender();
-            TestRender(render);
-        }
-
-        private void TestRender(IRender render)
-        {
             Assert.AreEqual(render.Paused, false);
             Assert.AreEqual(render.Playing, false);
 
@@ -30,14 +25,33 @@ namespace Test.Render
             render.Resume();
             Assert.AreEqual(render.Playing, true);
             Assert.AreEqual(render.Paused, false);
+        }
 
+        [TestMethod]
+        public void TestRenderStop()
+        {
+            IRender render = GetVideoRender();
+            render.Play("ss");
+            Assert.AreEqual(render.Playing, true);
             render.Stop();
             Assert.AreEqual(render.Playing, false);
             Assert.AreEqual(render.Paused, false);
+        }
+
+        [TestMethod]
+        public void TestRenderDispose()
+        {
+            IRender render = GetVideoRender();
+            render.Play("ss");
+            Assert.AreEqual(render.Playing, true);
+
+            Assert.AreEqual(render.RenderDisposed, false);
 
             render.CloseRender();
             Assert.AreEqual(render.Paused, false);
             Assert.AreEqual(render.Playing, false);
+
+            Assert.AreEqual(render.RenderDisposed, true);
         }
 
         private IRender GetVideoRender()
