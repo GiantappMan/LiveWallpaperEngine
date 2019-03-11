@@ -60,6 +60,8 @@ namespace LiveWallpaperEngineRender.Renders
 
         public bool Playing { private set; get; }
 
+        public string CurrentPath { private set; get; }
+
         #endregion
 
         public void Mute(bool mute)
@@ -98,6 +100,7 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Play(string path)
         {
+            CurrentPath = path;
             Playing = true;
 
             if (_player != null)
@@ -123,6 +126,29 @@ namespace LiveWallpaperEngineRender.Renders
             _player?.Dispose();
             RenderDisposed = true;
             Close();
+        }
+
+        public void SetAspect(string aspect)
+        {
+            try
+            {
+                if (_player != null)
+                {
+                    //var test = player.API.GetPropertyString("video-aspect");
+                    if (string.IsNullOrEmpty(aspect))
+                        _player.API.SetPropertyString("video-aspect", "-1.000000");
+                    else
+                    {
+                        //兼容中文分号
+                        aspect = aspect.Replace("：", ":");
+                        _player.API.SetPropertyString("video-aspect", aspect);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
         }
     }
 }
