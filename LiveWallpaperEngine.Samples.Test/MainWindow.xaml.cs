@@ -70,6 +70,7 @@ namespace LiveWallpaperEngine.Samples.Test
         {
             var btn = sender as Button;
             var process = btn.DataContext as Process;
+
             _core = LiveWallpaperEngineManager.GetCore(LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
             _core.SendToBackground(process.MainWindowHandle);
         }
@@ -95,22 +96,28 @@ namespace LiveWallpaperEngine.Samples.Test
         VideoRender _videoRender = null;
         private void btnVideo_Click(object sender, RoutedEventArgs e)
         {
-            var screen = LiveWallpaperEngineManager.AllScreens[0];
-            if (_videoRender == null || _videoRender.RenderDisposed)
-            {
-                _videoRender = new VideoRender();
-                _videoRender.InitRender(screen);
-            }
-
+            LiveWallpaperEngineManager.UIDispatcher = Dispatcher;
             using (var openFileDialog = new System.Windows.Forms.OpenFileDialog())
             {
                 openFileDialog.Filter = "All files (*.*)|*.*";
 
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
+                    var screen = LiveWallpaperEngineManager.AllScreens[0];
+                    if (_videoRender == null || _videoRender.RenderDisposed)
+                    {
+                        _videoRender = new VideoRender();
+                        _videoRender.InitRender(screen);
+                        bool ok = LiveWallpaperEngineManager.Show(_videoRender, screen);
+                        if (!ok)
+                        {
+                            _videoRender.CloseRender();
+                            MessageBox.Show(ok.ToString());
+                        }
+                    }
+
                     string filePath = openFileDialog.FileName;
                     _videoRender.Play(filePath);
-                    LiveWallpaperEngineManager.Show(_videoRender, screen);
                 }
             }
         }

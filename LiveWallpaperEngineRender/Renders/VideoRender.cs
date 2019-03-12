@@ -2,9 +2,6 @@
 using Mpv.NET.Player;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,52 +10,11 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
-    public partial class VideoRender : Form, IRender
+    public class VideoRender : IRender
     {
-        private MpvPlayer _player;
-
-        #region construct
-
-        public VideoRender()
-        {
-            //UI
-            BackColor = Color.Magenta;
-            TransparencyKey = Color.Magenta;
-            InitializeComponent();
-            FormBorderStyle = FormBorderStyle.None;
-
-            //callback
-            FormClosing += RenderForm_FormClosing;
-        }
-
-        public void InitRender(Screen screen)
-        {
-            Width = screen.Bounds.Width;
-            Height = screen.Bounds.Height;
-            Left = screen.Bounds.Left;
-            Top = screen.Bounds.Top;
-
-            //mpv
-            var assembly = Assembly.GetEntryAssembly();
-            //单元测试
-            if (assembly != null)
-            {
-                string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
-                _player = new MpvPlayer(Handle, $@"{appDir}\lib\mpv-1.dll")
-                {
-                    Loop = true,
-                    Volume = 0
-                };
-            }
-        }
-
-        private void RenderForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            FormClosing -= RenderForm_FormClosing;
-            _player?.Dispose();
-        }
-
-        #endregion
+        MpvForm control = new MpvForm();
+        Screen _cacheScreen;
+        string _cacheAspect;
 
         #region properties
 
@@ -74,8 +30,8 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Mute(bool mute)
         {
-            if (_player != null)
-                _player.Volume = mute ? 0 : 100;
+            if (control.Player != null)
+                control.Player.Volume = mute ? 0 : 100;
         }
 
         public void Pause()
@@ -86,7 +42,7 @@ namespace LiveWallpaperEngineRender.Renders
             Playing = false;
             Paused = true;
 
-            _player?.Pause();
+            control.Player?.Pause();
         }
 
         public void Resume()
@@ -97,13 +53,13 @@ namespace LiveWallpaperEngineRender.Renders
             Playing = true;
             Paused = false;
 
-            _player?.Resume();
+            control.Player?.Resume();
         }
 
         public IntPtr ShowRender()
         {
-            Show();
-            return Handle;
+            control.Show();
+            return control.Handle;
         }
 
         public void Play(string path)
@@ -111,11 +67,17 @@ namespace LiveWallpaperEngineRender.Renders
             CurrentPath = path;
             Playing = true;
 
-            if (_player != null)
+            try
             {
-                _player.Pause();
-                _player.Load(path);
-                _player.Resume();
+                if (control.Player != null)
+                {
+                    control.Player.Pause();
+                    control.Player.Load(path);
+                    control.Player.Resume();
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -125,31 +87,54 @@ namespace LiveWallpaperEngineRender.Renders
                 return;
 
             Playing = Paused = false;
-            _player?.Stop();
+            control.Player?.Stop();
         }
 
         public void CloseRender()
         {
             Stop();
-            _player?.Dispose();
+            control.Player?.Dispose();
             RenderDisposed = true;
-            Close();
+            control.Close();
+        }
+
+        public void InitRender(Screen screen)
+        {
+            _cacheScreen = screen;
+            control.Width = screen.Bounds.Width;
+            control.Height = screen.Bounds.Height;
+            control.Left = screen.Bounds.Left;
+            control.Top = screen.Bounds.Top;
+
+            //mpv
+            var assembly = Assembly.GetEntryAssembly();
+            //单元测试
+            if (assembly != null)
+            {
+                string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
+                control.Player = new MpvPlayer(control.Handle, $@"{appDir}\lib\mpv-1.dll")
+                {
+                    Loop = true,
+                    Volume = 0
+                };
+            }
         }
 
         public void SetAspect(string aspect)
         {
             try
             {
-                if (_player != null)
+                _cacheAspect = aspect;
+                if (control.Player != null)
                 {
                     //var test = player.API.GetPropertyString("video-aspect");
                     if (string.IsNullOrEmpty(aspect))
-                        _player.API.SetPropertyString("video-aspect", "-1.000000");
+                        control.Player.API.SetPropertyString("video-aspect", "-1.000000");
                     else
                     {
                         //兼容中文分号
                         aspect = aspect.Replace("：", ":");
-                        _player.API.SetPropertyString("video-aspect", aspect);
+                        control.Player.API.SetPropertyString("video-aspect", aspect);
                     }
                 }
             }
@@ -159,5 +144,30 @@ namespace LiveWallpaperEngineRender.Renders
             }
         }
 
+        public IntPtr RestartRender()
+        {
+            if (control != null)
+            {
+                control.Close();
+                //var close = new Action(control.Close);
+                //if (control.InvokeRequired)
+                //    control.BeginInvoke(close);
+                //else
+                //    close();
+            }
+
+            IntPtr result = IntPtr.Zero;
+            LiveWallpaperEngineManager.UIDispatcher.Invoke(() =>
+            {
+                control = new MpvForm();
+                InitRender(_cacheScreen);
+                ShowRender();
+                result = control.Handle;
+            });
+
+            SetAspect(_cacheAspect);
+
+            return result;
+        }
     }
 }

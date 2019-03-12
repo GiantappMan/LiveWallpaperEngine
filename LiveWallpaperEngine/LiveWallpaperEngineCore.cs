@@ -22,136 +22,41 @@ namespace LiveWallpaperEngine
         static IntPtr _currentHandler;
         static IntPtr _parentHandler;
         static IDesktopWallpaper _desktopWallpaperAPI;
-        static RECT? _originalRect;
+        static RECT? _originalRect;//窗口原始大小，恢复时使用
+
         static uint _slideshowTick;
-        static Process _exploreProcess;
-        static System.Timers.Timer _timer;
 
         #endregion
 
-        //public properties
+        //公开属性
         public bool Shown { get; private set; }
         public Screen DisplayScreen { get; private set; }
-        //event
-        public static event EventHandler TimerElapsed;
-        //public static event EventHandler NeedReapply;
 
         #endregion
 
         #region construct
-        public LiveWallpaperEngineCore(Screen screen)
+
+        //禁止外部程序集直接构造
+        internal LiveWallpaperEngineCore(Screen screen)
         {
             DisplayScreen = screen;
-            if (_timer == null)
-            {
-                _timer = new System.Timers.Timer(1000);
-                _timer.Elapsed += _timer_Elapsed;
-                _timer.Start();
-            }
-
-            CacheExplorer();
+            ReInit();
         }
 
-        private static void CacheExplorer()
+        internal void ReInit()
         {
-            _exploreProcess = GetExplorer();
+            _workerw = GetWorkerW();
+            //explore重启后，之前的窗口已经挂了不能恢复
+            Shown = false;
 
             var _desktopWallpaperAPI = GetDesktopWallpaperAPI();
             _desktopWallpaperAPI?.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
-        private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            _timer.Stop();
-
-            //explorer 进程已死
-            if (_exploreProcess == null || _exploreProcess.HasExited)
-            {
-                _workerw = IntPtr.Zero;
-                _exploreProcess = GetExplorer();
-            }
-
-            //重新应用壁纸
-            if (Shown && _exploreProcess != null && _workerw == IntPtr.Zero)
-            {
-                CacheExplorer();
-                _workerw = GetWorkerW();
-                Shown = false;
-                //NeedReapply?.Invoke(null, new EventArgs());
-            }
-
-            TimerElapsed?.Invoke(null, new EventArgs());
-
-            if (_timer == null)
-                return;//disposed
-            _timer.Start();
-        }
-
-        public void Dispose()
-        {
-            _timer.Elapsed -= _timer_Elapsed;
-            _timer.Stop();
-            _timer = null;
-            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
-        }
-
         #endregion
 
         #region  public methods
-
-        /// <summary>
-        /// 恢复WorkerW中的所有句柄到桌面
-        /// </summary>
-        public static void RestoreAllHandles()
-        {
-            var desktop = User32Wrapper.GetDesktopWindow();
-            var workw = GetWorkerW();
-            var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
-             {
-                 var txt = User32Wrapper.GetWindowText(tophandle);
-                 if (!string.IsNullOrEmpty(txt))
-                 {
-                     User32Wrapper.SetParent(tophandle, desktop);
-                 }
-
-                 return true;
-             }), IntPtr.Zero);
-
-            RefreshWallpaper(null);
-        }
-
-        public static IntPtr GetWorkerW()
-        {
-            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
-            User32Wrapper.SendMessageTimeout(progman,
-                                   0x052C,
-                                   new IntPtr(0),
-                                   IntPtr.Zero,
-                                   SendMessageTimeoutFlags.SMTO_NORMAL,
-                                   1000,
-                                   out IntPtr unusefulResult);
-            IntPtr workerw = IntPtr.Zero;
-            var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
-            {
-                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
-                                            IntPtr.Zero,
-                                            "SHELLDLL_DefView",
-                                            IntPtr.Zero);
-
-                if (p != IntPtr.Zero)
-                {
-                    workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
-                                             tophandle,
-                                             "WorkerW",
-                                             IntPtr.Zero);
-                    return false;
-                }
-
-                return true;
-            }), IntPtr.Zero);
-            return workerw;
-        }
 
         public void RestoreParent(bool refreshWallpaper = true)
         {
@@ -207,15 +112,30 @@ namespace LiveWallpaperEngine
             return true;
         }
 
-        public static Process GetExplorer()
+        /// <summary>
+        /// 恢复WorkerW中的所有句柄到桌面
+        /// </summary>
+        public static void RestoreAllHandles()
         {
-            var explorers = Process.GetProcessesByName("explorer");
-            if (explorers.Length == 0)
+            var desktop = User32Wrapper.GetDesktopWindow();
+            var workw = GetWorkerW();
+            var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
             {
-                return null;
-            }
+                var txt = User32Wrapper.GetWindowText(tophandle);
+                if (!string.IsNullOrEmpty(txt))
+                {
+                    User32Wrapper.SetParent(tophandle, desktop);
+                }
 
-            return explorers[0];
+                return true;
+            }), IntPtr.Zero);
+
+            RefreshWallpaper(null);
+        }
+
+        public void Dispose()
+        {
+            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         }
 
         public static IDesktopWallpaper GetDesktopWallpaperAPI()
@@ -235,11 +155,42 @@ namespace LiveWallpaperEngine
         #endregion
 
         #region private
+        internal static IntPtr GetWorkerW()
+        {
+            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
+            User32Wrapper.SendMessageTimeout(progman,
+                                   0x052C,
+                                   new IntPtr(0),
+                                   IntPtr.Zero,
+                                   SendMessageTimeoutFlags.SMTO_NORMAL,
+                                   1000,
+                                   out IntPtr unusefulResult);
+            IntPtr workerw = IntPtr.Zero;
+            var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
+            {
+                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
+                                            IntPtr.Zero,
+                                            "SHELLDLL_DefView",
+                                            IntPtr.Zero);
+
+                if (p != IntPtr.Zero)
+                {
+                    workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
+                                             tophandle,
+                                             "WorkerW",
+                                             IntPtr.Zero);
+                    return false;
+                }
+
+                return true;
+            }), IntPtr.Zero);
+            return workerw;
+        }
 
         private static void FullScreen(IntPtr targeHandler, Screen displayScreen)
         {
             RECT rect = new RECT(displayScreen.Bounds);
-            
+
             User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
             var ok = User32Wrapper.SetWindowPos(targeHandler, rect);
             return;
@@ -248,7 +199,7 @@ namespace LiveWallpaperEngine
         //刷新壁纸
         private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
         {
-            var explorer = GetExplorer();
+            var explorer = ExplorerMonitor.ExploreProcess;
             if (explorer == null)
                 return null;
 

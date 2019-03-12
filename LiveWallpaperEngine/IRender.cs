@@ -7,6 +7,7 @@ namespace LiveWallpaperEngine
 {
     public interface IRender
     {
+        string CurrentPath { get; }
         bool RenderDisposed { get; }
         bool Paused { get; }
         bool Playing { get; }
@@ -26,5 +27,7 @@ namespace LiveWallpaperEngine
         IntPtr ShowRender();
 
         void CloseRender();
+
+        IntPtr RestartRender();
     }
 }
