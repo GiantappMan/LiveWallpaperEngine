@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngine
 {
@@ -19,6 +20,8 @@ namespace LiveWallpaperEngine
         void Pause();
 
         void Resume();
+
+        void InitRender(Screen screen);
 
         IntPtr ShowRender();
 
