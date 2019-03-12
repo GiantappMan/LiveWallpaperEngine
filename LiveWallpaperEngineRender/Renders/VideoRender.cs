@@ -27,6 +27,17 @@ namespace LiveWallpaperEngineRender.Renders
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.None;
 
+            //callback
+            FormClosing += RenderForm_FormClosing;
+        }
+
+        public void InitRender(Screen screen)
+        {
+            Width = screen.Bounds.Width;
+            Height = screen.Bounds.Height;
+            Left = screen.Bounds.Left;
+            Top = screen.Bounds.Top;
+
             //mpv
             var assembly = Assembly.GetEntryAssembly();
             //单元测试
@@ -39,9 +50,6 @@ namespace LiveWallpaperEngineRender.Renders
                     Volume = 0
                 };
             }
-
-            //callback
-            FormClosing += RenderForm_FormClosing;
         }
 
         private void RenderForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -150,5 +158,6 @@ namespace LiveWallpaperEngineRender.Renders
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
+
     }
 }
