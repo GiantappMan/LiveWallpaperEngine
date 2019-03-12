@@ -92,11 +92,15 @@ namespace LiveWallpaperEngine.Samples.Test
             LiveWallpaperEngineCore.RestoreAllHandles();
         }
 
-        VideoRender _videoRender = new VideoRender();
+        VideoRender _videoRender = null;
         private void btnVideo_Click(object sender, RoutedEventArgs e)
         {
-            if (_videoRender.RenderDisposed)
+            var screen = LiveWallpaperEngineManager.AllScreens[0];
+            if (_videoRender == null || _videoRender.RenderDisposed)
+            {
                 _videoRender = new VideoRender();
+                _videoRender.InitRender(screen);
+            }
 
             using (var openFileDialog = new System.Windows.Forms.OpenFileDialog())
             {
@@ -106,7 +110,7 @@ namespace LiveWallpaperEngine.Samples.Test
                 {
                     string filePath = openFileDialog.FileName;
                     _videoRender.Play(filePath);
-                    LiveWallpaperEngineManager.Show(_videoRender, LiveWallpaperEngineManager.AllScreens[0]);
+                    LiveWallpaperEngineManager.Show(_videoRender, screen);
                 }
             }
         }
