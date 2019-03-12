@@ -5,47 +5,54 @@ using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
 using System.Diagnostics;
-using System.Timers;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngine
 {
     /// <summary>
-    /// 动态壁纸实现原理
+    /// 管理一个显示器的壁纸
     /// </summary>
     public class LiveWallpaperEngineCore
     {
         #region fields
+
+        #region static
+
         static IntPtr _workerw = IntPtr.Zero;
         static IntPtr _currentHandler;
         static IntPtr _parentHandler;
         static IDesktopWallpaper _desktopWallpaperAPI;
         static RECT? _originalRect;
         static uint _slideshowTick;
-
         static Process _exploreProcess;
-        static Timer _timer;
+        static System.Timers.Timer _timer;
+
+        #endregion
 
         //public properties
-        public static bool Shown { get; private set; }
-        public static object Screen { get; private set; }
+        public bool Shown { get; private set; }
+        public Screen DisplayScreen { get; private set; }
         //event
         public static event EventHandler TimerElapsed;
-        public static event EventHandler NeedReapply;
+        //public static event EventHandler NeedReapply;
 
         #endregion
 
         #region construct
-
-        static LiveWallpaperEngineCore()
+        public LiveWallpaperEngineCore(Screen screen)
         {
-            _timer = new Timer(1000);
-            _timer.Elapsed += _timer_Elapsed;
-            _timer.Start();
+            DisplayScreen = screen;
+            if (_timer == null)
+            {
+                _timer = new System.Timers.Timer(1000);
+                _timer.Elapsed += _timer_Elapsed;
+                _timer.Start();
+            }
 
-            InnerInit();
+            CacheExplorer();
         }
 
-        private static void InnerInit()
+        private static void CacheExplorer()
         {
             _exploreProcess = GetExplorer();
 
@@ -54,7 +61,7 @@ namespace LiveWallpaperEngine
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
-        private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             _timer.Stop();
 
@@ -68,10 +75,10 @@ namespace LiveWallpaperEngine
             //重新应用壁纸
             if (Shown && _exploreProcess != null && _workerw == IntPtr.Zero)
             {
-                InnerInit();
+                CacheExplorer();
                 _workerw = GetWorkerW();
                 Shown = false;
-                NeedReapply?.Invoke(null, new EventArgs());
+                //NeedReapply?.Invoke(null, new EventArgs());
             }
 
             TimerElapsed?.Invoke(null, new EventArgs());
@@ -81,7 +88,7 @@ namespace LiveWallpaperEngine
             _timer.Start();
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             _timer.Elapsed -= _timer_Elapsed;
             _timer.Stop();
@@ -102,7 +109,6 @@ namespace LiveWallpaperEngine
             var workw = GetWorkerW();
             var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
              {
-
                  var txt = User32Wrapper.GetWindowText(tophandle);
                  if (!string.IsNullOrEmpty(txt))
                  {
@@ -147,7 +153,7 @@ namespace LiveWallpaperEngine
             return workerw;
         }
 
-        public static void RestoreParent(bool refreshWallpaper = true)
+        public void RestoreParent(bool refreshWallpaper = true)
         {
             if (!Shown)
                 return;
@@ -165,7 +171,7 @@ namespace LiveWallpaperEngine
             Shown = false;
         }
 
-        public static bool SendToBackground(IntPtr handler, int displayIndex = 0)
+        public bool SendToBackground(IntPtr handler)
         {
             if (Shown && handler != _currentHandler)
             {
@@ -196,7 +202,7 @@ namespace LiveWallpaperEngine
 
             User32Wrapper.SetParent(_currentHandler, _workerw);
 
-            FullScreen(_currentHandler, displayIndex);
+            FullScreen(_currentHandler, DisplayScreen);
 
             return true;
         }
@@ -206,13 +212,6 @@ namespace LiveWallpaperEngine
             var explorers = Process.GetProcessesByName("explorer");
             if (explorers.Length == 0)
             {
-                //不再自动explorer，有点像流氓行为
-                //string explorer = string.Format("{0}\\{1}", Environment.GetEnvironmentVariable("WINDIR"), "explorer.exe");
-                //Process process = new Process();
-                //process.StartInfo.FileName = explorer;
-                //process.StartInfo.UseShellExecute = true;
-                //process.Start();
-                //return process;
                 return null;
             }
 
@@ -237,26 +236,12 @@ namespace LiveWallpaperEngine
 
         #region private
 
-        private static void FullScreen(IntPtr targeHandler, int displayIndex = 0)
+        private static void FullScreen(IntPtr targeHandler, Screen displayScreen)
         {
-            //var tmp = User32Wrapper.MonitorFromWindow(targeHandler, User32Wrapper.MONITOR_DEFAULTTONEAREST);
-            //MONITORINFO info = new MONITORINFO();
-
-            //bool ok = User32Wrapper.GetMonitorInfo(tmp, info);
-            //if (!ok)
-            //    return null;
-
-            //ok = User32Wrapper.GetWindowRect(_targeHandler, out RECT react);
-
-            //ok = User32Wrapper.SetWindowPos(targeHandler, info.rcMonitor);
-            //return react;
-
-            var displays = User32Wrapper.GetDisplays();
-            if (displays == null)
-                return;
-            var display = displays[displayIndex];
-            User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref display.rcMonitor, 2);
-            var ok = User32Wrapper.SetWindowPos(targeHandler, display.rcMonitor);
+            RECT rect = new RECT(displayScreen.Bounds);
+            
+            User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
+            var ok = User32Wrapper.SetWindowPos(targeHandler, rect);
             return;
         }
 

@@ -22,6 +22,7 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
+        LiveWallpaperEngineCore _core = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -62,25 +63,27 @@ namespace LiveWallpaperEngine.Samples.Test
         private void btnCloseProcess_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            LiveWallpaperEngineCore.RestoreParent();
+            _core?.RestoreParent();
         }
 
         private void btnShowProcess_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
             var process = btn.DataContext as Process;
-            LiveWallpaperEngineCore.SendToBackground(process.MainWindowHandle, cbDisplay.SelectedIndex);
+            _core = LiveWallpaperEngineManager.GetCore(LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
+            _core.SendToBackground(process.MainWindowHandle);
         }
 
         private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
         {
             var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
-            LiveWallpaperEngineCore.SendToBackground(handle, cbDisplay.SelectedIndex);
+            _core = LiveWallpaperEngineManager.GetCore(LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
+            _core.SendToBackground(handle);
         }
 
         private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)
         {
-            LiveWallpaperEngineCore.RestoreParent();
+            _core?.RestoreParent();
         }
         #endregion
 
@@ -103,7 +106,7 @@ namespace LiveWallpaperEngine.Samples.Test
                 {
                     string filePath = openFileDialog.FileName;
                     _videoRender.Play(filePath);
-                    LiveWallpaperEngineManager.Show(_videoRender);
+                    LiveWallpaperEngineManager.Show(_videoRender, LiveWallpaperEngineManager.AllScreens[0]);
                 }
             }
         }
