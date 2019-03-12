@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>LiveWallpaperEngineRender</id>
-    <version>1.0.0.2</version>
+    <version>1.0.0.4</version>
     <title>LiveWallpaperEngineRender</title>
     <authors>MscoderStudio</authors>
     <owners>MscoderStudio</owners>
@@ -23,6 +23,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\LiveWallpaperEngineRender\bin\Release\LiveWallpaperEngineRender.dll" target="lib\net46\LiveWallpaperEngineRender.dll" />
+    <file src="..\LiveWallpaperEngineRender\bin\Debug\LiveWallpaperEngineRender.dll" target="lib\net46\LiveWallpaperEngineRender.dll" />
+    <!-- <file src="..\LiveWallpaperEngineRender\bin\Release\LiveWallpaperEngineRender.dll" target="lib\net46\LiveWallpaperEngineRender.dll" /> -->
   </files>
 </package>

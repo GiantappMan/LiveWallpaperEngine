@@ -1,17 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngine
 {
     public class LiveWallpaperEngineManager
     {
-        public static bool Show(IRender render)
+        public static List<Screen> AllScreens { get; private set; }
+
+        static List<LiveWallpaperEngineCore> cores = new List<LiveWallpaperEngineCore>();
+        static LiveWallpaperEngineManager()
+        {
+            AllScreens = new List<Screen>(Screen.AllScreens);
+            SetupCores();
+        }
+
+        public static void SetupCores()
+        {
+            AllScreens.ForEach(item =>
+             {
+                 cores.Add(new LiveWallpaperEngineCore(item));
+             });
+        }
+
+        public static bool Show(IRender render, Screen screen)
         {
             var handle = render.ShowRender();
-            bool ok = LiveWallpaperEngineCore.SendToBackground(handle, 0);
+
+            var core = GetCore(screen);
+            if (core == null)
+                return false;
+
+            bool ok = core.SendToBackground(handle);
             return ok;
-            //LiveWallpaperEngineCore.
+        }
+
+        public static LiveWallpaperEngineCore GetCore(Screen screen)
+        {
+            var result = cores.FirstOrDefault(m => m.DisplayScreen == screen);
+            return result;
         }
     }
 }
