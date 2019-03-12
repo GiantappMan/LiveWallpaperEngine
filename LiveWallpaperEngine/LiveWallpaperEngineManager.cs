@@ -13,12 +13,12 @@ namespace LiveWallpaperEngine
         static List<LiveWallpaperEngineCore> cores = new List<LiveWallpaperEngineCore>();
         static LiveWallpaperEngineManager()
         {
-            AllScreens = new List<Screen>(Screen.AllScreens);
             SetupCores();
         }
 
         public static void SetupCores()
         {
+            AllScreens = new List<Screen>(Screen.AllScreens);
             AllScreens.ForEach(item =>
              {
                  cores.Add(new LiveWallpaperEngineCore(item));
