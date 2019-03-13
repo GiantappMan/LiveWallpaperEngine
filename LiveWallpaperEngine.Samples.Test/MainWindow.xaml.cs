@@ -1,4 +1,5 @@
-﻿using LiveWallpaperEngineRender.Renders;
+﻿using DZY.WinAPI;
+using LiveWallpaperEngineRender.Renders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ namespace LiveWallpaperEngine.Samples.Test
         public MainWindow()
         {
             InitializeComponent();
+            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_UNAWARE);
             System.Windows.Forms.Screen.AllScreens.ToList().ForEach(item =>
             {
                 cbDisplay.Items.Add(new ComboBoxItem() { Content = item.DeviceName });
