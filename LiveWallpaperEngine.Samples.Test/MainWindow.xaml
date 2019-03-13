@@ -90,6 +90,9 @@
                     VerticalAlignment="Center"
                     Click="btnDisposeVideo_Click"
                     Content="释放资源" />
+                <ItemsControl x:Name="monitors">
+                    
+                </ItemsControl>
             </StackPanel>
         </TabItem>
         <TabItem Header="网页" />

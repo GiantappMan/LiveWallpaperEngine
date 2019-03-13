@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -23,6 +22,9 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<VideoRender> _videoRenders = new List<VideoRender>();
+        HandleRender _handleRender = new HandleRender();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,9 +46,28 @@ namespace LiveWallpaperEngine.Samples.Test
                 case 0:
                     LoadProcess();
                     break;
-                case 1: break;
+                case 1:
+                    LoadMonitors();
+                    break;
             }
         }
+
+        private void LoadMonitors()
+        {
+            if (monitors.Items.Count == 0)
+                LiveWallpaperEngineManager.AllScreens.ForEach(m =>
+                {
+                    monitors.Items.Add(new CheckBox()
+                    {
+                        Content = m.DeviceName,
+                        Tag = m,
+                        IsChecked = true
+                    });
+
+                    _videoRenders.Add(new VideoRender());
+                });
+        }
+
         #region tabitem1
         private void LoadProcess()
         {
@@ -59,8 +80,6 @@ namespace LiveWallpaperEngine.Samples.Test
                });
            });
         }
-
-        HandleRender _handleRender = new HandleRender();
 
         private void btnCloseProcess_Click(object sender, RoutedEventArgs e)
         {
@@ -96,7 +115,6 @@ namespace LiveWallpaperEngine.Samples.Test
             LiveWallpaperEngineCore.RestoreAllHandles();
         }
 
-        VideoRender _videoRender = null;
         private void btnVideo_Click(object sender, RoutedEventArgs e)
         {
             LiveWallpaperEngineManager.UIDispatcher = Dispatcher;
@@ -106,41 +124,78 @@ namespace LiveWallpaperEngine.Samples.Test
 
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    var screen = LiveWallpaperEngineManager.AllScreens[1];
-                    if (_videoRender == null || _videoRender.RenderDisposed)
+                    ForeachVideoRenders((renderItem, screen) =>
                     {
-                        _videoRender = new VideoRender();
-                        _videoRender.Init(screen);
-                        bool ok = LiveWallpaperEngineManager.Show(_videoRender, screen);
-                        if (!ok)
+                        bool returnNew = false;
+                        if (renderItem == null || renderItem.RenderDisposed)
                         {
-                            _videoRender.CloseRender();
-                            MessageBox.Show(ok.ToString());
+                            returnNew = true;
+                            renderItem = new VideoRender();
+                            renderItem.Init(screen);
+                            bool ok = LiveWallpaperEngineManager.Show(renderItem, screen);
+                            if (!ok)
+                            {
+                                renderItem.CloseRender();
+                                MessageBox.Show(ok.ToString());
+                            }
                         }
-                    }
 
-                    string filePath = openFileDialog.FileName;
-                    _videoRender.Play(filePath);
+                        string filePath = openFileDialog.FileName;
+                        renderItem.Play(filePath);
+                        if (returnNew)
+                            return renderItem;
+                        return null;
+                    });
                 }
             }
         }
 
         private void btnStopVideo_Click(object sender, RoutedEventArgs e)
         {
-            _videoRender.Stop();
+            ForeachVideoRenders((_videoRender, screen) =>
+            {
+                _videoRender.Stop();
+                return null;
+            });
+        }
+
+        private void ForeachVideoRenders(Func<VideoRender, System.Windows.Forms.Screen, VideoRender> func)
+        {
+            var tmpRenders = new List<VideoRender>(_videoRenders);
+            for (int i = 0; i < tmpRenders.Count; i++)
+            {
+                var renderItem = _videoRenders[i];
+                if (monitors.Items[i] is CheckBox chk)
+                {
+                    if (chk.IsChecked != true)
+                        continue;
+                }
+
+                var newRender = func(renderItem, LiveWallpaperEngineManager.AllScreens[i]);
+                if (newRender != null)
+                    _videoRenders[i] = newRender;
+            }
         }
 
         private void btnPauseVideo_Click(object sender, RoutedEventArgs e)
         {
-            if (_videoRender.Paused)
-                _videoRender.Resume();
-            else
-                _videoRender.Pause();
+            ForeachVideoRenders((_videoRender, screen) =>
+            {
+                if (_videoRender.Paused)
+                    _videoRender.Resume();
+                else
+                    _videoRender.Pause();
+                return null;
+            });
         }
 
         private void btnDisposeVideo_Click(object sender, RoutedEventArgs e)
         {
-            _videoRender.CloseRender();
+            ForeachVideoRenders((_videoRender, screen) =>
+            {
+                _videoRender.CloseRender();
+                return null;
+            });
         }
     }
 }
