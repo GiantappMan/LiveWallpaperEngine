@@ -23,7 +23,6 @@ namespace LiveWallpaperEngine.Samples.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        LiveWallpaperEngineCore _core = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -61,10 +60,12 @@ namespace LiveWallpaperEngine.Samples.Test
            });
         }
 
+        HandleRender _handleRender = new HandleRender();
+
         private void btnCloseProcess_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            _core?.RestoreParent();
+            LiveWallpaperEngineManager.Close(_handleRender);
         }
 
         private void btnShowProcess_Click(object sender, RoutedEventArgs e)
@@ -72,21 +73,22 @@ namespace LiveWallpaperEngine.Samples.Test
             var btn = sender as Button;
             var process = btn.DataContext as Process;
 
-            _core = LiveWallpaperEngineManager.GetCore(LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
-            _core.SendToBackground(process.MainWindowHandle);
+            _handleRender.SetHandle(process.MainWindowHandle);
+            LiveWallpaperEngineManager.Show(_handleRender, LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
         }
 
         private void btnShowCustomHandle_Click(object sender, RoutedEventArgs e)
         {
             var handle = new IntPtr(long.Parse(txtCustomHandle.Text, System.Globalization.NumberStyles.HexNumber));
-            _core = LiveWallpaperEngineManager.GetCore(LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
-            _core.SendToBackground(handle);
+            _handleRender.SetHandle(handle);
+            LiveWallpaperEngineManager.Show(_handleRender, LiveWallpaperEngineManager.AllScreens[cbDisplay.SelectedIndex]);
         }
 
         private void btnCloseCustomHandle_Click(object sender, RoutedEventArgs e)
         {
-            _core?.RestoreParent();
+            LiveWallpaperEngineManager.Close(_handleRender);
         }
+
         #endregion
 
         private void btnRestoreAllHandles_Click(object sender, RoutedEventArgs e)
@@ -108,7 +110,7 @@ namespace LiveWallpaperEngine.Samples.Test
                     if (_videoRender == null || _videoRender.RenderDisposed)
                     {
                         _videoRender = new VideoRender();
-                        _videoRender.InitRender(screen);
+                        _videoRender.Init(screen);
                         bool ok = LiveWallpaperEngineManager.Show(_videoRender, screen);
                         if (!ok)
                         {
