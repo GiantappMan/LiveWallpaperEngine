@@ -48,7 +48,7 @@ namespace LiveWallpaperEngine
 
         public static void SetupCores()
         {
-            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_UNAWARE);
+            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
             AllScreens = new List<Screen>(Screen.AllScreens);
             AllScreens.ForEach(item =>
              {

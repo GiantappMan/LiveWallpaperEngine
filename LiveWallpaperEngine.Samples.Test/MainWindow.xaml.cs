@@ -27,8 +27,7 @@ namespace LiveWallpaperEngine.Samples.Test
         public MainWindow()
         {
             InitializeComponent();
-            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_UNAWARE);
-            System.Windows.Forms.Screen.AllScreens.ToList().ForEach(item =>
+            LiveWallpaperEngineManager.AllScreens.ToList().ForEach(item =>
             {
                 cbDisplay.Items.Add(new ComboBoxItem() { Content = item.DeviceName });
             });
@@ -105,7 +104,7 @@ namespace LiveWallpaperEngine.Samples.Test
 
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    var screen = LiveWallpaperEngineManager.AllScreens[0];
+                    var screen = LiveWallpaperEngineManager.AllScreens[1];
                     if (_videoRender == null || _videoRender.RenderDisposed)
                     {
                         _videoRender = new VideoRender();
