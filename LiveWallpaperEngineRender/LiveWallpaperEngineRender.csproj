@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renders\BaseRender.cs" />
+    <Compile Include="Renders\HandleRender.cs" />
     <Compile Include="Renders\MpvForm.cs">
       <SubType>Form</SubType>
     </Compile>

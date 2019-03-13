@@ -41,7 +41,11 @@ namespace LiveWallpaperEngine
                     IntPtr handle = IntPtr.Zero; ;
                     handle = m.Render.RestartRender();
                     m.SendToBackground(handle);
-                    m.Render.Play(m.Render.CurrentPath);
+                    if (m.Render is IVideoRender)
+                    {
+                        var tmp = m.Render as IVideoRender;
+                        tmp.Play(tmp.CurrentPath);
+                    }
                 }
             });
         }
@@ -64,9 +68,18 @@ namespace LiveWallpaperEngine
             if (core == null)
                 return false;
 
+            Close(core.Render);//清理旧Render
+
+            render.SetCore(core);
             core.Render = render;
             bool ok = core.SendToBackground(handle);
             return ok;
+        }
+
+        public static void Close(IRender render)
+        {
+            render?.CloseRender();
+            render?.SetCore(null);
         }
 
         public static LiveWallpaperEngineCoreEx GetCore(Screen screen)

@@ -11,7 +11,7 @@ namespace Test.Render
         [TestMethod]
         public void TestRenderPause()
         {
-            IRender render = GetVideoRender();
+            IVideoRender render = GetVideoRender();
             Assert.AreEqual(render.Paused, false);
             Assert.AreEqual(render.Playing, false);
 
@@ -30,7 +30,7 @@ namespace Test.Render
         [TestMethod]
         public void TestRenderStop()
         {
-            IRender render = GetVideoRender();
+            IVideoRender render = GetVideoRender();
             render.Play("ss");
             Assert.AreEqual(render.Playing, true);
             render.Stop();
@@ -41,7 +41,7 @@ namespace Test.Render
         [TestMethod]
         public void TestRenderDispose()
         {
-            IRender render = GetVideoRender();
+            IVideoRender render = GetVideoRender();
             render.Play("ss");
             Assert.AreEqual(render.Playing, true);
 
@@ -54,9 +54,9 @@ namespace Test.Render
             Assert.AreEqual(render.RenderDisposed, true);
         }
 
-        private IRender GetVideoRender()
+        private IVideoRender GetVideoRender()
         {
-            IRender render = new VideoRender();
+            IVideoRender render = new VideoRender();
             return render;
         }
     }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
-    public class VideoRender : IRender
+    public class VideoRender : BaseRender, IVideoRender
     {
         MpvForm control = new MpvForm();
         Screen _cacheScreen;
@@ -18,13 +18,6 @@ namespace LiveWallpaperEngineRender.Renders
 
         #region properties
 
-        public bool RenderDisposed { private set; get; }
-
-        public bool Paused { private set; get; }
-
-        public bool Playing { private set; get; }
-
-        public string CurrentPath { private set; get; }
 
         #endregion
 
@@ -98,7 +91,7 @@ namespace LiveWallpaperEngineRender.Renders
             control.Close();
         }
 
-        public void InitRender(Screen screen)
+        public void Init(Screen screen)
         {
             _cacheScreen = screen;
             control.Width = screen.Bounds.Width;
@@ -160,7 +153,7 @@ namespace LiveWallpaperEngineRender.Renders
             LiveWallpaperEngineManager.UIDispatcher.Invoke(() =>
             {
                 control = new MpvForm();
-                InitRender(_cacheScreen);
+                Init(_cacheScreen);
                 ShowRender();
                 result = control.Handle;
             });
@@ -168,6 +161,10 @@ namespace LiveWallpaperEngineRender.Renders
             SetAspect(_cacheAspect);
 
             return result;
+        }
+
+        public void SetCore(LiveWallpaperEngineCore core)
+        {
         }
     }
 }
