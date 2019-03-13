@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using DZY.WinAPI;
 
 namespace LiveWallpaperEngine
 {
@@ -47,6 +48,7 @@ namespace LiveWallpaperEngine
 
         public static void SetupCores()
         {
+            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_UNAWARE);
             AllScreens = new List<Screen>(Screen.AllScreens);
             AllScreens.ForEach(item =>
              {

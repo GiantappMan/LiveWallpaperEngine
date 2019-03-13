@@ -72,7 +72,7 @@ namespace LiveWallpaperEngine
             User32Wrapper.SetParent(_currentHandler, _parentHandler);
 
             if (_originalRect != null)
-                User32Wrapper.SetWindowPos(_currentHandler, _originalRect.Value);
+                User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
             Shown = false;
         }
 
@@ -121,7 +121,7 @@ namespace LiveWallpaperEngine
             var workw = GetWorkerW();
             var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
             {
-                var txt = User32Wrapper.GetWindowText(tophandle);
+                var txt = User32WrapperEx.GetWindowTextEx(tophandle);
                 if (!string.IsNullOrEmpty(txt))
                 {
                     User32Wrapper.SetParent(tophandle, desktop);
@@ -192,7 +192,7 @@ namespace LiveWallpaperEngine
             RECT rect = new RECT(displayScreen.Bounds);
 
             User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
-            var ok = User32Wrapper.SetWindowPos(targeHandler, rect);
+            var ok = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
             return;
         }
 
