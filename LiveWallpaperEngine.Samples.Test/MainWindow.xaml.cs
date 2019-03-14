@@ -54,6 +54,7 @@ namespace LiveWallpaperEngine.Samples.Test
 
         private void LoadMonitors()
         {
+            int i = 0;
             if (monitors.Items.Count == 0)
                 LiveWallpaperEngineManager.AllScreens.ForEach(m =>
                 {
@@ -64,7 +65,13 @@ namespace LiveWallpaperEngine.Samples.Test
                         IsChecked = true
                     });
 
-                    _videoRenders.Add(new VideoRender());
+                    var render = new VideoRender();
+                    var screen = m;
+                    render.Init(screen);
+                    bool ok = LiveWallpaperEngineManager.Show(render, screen);
+
+                    _videoRenders.Add(render);
+                    i++;
                 });
         }
 
