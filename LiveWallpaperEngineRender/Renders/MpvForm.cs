@@ -24,6 +24,7 @@ namespace LiveWallpaperEngineRender.Renders
             //UI
             BackColor = Color.Magenta;
             TransparencyKey = Color.Magenta;
+            ShowInTaskbar = false;
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.None;
 
