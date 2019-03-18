@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>LiveWallpaperEngineRender</id>
-    <version>1.0.0.8</version>
+    <version>1.0.0.9</version>
     <title>LiveWallpaperEngineRender</title>
     <authors>MscoderStudio</authors>
     <owners>MscoderStudio</owners>
