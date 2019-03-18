@@ -80,6 +80,18 @@ namespace LiveWallpaperEngine
         {
             render?.CloseRender();
             render?.SetCore(null);
+            var core = GetCore(render);
+            if (core == null)
+                return;
+
+            core.Render = null;
+            core.Close();
+        }
+
+        private static LiveWallpaperEngineCoreEx GetCore(IRender render)
+        {
+            var result = cores.FirstOrDefault(m => m.Render == render);
+            return result;
         }
 
         public static LiveWallpaperEngineCoreEx GetCore(Screen screen)
