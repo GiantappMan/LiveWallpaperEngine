@@ -18,12 +18,12 @@ namespace LiveWallpaperEngine
 
         #region static
 
-        static IntPtr _workerw = IntPtr.Zero;
-        static IntPtr _currentHandler;
-        static IntPtr _parentHandler;
-        static IDesktopWallpaper _desktopWallpaperAPI;
-        static RECT? _originalRect;//窗口原始大小，恢复时使用
+        IntPtr _currentHandler;
+        IntPtr _parentHandler;
+        RECT? _originalRect;//窗口原始大小，恢复时使用
 
+        static IDesktopWallpaper _desktopWallpaperAPI;
+        static IntPtr _workerw = IntPtr.Zero;
         static uint _slideshowTick;
 
         #endregion
@@ -73,6 +73,11 @@ namespace LiveWallpaperEngine
 
             if (_originalRect != null)
                 User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
+            Shown = false;
+        }
+
+        public void Close()
+        {
             Shown = false;
         }
 
@@ -133,7 +138,7 @@ namespace LiveWallpaperEngine
             RefreshWallpaper(null);
         }
 
-        public void Dispose()
+        public static void Dispose()
         {
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         }
