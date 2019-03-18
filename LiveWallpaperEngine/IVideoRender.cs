@@ -7,7 +7,9 @@ namespace LiveWallpaperEngine
     public interface IVideoRender : IRender
     {
         string CurrentPath { get; }
+
         bool Paused { get; }
+
         bool Playing { get; }
 
         void Mute(bool mute);
