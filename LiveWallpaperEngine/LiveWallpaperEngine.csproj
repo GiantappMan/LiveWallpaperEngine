@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DZY.WinAPI" Version="1.0.46" />
+    <PackageReference Include="DZY.WinAPI" Version="1.0.48" />
   </ItemGroup>
 
   <ItemGroup>

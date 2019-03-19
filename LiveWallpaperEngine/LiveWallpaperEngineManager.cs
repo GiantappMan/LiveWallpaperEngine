@@ -72,6 +72,13 @@ namespace LiveWallpaperEngine
 
             render.SetCore(core);
             core.Render = render;
+
+            //处理alt+tab可以看见本程序
+            //https://stackoverflow.com/questions/357076/best-way-to-hide-a-window-from-the-alt-tab-program-switcher
+            int exStyle = User32Wrapper.GetWindowLong(handle, WindowLongFlags.GWL_EXSTYLE);
+            exStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+            User32Wrapper.SetWindowLong(handle, WindowLongFlags.GWL_EXSTYLE, exStyle);
+
             bool ok = core.SendToBackground(handle);
             return ok;
         }
