@@ -37,6 +37,7 @@ namespace LiveWallpaperEngineRender.Renders
         {
             FormClosing -= RenderForm_FormClosing;
             Player?.Dispose();
+            Player = null;
         }
 
         #endregion
