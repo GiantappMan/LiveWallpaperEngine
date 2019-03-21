@@ -65,12 +65,13 @@ namespace LiveWallpaperEngine.Samples.Test
                         IsChecked = true
                     });
 
-                    var render = new VideoRender();
-                    var screen = m;
-                    render.Init(screen);
-                    bool ok = LiveWallpaperEngineManager.Show(render, screen);
+                    //var render = new VideoRender();
+                    //var screen = m;
+                    //render.Init(screen);
+                    //bool ok = LiveWallpaperEngineManager.Show(render, screen);
 
-                    _videoRenders.Add(render);
+                    //_videoRenders.Add(render);
+                    _videoRenders.Add(null);
                     i++;
                 });
         }

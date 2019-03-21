@@ -23,7 +23,7 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Mute(bool mute)
         {
-            if (control.Player != null)
+            if (control != null && control.Player != null)
                 control.Player.Volume = mute ? 0 : 100;
         }
 
@@ -35,7 +35,7 @@ namespace LiveWallpaperEngineRender.Renders
             Playing = false;
             Paused = true;
 
-            control.Player?.Pause();
+            control?.Player?.Pause();
         }
 
         public void Resume()
@@ -46,11 +46,13 @@ namespace LiveWallpaperEngineRender.Renders
             Playing = true;
             Paused = false;
 
-            control.Player?.Resume();
+            control?.Player?.Resume();
         }
 
         public IntPtr ShowRender()
         {
+            if (control == null)
+                return IntPtr.Zero;
             control.Show();
             return control.Handle;
         }
@@ -62,7 +64,7 @@ namespace LiveWallpaperEngineRender.Renders
 
             try
             {
-                if (control.Player != null)
+                if (control != null && control.Player != null)
                 {
                     control.Player.Pause();
                     control.Player.Load(path);
@@ -80,15 +82,16 @@ namespace LiveWallpaperEngineRender.Renders
                 return;
 
             Playing = Paused = false;
-            control.Player?.Stop();
+            control?.Player?.Stop();
         }
 
         public void CloseRender()
         {
             Stop();
-            control.Player?.Dispose();
+            control?.Player?.Dispose();
             RenderDisposed = true;
-            control.Close();
+            control?.Close();
+            control = null;
         }
 
         public void Init(Screen screen)
@@ -118,7 +121,7 @@ namespace LiveWallpaperEngineRender.Renders
             try
             {
                 _cacheAspect = aspect;
-                if (control.Player != null)
+                if (control != null && control.Player != null)
                 {
                     //var test = player.API.GetPropertyString("video-aspect");
                     if (string.IsNullOrEmpty(aspect))
@@ -139,19 +142,17 @@ namespace LiveWallpaperEngineRender.Renders
 
         public IntPtr RestartRender()
         {
-            if (control != null)
-            {
-                control.Close();
-                //var close = new Action(control.Close);
-                //if (control.InvokeRequired)
-                //    control.BeginInvoke(close);
-                //else
-                //    close();
-            }
-
             IntPtr result = IntPtr.Zero;
             LiveWallpaperEngineManager.UIDispatcher.Invoke(() =>
             {
+                //CloseRender(); explore死后会卡死
+
+                if (control != null)
+                {
+                    control.Close();
+                    control.Player = null;
+                }
+
                 control = new MpvForm();
                 Init(_cacheScreen);
                 ShowRender();
