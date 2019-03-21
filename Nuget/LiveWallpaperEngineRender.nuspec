@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package
+    xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>LiveWallpaperEngineRender</id>
+    <version>1.0.0.18</version>
+    <title>LiveWallpaperEngineRender</title>
+    <authors>MscoderStudio</authors>
+    <owners>MscoderStudio</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/DaZiYuan/LiveWallpaperEngine/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/DaZiYuan/LiveWallpaperEngine</projectUrl>
+    <description>
+      动态壁纸工具核心，万物皆壁纸。任意进程，任意handle放进桌面。。
+    </description>
+    <summary>LiveWallpaperEngineRender</summary>
+    <copyright>MscoderStudio</copyright>
+    <tags>UWP WPF XAML</tags>
+    <dependencies>
+      <group targetFramework="net46">
+        <dependency id="LiveWallpaperEngine" version="1.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\LiveWallpaperEngineRender\bin\Debug\LiveWallpaperEngine.dll" target="lib\net46\LiveWallpaperEngine.dll" />
+    <file src="..\LiveWallpaperEngineRender\bin\Debug\LiveWallpaperEngineRender.dll" target="lib\net46\LiveWallpaperEngineRender.dll" />
+    <!-- <file src="..\LiveWallpaperEngineRender\bin\Release\LiveWallpaperEngineRender.dll" target="lib\net46\LiveWallpaperEngineRender.dll" /> -->
+  </files>
+</package>

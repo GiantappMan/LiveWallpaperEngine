@@ -1,6 +1,6 @@
 ﻿namespace LiveWallpaperEngineRender.Renders
 {
-    partial class VideoRender
+    partial class MpvForm
     {
         /// <summary>
         /// Required designer variable.

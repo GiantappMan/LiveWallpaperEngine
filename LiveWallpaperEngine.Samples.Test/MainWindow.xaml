@@ -36,16 +36,14 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    
-                <!--<CheckBox
+
+                    <!--<CheckBox
                     x:Name="chkDisableOSWallpaper"
                     Grid.Row="1"
                     Margin="5"
                     Content="DisableOSWallpaper"
                     IsChecked="True" />-->
-                    <ComboBox x:Name="cbDisplay" SelectedIndex="0">
-                        
-                    </ComboBox>
+                    <ComboBox x:Name="cbDisplay" SelectedIndex="0" />
                 </StackPanel>
 
                 <StackPanel
@@ -74,7 +72,29 @@
                 </StackPanel>
             </Grid>
         </TabItem>
-        <TabItem Header="视频" />
+        <TabItem Header="视频">
+            <StackPanel>
+                <Button
+                    VerticalAlignment="Center"
+                    Click="btnVideo_Click"
+                    Content="选择视频" />
+                <Button
+                    VerticalAlignment="Center"
+                    Click="btnPauseVideo_Click"
+                    Content="暂停恢复" />
+                <Button
+                    VerticalAlignment="Center"
+                    Click="btnStopVideo_Click"
+                    Content="停止视频" />
+                <Button
+                    VerticalAlignment="Center"
+                    Click="btnDisposeVideo_Click"
+                    Content="释放资源" />
+                <ItemsControl x:Name="monitors">
+                    
+                </ItemsControl>
+            </StackPanel>
+        </TabItem>
         <TabItem Header="网页" />
         <TabItem Header="应用程序" />
     </TabControl>
