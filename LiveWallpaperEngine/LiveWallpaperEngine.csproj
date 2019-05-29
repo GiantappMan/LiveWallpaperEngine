@@ -1,15 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>LiveWallpaperEngine</AssemblyName>
-    <Version>1.0.3</Version>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="DZY.WinAPI" Version="1.0.48" />
+    <PackageReference Include="DZY.WinAPI" Version="2.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Windows.Forms">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
@@ -18,5 +14,4 @@
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>
