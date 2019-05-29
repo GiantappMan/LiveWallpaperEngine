@@ -28,7 +28,7 @@ https://www.mscoder.cn/product/livewallpaper/
 
 ## 开发环境
 vs2019
-.net core 3.0 (x86)
+.net core 3.0
 
 ## 其他注意事项：
 * 开启360、腾讯管家等全家桶软件，有可能无法嵌入桌面

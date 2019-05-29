@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using LiveWallpaperEngine;
 using LiveWallpaperEngineRender.Renders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,6 +42,7 @@ namespace Test.Render
         [TestMethod]
         public void TestRenderDispose()
         {
+            var test = Screen.AllScreens;
             IVideoRender render = GetVideoRender();
             render.Play("ss");
             Assert.AreEqual(render.Playing, true);
@@ -56,6 +58,7 @@ namespace Test.Render
 
         private IVideoRender GetVideoRender()
         {
+            var test = Screen.AllScreens;
             IVideoRender render = new VideoRender();
             return render;
         }

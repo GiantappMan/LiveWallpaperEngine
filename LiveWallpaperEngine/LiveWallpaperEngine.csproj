@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <Version>2.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DZY.WinAPI" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
+      <HintPath>A:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll</HintPath>
+      <HintPath>A:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

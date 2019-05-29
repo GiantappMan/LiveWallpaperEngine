@@ -109,7 +109,14 @@ namespace LiveWallpaperEngineRender.Renders
             if (assembly != null)
             {
                 string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
-                control.Player = new MpvPlayer(control.Handle, $@"{appDir}\lib\mpv-1.dll")
+                string dllPath = $@"{appDir}\lib\mpv-1.dll";
+
+                if (System.Environment.Is64BitProcess)
+                {
+                    dllPath = $@"{appDir}\lib\mpv-1-x64.dll";
+                }
+
+                control.Player = new MpvPlayer(control.Handle, dllPath)
                 {
                     Loop = true,
                     Volume = 0
