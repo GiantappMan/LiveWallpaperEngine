@@ -11,10 +11,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms">
-      <HintPath>A:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0-preview5-27626-15\ref\netcoreapp3.0\System.Windows.Forms.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0-preview5-27626-15\ref\netcoreapp3.0\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
-      <HintPath>A:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0-preview5-27626-15\ref\netcoreapp3.0\WindowsBase.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0-preview5-27626-15\ref\netcoreapp3.0\WindowsBase.dll</HintPath>
     </Reference>
     <Content Include="lib\mpv-1-x64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
