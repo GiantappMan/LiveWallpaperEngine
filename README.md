@@ -27,7 +27,7 @@
 https://www.mscoder.cn/product/livewallpaper/
 
 ## 开发环境
-vs2019
+vs2019 Preview
 .net core 3.0
 
 ## 其他注意事项：
