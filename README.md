@@ -1,6 +1,6 @@
 # LiveWallpaperEngine
 
-## 新版本正在开发，可用版本请查看tag最新版
+新版本正在开发，旧的可用版本查看tag v0.1
 
 ---
 
