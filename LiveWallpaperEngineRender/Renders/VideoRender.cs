@@ -19,7 +19,6 @@ namespace LiveWallpaperEngineRender.Renders
 
         #region properties
 
-
         #endregion
 
         public void Mute(bool mute)
@@ -111,8 +110,13 @@ namespace LiveWallpaperEngineRender.Renders
                 string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
                 string dllPath = $@"{appDir}\lib\mpv-1.dll";
 
-                if (System.Environment.Is64BitProcess)
+                if (IntPtr.Size == 4)
                 {
+                    // 32-bit
+                }
+                else if (IntPtr.Size == 8)
+                {
+                    // 64-bit
                     dllPath = $@"{appDir}\lib\mpv-1-x64.dll";
                 }
 
@@ -121,6 +125,8 @@ namespace LiveWallpaperEngineRender.Renders
                     Loop = true,
                     Volume = 0
                 };
+                //防止视频黑边
+                control.Player.API.SetPropertyString("panscan", "1.0");
             }
         }
 
@@ -131,7 +137,6 @@ namespace LiveWallpaperEngineRender.Renders
                 _cacheAspect = aspect;
                 if (control != null && control.Player != null)
                 {
-                    //var test = player.API.GetPropertyString("video-aspect");
                     if (string.IsNullOrEmpty(aspect))
                         control.Player.API.SetPropertyString("video-aspect", "-1.000000");
                     else
