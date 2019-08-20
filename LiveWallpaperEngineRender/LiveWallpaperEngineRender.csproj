@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <TargetFrameworks>net47;netcoreapp3.0</TargetFrameworks>
-    <Version>2.0.2</Version>
+    <Version>2.0.3</Version>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="lib\mpv-1-x64.dll" />
-  </ItemGroup>
   <ItemGroup>
     <Content Include="lib\mpv-1-x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\mpv-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
