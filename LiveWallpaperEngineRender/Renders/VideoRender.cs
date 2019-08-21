@@ -1,5 +1,6 @@
 ﻿using LiveWallpaperEngine;
 using Mpv.NET.Player;
+using MpvPlayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,32 +103,7 @@ namespace LiveWallpaperEngineRender.Renders
             control.Left = screen.Bounds.Left;
             control.Top = screen.Bounds.Top;
 
-            //mpv
-            var assembly = Assembly.GetEntryAssembly();
-            //单元测试
-            if (assembly != null)
-            {
-                string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
-                string dllPath = $@"{appDir}\lib\mpv-1.dll";
-
-                if (IntPtr.Size == 4)
-                {
-                    // 32-bit
-                }
-                else if (IntPtr.Size == 8)
-                {
-                    // 64-bit
-                    dllPath = $@"{appDir}\lib\mpv-1-x64.dll";
-                }
-
-                control.Player = new MpvPlayer(control.Handle, dllPath)
-                {
-                    Loop = true,
-                    Volume = 0
-                };
-                //防止视频黑边
-                control.Player.API.SetPropertyString("panscan", "1.0");
-            }
+            control.InitPlayer();
         }
 
         public void SetAspect(string aspect)
