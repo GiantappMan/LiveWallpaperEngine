@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <TargetFrameworks>net47;netcoreapp3.0</TargetFrameworks>
-    <Version>2.0.6</Version>
+    <Version>2.0.7</Version>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mpv.NET" Version="1.1.0" />
-    <PackageReference Include="MpvPlayer" Version="1.0.6" />
+    <PackageReference Include="MpvPlayer" Version="1.0.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
@@ -17,6 +17,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="D:\.nuget\packages\mpvplayer\1.0.4\contentFiles\any\net47\lib\mpv-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="D:\.nuget\packages\mpvplayer\1.0.9\contentFiles\any\net47\lib\mpv-1-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="D:\.nuget\packages\mpvplayer\1.0.9\contentFiles\any\net47\lib\mpv-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
