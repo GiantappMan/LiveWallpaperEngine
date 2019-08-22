@@ -1,5 +1,6 @@
 ﻿using LiveWallpaperEngine;
 using Mpv.NET.Player;
+using MpvPlayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,6 @@ namespace LiveWallpaperEngineRender.Renders
         string _cacheAspect;
 
         #region properties
-
 
         #endregion
 
@@ -103,25 +103,7 @@ namespace LiveWallpaperEngineRender.Renders
             control.Left = screen.Bounds.Left;
             control.Top = screen.Bounds.Top;
 
-            //mpv
-            var assembly = Assembly.GetEntryAssembly();
-            //单元测试
-            if (assembly != null)
-            {
-                string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
-                string dllPath = $@"{appDir}\lib\mpv-1.dll";
-
-                if (System.Environment.Is64BitProcess)
-                {
-                    dllPath = $@"{appDir}\lib\mpv-1-x64.dll";
-                }
-
-                control.Player = new MpvPlayer(control.Handle, dllPath)
-                {
-                    Loop = true,
-                    Volume = 0
-                };
-            }
+            control.InitPlayer();
         }
 
         public void SetAspect(string aspect)
@@ -131,7 +113,6 @@ namespace LiveWallpaperEngineRender.Renders
                 _cacheAspect = aspect;
                 if (control != null && control.Player != null)
                 {
-                    //var test = player.API.GetPropertyString("video-aspect");
                     if (string.IsNullOrEmpty(aspect))
                         control.Player.API.SetPropertyString("video-aspect", "-1.000000");
                     else

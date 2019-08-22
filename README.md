@@ -39,7 +39,7 @@ vs2019 Preview
 
 ## 其他注意事项：
 * 开启360、腾讯管家等全家桶软件，有可能无法嵌入桌面
-* 已在部分电脑发现，无法激活WorkerW句柄，导致功能无法实现
+* 已在部分电脑发现，无法激活WorkerW句柄，导致功能无法实现 
 
 ## 感谢这些作者的开源精神：
 https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows  
