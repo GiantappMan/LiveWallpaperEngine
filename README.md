@@ -1,9 +1,5 @@
 # LiveWallpaperEngine
 
-新版本正在开发，旧的可用版本查看tag v0.1
-
----
-
 ## 定位:
   动态壁纸最核心的那层功能
 
@@ -45,7 +41,9 @@ vs2019 Preview
 https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows  
 https://github.com/Francesco149/weebp/blob/master/src/weebp.c  
 
-## QQ群交流:
+---
+
+## 广告:
 **C#全栈开发**：191034956  
 **全球it互联交友**: 665127101
 （只允许单身码农和各行业的妹子加入，初衷是给程序员多一种认识异性的渠道）
