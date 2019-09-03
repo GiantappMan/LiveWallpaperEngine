@@ -11,6 +11,16 @@ namespace LiveWallpaperEngine
     /// </summary>
     public static class WallpaperManager
     {
+        private static StatusManager _statusManager = new StatusManager();
+
+        public static Status Status
+        {
+            get
+            {
+                return _statusManager.Status;
+            }
+        }
+
         public static Settings Settings { get; private set; }
 
         public static Task SetSettings(Settings settings)
@@ -20,20 +30,23 @@ namespace LiveWallpaperEngine
 
         #region public methods
 
+        public static WallpaperType GetWallpaperType(string file)
+        {
+            return WallpaperType.Automatic;
+        }
+
         /// <summary>
         /// 显示壁纸                
         /// </summary>
         /// <remarks>       
-        /// 视频
-        /// todo 网页
-        /// todo exe
-        /// todo 图片地址
-        /// </remarks>
-        /// <param name="filepath">壁纸路经，内部自动按后缀处理。</param>
-        /// <param name="screenIndexs">显示壁纸的屏幕索引，从0开始</param>
-        public static void ShowWallpaper(string filepath, int[] screenIndexs)
+        public static void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
         {
-            //todo
+            _statusManager.ShowWallpaper(wallpaper, screenIndexs);
+        }
+
+        public static void CloseWallpaper(params int[] screenIndex)
+        {
+            _statusManager.CloseWallpaper(screenIndex);
         }
 
         #endregion

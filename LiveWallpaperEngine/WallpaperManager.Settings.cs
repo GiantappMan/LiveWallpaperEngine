@@ -30,6 +30,6 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 每个屏幕的单独设置
         /// </summary>
-        public static ScreenSetting[] ScreenScreenSettings { get; set; }
+        public static ScreenSetting[] ScreenSettings { get; set; }
     }
 }
