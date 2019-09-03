@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Test.LiveWallpaperEngine
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTest
     {
         [TestMethod]
         public void TestMethod1()
