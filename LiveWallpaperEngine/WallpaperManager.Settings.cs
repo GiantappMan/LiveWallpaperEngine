@@ -21,7 +21,7 @@ namespace LiveWallpaperEngine
         public ActionWhenMaximized WhenCurrentScreenMaximized { get; set; }
     }
 
-    public struct Settings
+    public struct WallpaperManagerSetting
     {
         /// <summary>
         /// 播放音频的显示器

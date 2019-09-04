@@ -21,9 +21,9 @@ namespace LiveWallpaperEngine
             }
         }
 
-        public static Settings Settings { get; private set; }
+        public static WallpaperManagerSetting GlobalSetting { get; private set; }
 
-        public static Task SetSettings(Settings settings)
+        public static Task SetSettings(WallpaperManagerSetting settings)
         {
             return Task.CompletedTask;
         }
