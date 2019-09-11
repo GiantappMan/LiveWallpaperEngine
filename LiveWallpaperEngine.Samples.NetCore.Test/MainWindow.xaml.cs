@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GiantappConfiger;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 DeviceName = m.DeviceName,
                 Checked = true
             }).ToList();
+
+            //ConfigerService service = new ConfigerService();
+            //var vm = service.GetVM(new object[] { WallpaperManager.GlobalSetting }, null);
+            //configer.DataContext = vm;
         }
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)

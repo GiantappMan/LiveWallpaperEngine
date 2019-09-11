@@ -26,10 +26,10 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 播放音频的显示器
         /// </summary>
-        public static int AudioScreenIndex { get; set; }
+        public int AudioScreenIndex { get; set; }
         /// <summary>
         /// 每个屏幕的单独设置
         /// </summary>
-        public static ScreenSetting[] ScreenSettings { get; set; }
+        public List<ScreenSetting> ScreenSettings { get; set; }
     }
 }
