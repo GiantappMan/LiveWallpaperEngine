@@ -18,7 +18,7 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 当前窗口其他程序全屏时
         /// </summary>
-        public ActionWhenMaximized WhenCurrentScreenMaximized { get; set; }
+        public ActionWhenMaximized? WhenCurrentScreenMaximized { get; set; }
     }
 
     public struct WallpaperManagerSetting

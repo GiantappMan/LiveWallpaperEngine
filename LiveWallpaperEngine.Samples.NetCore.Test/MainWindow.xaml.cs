@@ -46,7 +46,20 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             }).ToList();
             audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = -1 });
 
-            var vm = ConfigerService.GetVM(WallpaperManager.GlobalSetting, new DescriptorInfoDict()
+            var screenSetting = Screen.AllScreens.Select(m => new ScreenSetting()
+            {
+                ScreenIndex = Screen.AllScreens.ToList().IndexOf(m),
+                WhenCurrentScreenMaximized = ActionWhenMaximized.Pause
+            }).ToList();
+
+            var screenSettingOptions = new List<DescriptorInfo>()
+            {
+                new DescriptorInfo(){Text="播放",DefaultValue=ActionWhenMaximized.Play},
+                new DescriptorInfo(){Text="暂停",DefaultValue=ActionWhenMaximized.Pause},
+                new DescriptorInfo(){Text="停止",DefaultValue=ActionWhenMaximized.Stop},
+            };
+
+            var descInfo = new DescriptorInfoDict()
             {
                 { "WallpaperManagerSetting",
                     new DescriptorInfo(){
@@ -56,12 +69,26 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 new DescriptorInfo(){
                                     Text="音源",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
-                                    DefaultValue=-1
+                                    DefaultValue=-1,
                                 }
                             },
-                    {"ScreenSettings",new DescriptorInfo(){Text="显示器设置",Type=PropertyType.List } },
+                    {"ScreenSettings",
+                        new DescriptorInfo(){
+                            Text ="显示器设置",
+                            Type =PropertyType.List,
+                            CanAddItem =false,
+                            CanRemoveItem=false,
+                            DefaultValue=screenSetting,
+                            PropertyDescriptors=new DescriptorInfoDict()
+                            {
+                                {"ScreenIndex",new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
+                                {"WhenCurrentScreenMaximized",new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
+                            }
+                        }
+                    },
                 }}}
-            });
+            };
+            var vm = ConfigerService.GetVM(WallpaperManager.GlobalSetting, descInfo);
             configer.DataContext = vm;
         }
 
