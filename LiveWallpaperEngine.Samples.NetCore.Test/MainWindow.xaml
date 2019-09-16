@@ -24,16 +24,22 @@
                 VerticalAlignment="Center"
                 Click="btnStop_Click"
                 Content="停止" />
-            <ItemsControl x:Name="monitors">
-                <ItemsControl.ItemTemplate>
-                    <ItemContainerTemplate>
-                        <StackPanel>
-                            <CheckBox Content="{Binding DeviceName}" IsChecked="{Binding Checked}" />
-                        </StackPanel>
-                    </ItemContainerTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>显示器:</TextBlock>
+                <ItemsControl x:Name="monitors">
+                    <ItemsControl.ItemTemplate>
+                        <ItemContainerTemplate>
+                            <StackPanel>
+                                <CheckBox Content="{Binding DeviceName}" IsChecked="{Binding Checked}" />
+                            </StackPanel>
+                        </ItemContainerTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
-        <giantappconfiger:ConfigControl x:Name="configer" Grid.Row="1" />
+        <giantappconfiger:ConfigControl
+            x:Name="configer"
+            Grid.Row="1"
+            BorderBrush="Gray" />
     </Grid>
 </Window>

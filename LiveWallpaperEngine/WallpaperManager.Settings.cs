@@ -26,7 +26,7 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 播放音频的显示器
         /// </summary>
-        public int AudioScreenIndex { get; set; }
+        public int? AudioScreenIndex { get; set; }
         /// <summary>
         /// 每个屏幕的单独设置
         /// </summary>

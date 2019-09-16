@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GiantappConfiger" Version="1.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\GiantappConfiger\GiantappConfiger\GiantappConfiger.csproj" />
     <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
   </ItemGroup>
 

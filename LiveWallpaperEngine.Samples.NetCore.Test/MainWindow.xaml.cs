@@ -1,6 +1,8 @@
 ﻿using GiantappConfiger;
+using GiantappConfiger.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +39,30 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 Checked = true
             }).ToList();
 
-            //ConfigerService service = new ConfigerService();
-            //var vm = service.GetVM(new object[] { WallpaperManager.GlobalSetting }, null);
-            //configer.DataContext = vm;
+            var audioOption = Screen.AllScreens.Select(m => new DescriptorInfo()
+            {
+                Text = m.DeviceName,
+                DefaultValue = Screen.AllScreens.ToList().IndexOf(m)
+            }).ToList();
+            audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = -1 });
+
+            var vm = ConfigerService.GetVM(WallpaperManager.GlobalSetting, new DescriptorInfoDict()
+            {
+                { "WallpaperManagerSetting",
+                    new DescriptorInfo(){
+                        Text="壁纸设置",
+                        PropertyDescriptors=new DescriptorInfoDict(){
+                            {"AudioScreenIndex",
+                                new DescriptorInfo(){
+                                    Text="音源",
+                                    Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
+                                    DefaultValue=-1
+                                }
+                            },
+                    {"ScreenSettings",new DescriptorInfo(){Text="显示器设置",Type=PropertyType.List } },
+                }}}
+            });
+            configer.DataContext = vm;
         }
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)
