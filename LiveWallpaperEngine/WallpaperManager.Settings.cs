@@ -31,5 +31,9 @@ namespace LiveWallpaperEngine
         /// 每个屏幕的单独设置
         /// </summary>
         public List<ScreenSetting> ScreenSettings { get; set; }
+        /// <summary>
+        /// 当explor崩溃后自动重启
+        /// </summary>
+        public bool? AutoRestartWhenExplorerCrash { get; set; }
     }
 }
