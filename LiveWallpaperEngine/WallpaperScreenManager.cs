@@ -12,7 +12,7 @@ namespace LiveWallpaperEngine
     /// <summary>
     /// 管理一个显示器的壁纸
     /// </summary>
-    public class LiveWallpaperEngineCore
+    public class WallpaperScreenManager
     {
         #region fields
 
@@ -37,7 +37,7 @@ namespace LiveWallpaperEngine
         #region construct
 
         //禁止外部程序集直接构造
-        internal LiveWallpaperEngineCore(Screen screen)
+        internal WallpaperScreenManager(Screen screen)
         {
             DisplayScreen = screen;
             ReInit();

@@ -11,12 +11,12 @@ namespace LiveWallpaperEngineRender.Renders
     public class HandleRender : BaseRender, IRender
     {
         IntPtr _handle;
-        LiveWallpaperEngineCore _core;
+        WallpaperScreenManager _core;
         public HandleRender()
         {
         }
 
-        public void SetCore(LiveWallpaperEngineCore core)
+        public void SetCore(WallpaperScreenManager core)
         {
             _core = core;
         }

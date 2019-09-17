@@ -27,6 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Samples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GiantappConfiger", "..\GiantappConfiger\GiantappConfiger\GiantappConfiger.csproj", "{63184D6F-02A4-45C1-97A6-A048CBE20A31}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LiveWallpaperEngine", "LiveWallpaperEngine", "{72CDF294-47D8-4A87-BC5D-C330B0A2E324}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\LiveWallpaperEngine\README.md = Docs\LiveWallpaperEngine\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +125,7 @@ Global
 		{22F1618F-3EC5-4848-92F4-A58284A3B080} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 		{B7F17A3F-038E-4ABC-9CE7-6F0F0DFECE73} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 		{C959B22A-239C-4264-8E54-51AFD5A5B7C4} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
+		{72CDF294-47D8-4A87-BC5D-C330B0A2E324} = {E3554D4E-7CD8-4128-9438-95CDBCDE4B25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0CCDD11-AAC6-45FC-883B-0DBE493DA7E9}

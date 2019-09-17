@@ -8,7 +8,7 @@ using DZY.WinAPI;
 
 namespace LiveWallpaperEngine
 {
-    public class LiveWallpaperEngineCoreEx : LiveWallpaperEngineCore
+    public class LiveWallpaperEngineCoreEx : WallpaperScreenManager
     {
         internal LiveWallpaperEngineCoreEx(Screen screen) : base(screen) { }
         public IRender Render { get; set; }
@@ -111,6 +111,5 @@ namespace LiveWallpaperEngine
             var result = cores.FirstOrDefault(m => m.Render == render);
             return result;
         }
-
     }
 }

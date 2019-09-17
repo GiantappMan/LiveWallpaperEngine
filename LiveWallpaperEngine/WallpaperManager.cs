@@ -3,74 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiveWallpaperEngine.Models;
 
 namespace LiveWallpaperEngine
 {
     /// <summary>
-    /// 壁纸管理
+    /// 管理所有显示器的壁纸
     /// </summary>
-    public static class WallpaperManager
+    static class WallpaperManager
     {
-        private static StatusManager _statusManager = new StatusManager();
+        static List<WallpaperScreenManager> _screenManagers = new List<WallpaperScreenManager>();
 
-        public static Status Status
+        static internal void ShowWallpaper(string path, IWallpaperRender render, params int[] screenIndexs)
         {
-            get
-            {
-                return _statusManager.Status;
-            }
         }
-
-        public static WallpaperManagerSetting GlobalSetting { get; private set; }
-
-        public static Task ApplySetting(WallpaperManagerSetting setting)
+        static internal void CloseWallpaper(params int[] screenIndex)
         {
-            return Task.CompletedTask;
         }
-
-        #region public methods
-
-        public static WallpaperType GetWallpaperType(string file)
-        {
-            return WallpaperType.Automatic;
-        }
-
-        /// <summary>
-        /// 显示壁纸                
-        /// </summary>
-        /// <remarks>       
-        public static void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
-        {
-            _statusManager.ShowWallpaper(wallpaper, screenIndexs);
-        }
-
-        public static void CloseWallpaper(params int[] screenIndex)
-        {
-            _statusManager.CloseWallpaper(screenIndex);
-        }
-
-        #endregion
-
-        #region private methods
-
-        /// <summary>
-        /// 暂停壁纸
-        /// </summary>
-        /// <param name="screendIndexs"></param>
-        private static void Pause(int[] screendIndexs)
-        {
-
-        }
-
-        /// <summary>
-        /// 恢复壁纸
-        /// </summary>
-        /// <param name="screendIndexs"></param>
-        private static void Resume(int[] screendIndexs)
-        {
-
-        }
-
-        #endregion
     }
 }

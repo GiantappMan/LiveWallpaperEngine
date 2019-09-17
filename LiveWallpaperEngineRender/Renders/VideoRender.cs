@@ -153,7 +153,7 @@ namespace LiveWallpaperEngineRender.Renders
             return result;
         }
 
-        public void SetCore(LiveWallpaperEngineCore core)
+        public void SetCore(WallpaperScreenManager core)
         {
         }
     }

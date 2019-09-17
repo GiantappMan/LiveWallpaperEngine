@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveWallpaperEngine.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,22 +9,28 @@ namespace LiveWallpaperEngine
 {
     public struct Status
     {
+        /// <summary>
+        /// 正在播放的显示器索引+壁纸
+        /// </summary>
         public Dictionary<int, Wallpaper?> Wallpapers;
     }
 
     /// <summary>
     /// 状态管理
+    /// 只处理状态相关数据
     /// </summary>
-    public class StatusManager
+    static internal class StatusManager
     {
-        public Status Status;
-        public StatusManager()
+        static internal Status Status;
+        static StatusManager()
         {
-            Status = new Status();
-            Status.Wallpapers = new Dictionary<int, Wallpaper?>();
+            Status = new Status
+            {
+                Wallpapers = new Dictionary<int, Wallpaper?>()
+            };
         }
 
-        public void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
+        static internal void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
         {
             foreach (var screen in screenIndexs)
             {
@@ -31,7 +38,7 @@ namespace LiveWallpaperEngine
             }
         }
 
-        public void CloseWallpaper(params int[] screenIndexs)
+        static internal void CloseWallpaper(params int[] screenIndexs)
         {
             foreach (var screen in screenIndexs)
             {

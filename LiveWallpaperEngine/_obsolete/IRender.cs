@@ -9,7 +9,7 @@ namespace LiveWallpaperEngine
     {
         bool RenderDisposed { get; }
 
-        void SetCore(LiveWallpaperEngineCore core);
+        void SetCore(WallpaperScreenManager core);
 
         IntPtr ShowRender();
 

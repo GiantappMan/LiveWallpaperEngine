@@ -1,5 +1,6 @@
 ﻿using GiantappConfiger;
 using GiantappConfiger.Models;
+using LiveWallpaperEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -93,7 +94,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     },
                 }}}
             };
-            var vm = ConfigerService.GetVM(WallpaperManager.GlobalSetting, descInfo);
+            var vm = ConfigerService.GetVM(LiveWallpaper.Setting, descInfo);
             configer.DataContext = vm;
         }
 
@@ -107,7 +108,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
-                    WallpaperManager.ShowWallpaper(new Wallpaper() { Path = openFileDialog.FileName }, displayIds);
+                    LiveWallpaper.Show(new Wallpaper() { Path = openFileDialog.FileName }, displayIds);
                 }
             }
         }
@@ -115,14 +116,14 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
-            WallpaperManager.CloseWallpaper(displayIds);
+            LiveWallpaper.Close(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
-            var setting = ConfigerService.GetData<WallpaperManagerSetting>(vm.Nodes);
-            WallpaperManager.ApplySetting(setting);
+            var setting = ConfigerService.GetData<LiveWallpaperSetting>(vm.Nodes);
+            LiveWallpaper.ApplySetting(setting);
         }
     }
 }

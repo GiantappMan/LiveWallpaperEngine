@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Models
 {
     public enum ActionWhenMaximized
     {
@@ -21,7 +21,7 @@ namespace LiveWallpaperEngine
         public ActionWhenMaximized? WhenCurrentScreenMaximized { get; set; }
     }
 
-    public struct WallpaperManagerSetting
+    public struct LiveWallpaperSetting
     {
         /// <summary>
         /// 播放音频的显示器
