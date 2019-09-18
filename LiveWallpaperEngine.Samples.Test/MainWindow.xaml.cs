@@ -120,7 +120,7 @@ namespace LiveWallpaperEngine.Samples.Test
 
         private void btnRestoreAllHandles_Click(object sender, RoutedEventArgs e)
         {
-            LiveWallpaperEngineCore.RestoreAllHandles();
+            WallpaperScreenManager.RestoreAllHandles();
         }
 
         private void btnVideo_Click(object sender, RoutedEventArgs e)

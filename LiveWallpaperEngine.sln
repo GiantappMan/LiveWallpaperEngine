@@ -5,18 +5,19 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine", "LiveWallpaperEngine\LiveWallpaperEngine.csproj", "{B81B6B65-081C-4035-99C9-543BDA79D05F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B5707277-42B0-4BDA-8EAF-33612CA2ABF0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{B5707277-42B0-4BDA-8EAF-33612CA2ABF0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Samples.Test", "LiveWallpaperEngine.Samples.Test\LiveWallpaperEngine.Samples.Test.csproj", "{91DF7138-BED9-4119-BE8B-449278195EDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineRender", "LiveWallpaperEngineRender\LiveWallpaperEngineRender.csproj", "{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{11F316F1-A6C6-478F-A584-4382EDCFF9F7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{11F316F1-A6C6-478F-A584-4382EDCFF9F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Render", "Test.Render\Test.Render.csproj", "{22F1618F-3EC5-4848-92F4-A58284A3B080}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E3554D4E-7CD8-4128-9438-95CDBCDE4B25}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E3554D4E-7CD8-4128-9438-95CDBCDE4B25}"
 	ProjectSection(SolutionItems) = preProject
+		Docs\CHANGELOG.md = Docs\CHANGELOG.md
 		Docs\Package.md = Docs\Package.md
 		README.md = README.md
 	EndProjectSection
@@ -31,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LiveWallpaperEngine", "Live
 	ProjectSection(SolutionItems) = preProject
 		Docs\LiveWallpaperEngine\README.md = Docs\LiveWallpaperEngine\README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02F4F61B-91AC-4F16-939D-EB9B9980A60C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,10 +124,13 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B81B6B65-081C-4035-99C9-543BDA79D05F} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 		{91DF7138-BED9-4119-BE8B-449278195EDA} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
+		{A93D8532-C5C1-4246-AFEF-3CFEC2628A0E} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 		{22F1618F-3EC5-4848-92F4-A58284A3B080} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 		{B7F17A3F-038E-4ABC-9CE7-6F0F0DFECE73} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 		{C959B22A-239C-4264-8E54-51AFD5A5B7C4} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
+		{63184D6F-02A4-45C1-97A6-A048CBE20A31} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 		{72CDF294-47D8-4A87-BC5D-C330B0A2E324} = {E3554D4E-7CD8-4128-9438-95CDBCDE4B25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
