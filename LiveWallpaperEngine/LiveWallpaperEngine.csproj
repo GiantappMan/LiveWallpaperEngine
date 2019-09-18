@@ -6,7 +6,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_obsolete\**" />
+    <EmbeddedResource Remove="_obsolete\**" />
+    <None Remove="_obsolete\**" />
+    <Page Remove="_obsolete\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DZY.WinAPI" Version="2.0.2" />
+    <PackageReference Include="MpvPlayer" Version="1.0.11" />
   </ItemGroup>  
 </Project>

@@ -22,5 +22,19 @@ namespace LiveWallpaperEngine
         /// 支持的文件名后缀 例如：.html
         /// </summary>
         string[] SupportExtensions { get; }
+        /// <summary>
+        /// 获取窗口句柄
+        /// </summary>
+        /// <returns></returns>
+        IntPtr GetWindowHandle();
+        /// <summary>
+        /// 关闭窗口
+        /// </summary>
+        void Close();
+        /// <summary>
+        /// 加载壁纸
+        /// </summary>
+        /// <param name="path"></param>
+        void LaunchWallpaper(string path);
     }
 }

@@ -19,17 +19,6 @@ namespace LiveWallpaperEngine
     /// </summary>
     public static class LiveWallpaper
     {
-        static LiveWallpaper()
-        {
-            Renders = new List<IWallpaperRender>()
-            {
-                new ExeRender(),
-                new ImageRender(),
-                new VideoRender(),
-                new WebRender()
-            };
-        }
-
         private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
         {
             try
@@ -51,7 +40,6 @@ namespace LiveWallpaperEngine
                 return StatusManager.Status;
             }
         }
-        public static List<IWallpaperRender> Renders { get; set; }
         public static LiveWallpaperSetting Setting { get; private set; }
         #endregion
 
@@ -71,42 +59,13 @@ namespace LiveWallpaperEngine
 
             return Task.CompletedTask;
         }
-        public static WallpaperType GetWallpaperType(string file)
-        {
-            var render = GetRender(file);
-            if (render != null)
-                return render.SupportType;
-            return WallpaperType.NotSupport;
-        }
-        internal static IWallpaperRender GetRender(string file)
-        {
-            var extension = Path.GetExtension(file);
-            var render = Renders.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
-            if (render != null)
-                return render;
-            return null;
-        }
-        internal static IWallpaperRender GetRender(WallpaperType wType)
-        {
-            var render = Renders.FirstOrDefault(m => m.SupportType == wType);
-            return render;
-        }
         /// <summary>
         /// 显示壁纸                
         /// </summary>
         /// <remarks>       
         public static void Show(Wallpaper wallpaper, params int[] screenIndexs)
         {
-            IWallpaperRender render = null;
-            if (wallpaper.Type == null)
-            {
-                render = GetRender(wallpaper.Path);
-                wallpaper.Type = render.SupportType;
-            }
-            else
-                render = GetRender(wallpaper.Type.Value);
-
-            WallpaperManager.ShowWallpaper(wallpaper.Path, render, screenIndexs);
+            WallpaperManager.ShowWallpaper(wallpaper, screenIndexs);
             StatusManager.ShowWallpaper(wallpaper, screenIndexs);
         }
         public static void Close(params int[] screenIndex)

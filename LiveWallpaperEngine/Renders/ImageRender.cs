@@ -12,5 +12,18 @@ namespace LiveWallpaperEngine.Renders
     {
         public WallpaperType SupportType => WallpaperType.Image;
         public string[] SupportExtensions => new string[] { ".jpg", ".jpeg", ".png", ".bmp" };
+
+        public void Close()
+        {
+        }
+
+        public IntPtr GetWindowHandle()
+        {
+            return IntPtr.Zero;
+        }
+
+        public void LaunchWallpaper(string path)
+        {
+        }
     }
 }

@@ -12,5 +12,18 @@ namespace LiveWallpaperEngine.Renders
     {
         public WallpaperType SupportType => WallpaperType.Exe;
         public string[] SupportExtensions => new string[] { ".exe" };
+
+        public void Close()
+        {
+        }
+
+        public IntPtr GetWindowHandle()
+        {
+            return IntPtr.Zero;
+        }
+
+        public void LaunchWallpaper(string path)
+        {
+        }
     }
 }

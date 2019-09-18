@@ -3,6 +3,7 @@
 //https://github.com/Francesco149/weebp/blob/master/src/weebp.c 
 using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
+using LiveWallpaperEngine.Models;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace LiveWallpaperEngine
 
         #region static
 
+        IWallpaperRender _currentRender;
         IntPtr _currentHandler;
         IntPtr _parentHandler;
         RECT? _originalRect;//窗口原始大小，恢复时使用
@@ -40,10 +42,10 @@ namespace LiveWallpaperEngine
         internal WallpaperScreenManager(Screen screen)
         {
             DisplayScreen = screen;
-            ReInit();
+            Init();
         }
 
-        internal void ReInit()
+        internal void Init()
         {
             _workerw = GetWorkerW();
             //explore重启后，之前的窗口已经挂了不能恢复
@@ -54,10 +56,25 @@ namespace LiveWallpaperEngine
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
+
         #endregion
 
         #region  public methods
 
+        internal void ShowWallpaper(Wallpaper wallpaper)
+        {
+            WallpaperType wType = WallpaperType.Video;
+            if (_currentRender == null)
+                _currentRender = RenderFactory.GetRender(wType);
+            else if (_currentRender != null && _currentRender.SupportType != wType)
+            {
+                //类型不一样，关闭旧的render
+                _currentRender.Close();
+                _currentRender = RenderFactory.GetRender(wType);
+            }
+            SendToBackground(_currentRender);
+            _currentRender.LaunchWallpaper(wallpaper.Path);
+        }
         public void RestoreParent(bool refreshWallpaper = true)
         {
             if (!Shown)
@@ -79,10 +96,14 @@ namespace LiveWallpaperEngine
         public void Close()
         {
             Shown = false;
+            _currentRender?.Close();
+            _currentRender = null;
         }
 
-        public bool SendToBackground(IntPtr handler)
+        public bool SendToBackground(IWallpaperRender render)
         {
+            _currentRender = render;
+            var handler = render.GetWindowHandle();
             if (Shown && handler != _currentHandler)
             {
                 //已经换了窗口，恢复上一个窗口
@@ -98,7 +119,6 @@ namespace LiveWallpaperEngine
 
             Shown = true;
             _currentHandler = handler;
-
             if (_workerw == IntPtr.Zero)
             {
                 _workerw = GetWorkerW();
@@ -177,7 +197,6 @@ namespace LiveWallpaperEngine
                                             IntPtr.Zero,
                                             "SHELLDLL_DefView",
                                             IntPtr.Zero);
-
                 if (p != IntPtr.Zero)
                 {
                     workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,

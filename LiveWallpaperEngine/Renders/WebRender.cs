@@ -12,5 +12,18 @@ namespace LiveWallpaperEngine.Renders
     {
         public WallpaperType SupportType => WallpaperType.Web;
         public string[] SupportExtensions => new string[] { ".html", ".htm" };
+
+        public void Close()
+        {
+        }
+
+        public IntPtr GetWindowHandle()
+        {
+            return IntPtr.Zero;
+        }
+
+        public void LaunchWallpaper(string path)
+        {
+        }
     }
 }
