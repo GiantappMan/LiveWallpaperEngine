@@ -69,7 +69,7 @@ namespace LiveWallpaperEngine
             else if (_currentRender != null && _currentRender.SupportType != wType)
             {
                 //类型不一样，关闭旧的render
-                _currentRender.Close();
+                _currentRender.Dispose();
                 _currentRender = RenderFactory.GetRender(wType);
             }
             SendToBackground(_currentRender);
@@ -96,7 +96,7 @@ namespace LiveWallpaperEngine
         public void Close()
         {
             Shown = false;
-            _currentRender?.Close();
+            _currentRender?.Dispose();
             _currentRender = null;
         }
 
@@ -104,6 +104,7 @@ namespace LiveWallpaperEngine
         {
             _currentRender = render;
             var handler = render.GetWindowHandle();
+            return false;
             if (Shown && handler != _currentHandler)
             {
                 //已经换了窗口，恢复上一个窗口

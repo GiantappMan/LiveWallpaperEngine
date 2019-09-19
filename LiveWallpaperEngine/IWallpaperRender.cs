@@ -28,9 +28,9 @@ namespace LiveWallpaperEngine
         /// <returns></returns>
         IntPtr GetWindowHandle();
         /// <summary>
-        /// 关闭窗口
+        /// 释放
         /// </summary>
-        void Close();
+        void Dispose();
         /// <summary>
         /// 加载壁纸
         /// </summary>

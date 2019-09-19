@@ -62,36 +62,39 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
             var descInfo = new DescriptorInfoDict()
             {
-                { "WallpaperManagerSetting",
+                { nameof(LiveWallpaperSetting),
                     new DescriptorInfo(){
                         Text="壁纸设置",
                         PropertyDescriptors=new DescriptorInfoDict(){
-                            {"AudioScreenIndex",
+                            {
+                                nameof(LiveWallpaperSetting.AudioScreenIndex),
                                 new DescriptorInfo(){
                                     Text="音源",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
                                     DefaultValue=-1,
                                 }
                             },
-                            { "AutoRestartWhenExplorerCrash",
-                            new DescriptorInfo(){
+                            {
+                                nameof(LiveWallpaperSetting.AutoRestartWhenExplorerCrash),
+                                new DescriptorInfo(){
                                     Text="崩溃后自动恢复",
                                     DefaultValue=true,
                                 }},
-                    {"ScreenSettings",
-                        new DescriptorInfo(){
-                            Text ="显示器设置",
-                            Type =PropertyType.List,
-                            CanAddItem =false,
-                            CanRemoveItem=false,
-                            DefaultValue=screenSetting,
-                            PropertyDescriptors=new DescriptorInfoDict()
                             {
-                                {"ScreenIndex",new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
-                                {"WhenCurrentScreenMaximized",new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
-                            }
-                        }
-                    },
+                                nameof(LiveWallpaperSetting.ScreenSettings),
+                                new DescriptorInfo(){
+                                    Text ="显示器设置",
+                                    Type =PropertyType.List,
+                                    CanAddItem =false,
+                                    CanRemoveItem=false,
+                                    DefaultValue=screenSetting,
+                                    PropertyDescriptors=new DescriptorInfoDict()
+                                    {
+                                        {nameof(ScreenSetting.ScreenIndex),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
+                                        {nameof(ScreenSetting.WhenCurrentScreenMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
+                                    }
+                                }
+                            },
                 }}}
             };
             var vm = ConfigerService.GetVM(LiveWallpaper.Setting, descInfo);
@@ -109,6 +112,13 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
                     LiveWallpaper.Show(new Wallpaper() { Path = openFileDialog.FileName }, displayIds);
+                    //var form = new MpvPlayer.MpvForm();
+                    //form.FormBorderStyle = FormBorderStyle.FixedSingle;
+
+                    //form.Show();
+                    //form.InitPlayer();
+                    //form.Player.AutoPlay = true;
+                    //form.Player.Load(openFileDialog.FileName);
                 }
             }
         }

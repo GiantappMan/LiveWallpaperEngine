@@ -13,7 +13,7 @@ namespace LiveWallpaperEngine.Renders
         public WallpaperType SupportType => WallpaperType.Exe;
         public string[] SupportExtensions => new string[] { ".exe" };
 
-        public void Close()
+        public void Dispose()
         {
         }
 

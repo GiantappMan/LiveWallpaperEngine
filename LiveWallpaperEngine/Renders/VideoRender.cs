@@ -18,14 +18,36 @@ namespace LiveWallpaperEngine.Renders
         public WallpaperType SupportType => WallpaperType.Video;
         public string[] SupportExtensions => new string[] { ".mp4", ".flv", ".blv", ".avi" };
 
-        public void Close()
+        public void LaunchWallpaper(string path)
+        {
+            //if (_playing)
+            //    _control?.Player?.Stop();
+            _playing = true;
+
+            try
+            {
+                if (_control != null && _control.Player != null)
+                {
+                    //_control.Player.Pause();
+                    _control.Player.AutoPlay = true;
+                    _control.Player.Load(path, true);
+                    //_control.Player.Resume();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+        }
+        public void Dispose()
         {
             if (!_playing && !_paused)
                 return;
 
             _playing = _paused = false;
-            _control?.Player?.Stop();
-            _control?.Player?.Dispose();
+            //_control?.Player?.Stop();
+            //_control?.Player?.Dispose();
+            //_control?.Dispose();
             _control?.Close();
             _control = null;
         }
@@ -37,7 +59,9 @@ namespace LiveWallpaperEngine.Renders
             if (_control != null && _control.Handle != IntPtr.Zero && _control.Visible)
                 return _control.Handle;
 
+            _control.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             _control.InitPlayer();
+            //_control.BackColor = System.Drawing.Color.Red;
             _control.Show();
             return _control.Handle;
         }
@@ -69,26 +93,5 @@ namespace LiveWallpaperEngine.Renders
             _control?.Player?.Resume();
         }
 
-        public void LaunchWallpaper(string path)
-        {
-            //if (_playing)
-            //    _control?.Player?.Stop();
-            _playing = true;
-
-            try
-            {
-                if (_control != null && _control.Player != null)
-                {
-                    //_control.Player.Pause();
-                    _control.Player.AutoPlay = true;
-                    _control.Player.Load(path, true);
-                    //_control.Player.Resume();
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-            }
-        }
     }
 }
