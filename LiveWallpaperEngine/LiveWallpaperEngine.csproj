@@ -15,6 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DZY.WinAPI" Version="2.0.2" />
-    <PackageReference Include="MpvPlayer" Version="1.0.11" />
+    <PackageReference Include="MpvPlayer" Version="1.0.12" />
   </ItemGroup>  
 </Project>

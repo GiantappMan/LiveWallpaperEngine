@@ -71,22 +71,23 @@ namespace LiveWallpaperEngine.Renders
 
         public void LaunchWallpaper(string path)
         {
-            if(_playing)
-                _control?.Player?.Stop();
-
+            //if (_playing)
+            //    _control?.Player?.Stop();
             _playing = true;
 
             try
             {
                 if (_control != null && _control.Player != null)
                 {
-                    _control.Player.Pause();
-                    _control.Player.Load(path);
-                    _control.Player.Resume();
+                    //_control.Player.Pause();
+                    _control.Player.AutoPlay = true;
+                    _control.Player.Load(path, true);
+                    //_control.Player.Resume();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
     }
