@@ -8,20 +8,17 @@ using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
 {
+    public class SupportExtensions : List<string> { }
+
     /// <summary>
     /// 壁纸渲染器
     /// </summary>
-    public interface IWallpaperRender
+    public interface IRender
     {
         /// <summary>
         /// 支持的类型
         /// </summary>
-        WallpaperType SupportType { get; }
-
-        /// <summary>
-        /// 支持的文件名后缀 例如：.html
-        /// </summary>
-        string[] SupportExtensions { get; }
+        Dictionary<WallpaperType, SupportExtensions> SupportTypes { get; }
         /// <summary>
         /// 获取窗口句柄
         /// </summary>
@@ -36,5 +33,13 @@ namespace LiveWallpaperEngine
         /// </summary>
         /// <param name="path"></param>
         void LaunchWallpaper(string path);
+
+        void Pause();
+
+        void Resum();
+
+        void SetVolume(int v);
+
+        int GetVolume();
     }
 }

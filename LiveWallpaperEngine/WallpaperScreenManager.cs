@@ -6,6 +6,8 @@ using DZY.WinAPI.Desktop.API;
 using LiveWallpaperEngine.Models;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LiveWallpaperEngine
@@ -19,14 +21,14 @@ namespace LiveWallpaperEngine
 
         #region static
 
-        IWallpaperRender _currentRender;
+        IRender _currentRender;
         IntPtr _currentHandler;
         IntPtr _parentHandler;
         RECT? _originalRect;//窗口原始大小，恢复时使用
 
         static IDesktopWallpaper _desktopWallpaperAPI;
-        static IntPtr _workerw = IntPtr.Zero;
-        static uint _slideshowTick;
+        private static IntPtr _workerw = IntPtr.Zero;
+        //static uint _slideshowTick;
 
         #endregion
 
@@ -63,10 +65,10 @@ namespace LiveWallpaperEngine
 
         internal void ShowWallpaper(Wallpaper wallpaper)
         {
-            WallpaperType wType = WallpaperType.Video;
+            WallpaperType wType = wallpaper.Type;
             if (_currentRender == null)
                 _currentRender = RenderFactory.GetRender(wType);
-            else if (_currentRender != null && _currentRender.SupportType != wType)
+            else if (_currentRender != null && !_currentRender.SupportTypes.ContainsKey(wType))
             {
                 //类型不一样，关闭旧的render
                 _currentRender.Dispose();
@@ -100,7 +102,7 @@ namespace LiveWallpaperEngine
             _currentRender = null;
         }
 
-        public bool SendToBackground(IWallpaperRender render)
+        public bool SendToBackground(IRender render)
         {
             _currentRender = render;
             var handler = render.GetWindowHandle();

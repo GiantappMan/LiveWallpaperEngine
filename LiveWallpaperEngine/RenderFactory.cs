@@ -2,6 +2,7 @@
 using LiveWallpaperEngine.Renders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,19 +18,16 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 公开属性，方便外部库自定义
         /// </summary>
-        public static Dictionary<WallpaperType, Type> RenderMaps = new Dictionary<WallpaperType, Type>();
+        public static List<IRender> Renders = new List<IRender>();
 
         static RenderFactory()
         {
-            RenderMaps.Add(WallpaperType.Exe, typeof(ExeRender));
-            RenderMaps.Add(WallpaperType.Image, typeof(ImageRender));
-            RenderMaps.Add(WallpaperType.Video, typeof(VideoRender));
-            RenderMaps.Add(WallpaperType.Web, typeof(WebRender));
+            Renders.Add(new RemoteRender());
         }
 
-        public static IWallpaperRender GetRender(WallpaperType wType)
+        public static IRender GetRender(WallpaperType wType)
         {
-            var render = Activator.CreateInstance(RenderMaps[wType]) as IWallpaperRender;
+            var render = Renders.FirstOrDefault(r => r.SupportTypes.ContainsKey(wType));
             return render;
         }
     }
