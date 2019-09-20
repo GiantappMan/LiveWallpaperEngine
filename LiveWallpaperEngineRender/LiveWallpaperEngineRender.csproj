@@ -8,4 +8,9 @@
     <StartupObject>LiveWallpaperEngineRender.Program</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MpvPlayer" Version="1.0.12" />
+    <PackageReference Include="TinyIpc" Version="2.0.0" />
+  </ItemGroup>
+
 </Project>

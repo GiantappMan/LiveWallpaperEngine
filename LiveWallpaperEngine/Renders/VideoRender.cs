@@ -92,6 +92,5 @@ namespace LiveWallpaperEngine.Renders
             _paused = false;
             _control?.Player?.Resume();
         }
-
     }
 }

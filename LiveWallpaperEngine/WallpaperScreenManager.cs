@@ -52,7 +52,7 @@ namespace LiveWallpaperEngine
             Shown = false;
 
             var _desktopWallpaperAPI = GetDesktopWallpaperAPI();
-            _desktopWallpaperAPI?.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
+            //_desktopWallpaperAPI?.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
@@ -104,7 +104,6 @@ namespace LiveWallpaperEngine
         {
             _currentRender = render;
             var handler = render.GetWindowHandle();
-            return false;
             if (Shown && handler != _currentHandler)
             {
                 //已经换了窗口，恢复上一个窗口
@@ -138,31 +137,31 @@ namespace LiveWallpaperEngine
             return true;
         }
 
-        /// <summary>
-        /// 恢复WorkerW中的所有句柄到桌面
-        /// </summary>
-        public static void RestoreAllHandles()
-        {
-            var desktop = User32Wrapper.GetDesktopWindow();
-            var workw = GetWorkerW();
-            var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
-            {
-                var txt = User32WrapperEx.GetWindowTextEx(tophandle);
-                if (!string.IsNullOrEmpty(txt))
-                {
-                    User32Wrapper.SetParent(tophandle, desktop);
-                }
+        ///// <summary>
+        ///// 恢复WorkerW中的所有句柄到桌面
+        ///// </summary>
+        //public static void RestoreAllHandles()
+        //{
+        //    var desktop = User32Wrapper.GetDesktopWindow();
+        //    var workw = GetWorkerW();
+        //    var enumWindowResult = User32Wrapper.EnumChildWindows(workw, new EnumWindowsProc((tophandle, topparamhandle) =>
+        //    {
+        //        var txt = User32WrapperEx.GetWindowTextEx(tophandle);
+        //        if (!string.IsNullOrEmpty(txt))
+        //        {
+        //            User32Wrapper.SetParent(tophandle, desktop);
+        //        }
 
-                return true;
-            }), IntPtr.Zero);
+        //        return true;
+        //    }), IntPtr.Zero);
 
-            RefreshWallpaper(null);
-        }
+        //    RefreshWallpaper(null);
+        //}
 
-        public static void Dispose()
-        {
-            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
-        }
+        //public static void Dispose()
+        //{
+        //    _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
+        //}
 
         public static IDesktopWallpaper GetDesktopWallpaperAPI()
         {
