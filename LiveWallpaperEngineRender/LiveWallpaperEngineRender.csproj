@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
-    <Version>2.0.7</Version>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <StartupObject>LiveWallpaperEngineRender.Program</StartupObject>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Mpv.NET" Version="1.1.0" />
-    <PackageReference Include="MpvPlayer" Version="1.0.11" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
-  </ItemGroup>
+
 </Project>
