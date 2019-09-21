@@ -12,7 +12,10 @@ namespace LiveWallpaperEngine.Renders
     public class RemoteRender : IRender
     {
         Process _currentProcess = null;
-        IPCHelper ipc = new IPCHelper();
+        string _chidrenProcessIpcId = Guid.NewGuid().ToString();
+        IntPtr _cacheHandler;
+
+        IPCHelper ipc = null;
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
@@ -22,6 +25,11 @@ namespace LiveWallpaperEngine.Renders
             new WebWallpaperType()
         };
 
+        public RemoteRender()
+        {
+            ipc = new IPCHelper(Guid.NewGuid().ToString(), _chidrenProcessIpcId);
+        }
+
         public int GetVolume()
         {
             throw new NotImplementedException();
@@ -29,6 +37,10 @@ namespace LiveWallpaperEngine.Renders
 
         public void LaunchWallpaper(string path)
         {
+            _ = ipc.Send(new LaunchWallpaper()
+            {
+                Path = path
+            });
         }
 
         public void Pause()
@@ -50,18 +62,19 @@ namespace LiveWallpaperEngine.Renders
         {
             _currentProcess?.Kill();
             _currentProcess = null;
+            ipc.Dispose();
+            ipc = null;
         }
 
         public async Task<IntPtr> GetWindowHandle()
         {
-            _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", $"{0} {@"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\video.mp4"}");
+            if (_cacheHandler != IntPtr.Zero)
+                return _cacheHandler;
+            _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", $"{ipc.ID} {_chidrenProcessIpcId}");
             //发送server信息给指定render
-            var handle = await ipc.SendAndWait<LaunchWallpaper, RenderInitlized>(new LaunchWallpaper()
-            {
-                PID = _currentProcess.Id,
-                ServerID = ipc.ID
-            });
-            return handle.Handle;
+            var handle = await ipc.Wait<RenderInitlized>();
+            _cacheHandler = handle.Handle;
+            return _cacheHandler;
         }
     }
 }

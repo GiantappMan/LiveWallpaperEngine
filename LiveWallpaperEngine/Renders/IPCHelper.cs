@@ -17,56 +17,65 @@ namespace LiveWallpaperEngine.Renders
 
     #region ToClientCommands
 
-    public struct LaunchWallpaper
+    public class LaunchWallpaper
     {
-        public int PID { get; set; }
-        public string ServerID { get; set; }
+        public string Path { get; set; }
     }
 
     #endregion
 
-    public class Command<T>
+    public class Command
     {
+        // 发送方id
+        public string FromId { get; set; }
         // 接收人id，如果为空。都可以接收
         public string TargetID { get; set; }
         // 命令标识
         public string CommandFullName { get; set; }
-        public T Parameter { get; set; }
+        public string Parameter { get; set; }
     }
 
     class IPCHelper : IDisposable
     {
         TinyMessageBus _messageBus;
-        ConcurrentQueue<Command<object>> _messages = new ConcurrentQueue<Command<object>>();
+        ConcurrentQueue<Command> _messages = new ConcurrentQueue<Command>();
+        public event EventHandler<Command> MsgReceived;
 
+        public string TargetID { get; private set; }
         public string ID { get; private set; }
-        public IPCHelper()
+        public IPCHelper(string id, string targetId)
         {
-            ID = Guid.NewGuid().ToString();
+            TargetID = targetId;
+            ID = id;
+
             _messageBus = new TinyMessageBus("livewallpaper");
             _messageBus.MessageReceived += _messageBus_MessageReceived;
         }
 
         private void _messageBus_MessageReceived(object sender, TinyMessageReceivedEventArgs e)
         {
-            var msg = JsonConvert.DeserializeObject<Command<object>>(Encoding.UTF8.GetString(e.Message));
+            var msg = JsonConvert.DeserializeObject<Command>(Encoding.UTF8.GetString(e.Message));
             if (msg.TargetID != null && msg.TargetID != ID)
                 return;
 
+            MsgReceived?.Invoke(this, msg);
             _messages.Enqueue(msg);
         }
 
         public void Dispose()
         {
+            _messageBus.MessageReceived -= _messageBus_MessageReceived;
             _messageBus?.Dispose();
             _messageBus = null;
         }
 
         public Task Send<T>(T command)
         {
-            Command<T> realCommand = new Command<T>();
+            Command realCommand = new Command();
             realCommand.CommandFullName = typeof(T).FullName;
-            realCommand.Parameter = command;
+            realCommand.Parameter = JsonConvert.SerializeObject(command);
+            realCommand.TargetID = TargetID;
+            realCommand.FromId = ID;
             var json = JsonConvert.SerializeObject(realCommand);
             return _messageBus.PublishAsync(Encoding.UTF8.GetBytes(json));
         }
@@ -75,9 +84,9 @@ namespace LiveWallpaperEngine.Renders
         {
             R r = default;
             Task wait = Task.Run((async () =>
-              {
-                  r = await Wait<R>();
-              }));
+            {
+                r = await Wait<R>();
+            }));
 
             _ = Send(command);
             await Task.WhenAny(wait, Task.Delay(timeOut));
@@ -92,7 +101,10 @@ namespace LiveWallpaperEngine.Renders
                     //还没有消息多等n毫秒
                     await Task.Delay(100);
                 else if (msg.CommandFullName == typeof(T).FullName)
-                    return JsonConvert.DeserializeObject<T>(msg.Parameter.ToString());
+                {
+                    var result = JsonConvert.DeserializeObject<T>(msg.Parameter.ToString());
+                    return result;
+                }
 
                 await Task.Delay(100);
             }
