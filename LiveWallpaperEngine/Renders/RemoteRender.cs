@@ -1,10 +1,7 @@
-﻿using System;
+﻿using LiveWallpaperEngine.Wallpaper.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiveWallpaperEngine.Models;
 
 namespace LiveWallpaperEngine.Renders
 {
@@ -14,12 +11,12 @@ namespace LiveWallpaperEngine.Renders
     public class RemoteRender : IRender
     {
         Process _currentProcess = null;
-        public Dictionary<WallpaperType, SupportExtensions> SupportTypes => new Dictionary<WallpaperType, SupportExtensions>()
+        public List<WallpaperType> SupportTypes => new List<WallpaperType>()
         {
-            { WallpaperType.Exe,new SupportExtensions(){ ".exe" } },
-            { WallpaperType.Video,new SupportExtensions(){ ".mp4", ".flv", ".blv", ".avi" } },
-            { WallpaperType.Image,new SupportExtensions(){ ".jpg", ".jpeg", ".png", ".bmp" } },
-            { WallpaperType.Web,new SupportExtensions(){ ".html", ".htm" } },
+            new WallpaperType(WallpaperType.DefinedType.Exe,".exe"),
+            new WallpaperType(WallpaperType.DefinedType.Video,".mp4", ".flv", ".blv", ".avi"),
+            new WallpaperType(WallpaperType.DefinedType.Image,".jpg", ".jpeg", ".png", ".bmp"),
+            new WallpaperType(WallpaperType.DefinedType.Web,".html", ".htm")
         };
 
         public int GetVolume()

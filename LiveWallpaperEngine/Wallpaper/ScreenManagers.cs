@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using DZY.WinAPI;
-using LiveWallpaperEngine.Models;
+using LiveWallpaperEngine.Wallpaper.Models;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Wallpaper
 {
     /// <summary>
     /// 管理所有显示器的壁纸
     /// </summary>
-    static class WallpaperManager
+    static class ScreenManagers
     {
-        static Dictionary<int, WallpaperScreenManager> _screenManagers = new Dictionary<int, WallpaperScreenManager>();
+        static Dictionary<int, ScreenManager> _screenManagers = new Dictionary<int, ScreenManager>();
 
-        static WallpaperManager()
+        static ScreenManagers()
         {
             Initlize();
         }
@@ -27,10 +23,10 @@ namespace LiveWallpaperEngine
             for (int i = 0; i < Screen.AllScreens.Length; i++)
             {
                 var item = Screen.AllScreens[i];
-                _screenManagers.Add(i, new WallpaperScreenManager(item));
+                _screenManagers.Add(i, new ScreenManager(item));
             }
         }
-        static internal void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
+        static internal void ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {                

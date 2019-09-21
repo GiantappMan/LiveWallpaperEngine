@@ -3,19 +3,17 @@
 //https://github.com/Francesco149/weebp/blob/master/src/weebp.c 
 using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
-using LiveWallpaperEngine.Models;
+using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Wallpaper.Models;
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Wallpaper
 {
     /// <summary>
     /// 管理一个显示器的壁纸
     /// </summary>
-    public class WallpaperScreenManager
+    public class ScreenManager
     {
         #region fields
 
@@ -41,7 +39,7 @@ namespace LiveWallpaperEngine
         #region construct
 
         //禁止外部程序集直接构造
-        internal WallpaperScreenManager(Screen screen)
+        internal ScreenManager(Screen screen)
         {
             DisplayScreen = screen;
             Init();
@@ -63,16 +61,16 @@ namespace LiveWallpaperEngine
 
         #region  public methods
 
-        internal void ShowWallpaper(Wallpaper wallpaper)
+        internal void ShowWallpaper(WallpaperModel wallpaper)
         {
-            WallpaperType wType = wallpaper.Type;
+            var dType = wallpaper.Type.DType;
             if (_currentRender == null)
-                _currentRender = RenderFactory.GetRender(wType);
-            else if (_currentRender != null && !_currentRender.SupportTypes.ContainsKey(wType))
+                _currentRender = RenderFactory.GetRender(dType);
+            else if (_currentRender != null && !_currentRender.SupportTypes.Exists(m => m.DType == dType))
             {
                 //类型不一样，关闭旧的render
                 _currentRender.Dispose();
-                _currentRender = RenderFactory.GetRender(wType);
+                _currentRender = RenderFactory.GetRender(dType);
             }
             SendToBackground(_currentRender);
             _currentRender.LaunchWallpaper(wallpaper.Path);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine.Models
+namespace LiveWallpaperEngine.Wallpaper.Models
 {
     public enum ActionWhenMaximized
     {

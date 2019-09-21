@@ -1,18 +1,15 @@
-﻿using LiveWallpaperEngine.Models;
-using System;
+﻿using LiveWallpaperEngine.Wallpaper.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Wallpaper
 {
     public struct Status
     {
         /// <summary>
         /// 正在播放的显示器索引+壁纸
         /// </summary>
-        public Dictionary<int, Wallpaper?> Wallpapers;
+        public Dictionary<int, WallpaperModel?> Wallpapers;
     }
 
     /// <summary>
@@ -26,11 +23,11 @@ namespace LiveWallpaperEngine
         {
             Status = new Status
             {
-                Wallpapers = new Dictionary<int, Wallpaper?>()
+                Wallpapers = new Dictionary<int, WallpaperModel?>()
             };
         }
 
-        static internal void ShowWallpaper(Wallpaper wallpaper, params int[] screenIndexs)
+        static internal void ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
             foreach (var screen in screenIndexs)
             {

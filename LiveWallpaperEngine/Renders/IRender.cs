@@ -1,15 +1,9 @@
-﻿using LiveWallpaperEngine.Models;
+﻿using LiveWallpaperEngine.Wallpaper.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
 {
-    public class SupportExtensions : List<string> { }
-
     /// <summary>
     /// 壁纸渲染器
     /// </summary>
@@ -18,7 +12,7 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 支持的类型
         /// </summary>
-        Dictionary<WallpaperType, SupportExtensions> SupportTypes { get; }
+        List<WallpaperType> SupportTypes { get; }
         /// <summary>
         /// 获取窗口句柄
         /// </summary>

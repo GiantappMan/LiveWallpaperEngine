@@ -1,11 +1,7 @@
-﻿using LiveWallpaperEngine.Models;
-using LiveWallpaperEngine.Renders;
-using System;
+﻿using LiveWallpaperEngine.Renders;
+using LiveWallpaperEngine.Wallpaper.Models;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
 {
@@ -25,10 +21,15 @@ namespace LiveWallpaperEngine
             Renders.Add(new RemoteRender());
         }
 
-        public static IRender GetRender(WallpaperType wType)
+        public static IRender GetRender(WallpaperType.DefinedType dType)
         {
-            var render = Renders.FirstOrDefault(r => r.SupportTypes.ContainsKey(wType));
-            return render;
+            foreach (var render in Renders)
+            {
+                var exist = render.SupportTypes.FirstOrDefault(m => m.DType == dType);
+                if (exist != null)
+                    return render;
+            }
+            return null;
         }
     }
 }

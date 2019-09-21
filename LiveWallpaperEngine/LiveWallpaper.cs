@@ -1,11 +1,8 @@
-﻿using LiveWallpaperEngine.Models;
-using LiveWallpaperEngine.Renders;
+﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Wallpaper;
+using LiveWallpaperEngine.Wallpaper.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -63,14 +60,14 @@ namespace LiveWallpaperEngine
         /// 显示壁纸                
         /// </summary>
         /// <remarks>       
-        public static void Show(Wallpaper wallpaper, params int[] screenIndexs)
+        public static void Show(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            WallpaperManager.ShowWallpaper(wallpaper, screenIndexs);
+            ScreenManagers.ShowWallpaper(wallpaper, screenIndexs);
             StatusManager.ShowWallpaper(wallpaper, screenIndexs);
         }
         public static void Close(params int[] screenIndex)
         {
-            WallpaperManager.CloseWallpaper(screenIndex);
+            ScreenManagers.CloseWallpaper(screenIndex);
             StatusManager.CloseWallpaper(screenIndex);
         }
         #endregion

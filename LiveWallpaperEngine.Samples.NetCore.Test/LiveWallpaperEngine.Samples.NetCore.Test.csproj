@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GiantappConfiger\GiantappConfiger\GiantappConfiger.csproj" />
     <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
   </ItemGroup>
 

@@ -4,23 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine.Models
+namespace LiveWallpaperEngine.Wallpaper.Models
 {
-    /// <summary>
-    /// 壁纸类型
-    /// </summary>
-    public enum WallpaperType
-    {
-        Video,
-        Image,
-        Web,
-        Exe,
-    }
-    
     /// <summary>
     /// 表示一个壁纸
     /// </summary>
-    public struct Wallpaper
+    public struct WallpaperModel
     {
         public WallpaperType Type { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using GiantappConfiger;
 using GiantappConfiger.Models;
-using LiveWallpaperEngine.Models;
+using LiveWallpaperEngine.Wallpaper.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -111,7 +111,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
-                    LiveWallpaper.Show(new Wallpaper() { Path = openFileDialog.FileName }, displayIds);
+                    LiveWallpaper.Show(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;
 

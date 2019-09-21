@@ -1,9 +1,10 @@
-﻿using System;
+﻿using LiveWallpaperEngine.Wallpaper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Common
 {
     /// <summary>
     /// 监控 explorer是否崩溃
@@ -55,7 +56,7 @@ namespace LiveWallpaperEngine
 
             if (_lastTriggerTime != null)
             {
-                var workw = WallpaperScreenManager.GetWorkerW();
+                var workw = ScreenManager.GetWorkerW();
                 if (workw != IntPtr.Zero)
                 {
                     ExpolrerCreated?.Invoke(null, new EventArgs());
