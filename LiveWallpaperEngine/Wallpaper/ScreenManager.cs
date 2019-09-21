@@ -56,14 +56,12 @@ namespace LiveWallpaperEngine.Wallpaper
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
-
         #endregion
 
         #region  public methods
 
-        internal void ShowWallpaper(WallpaperModel wallpaper)
+        internal void ShowWallpaper(WallpaperType.DefinedType dType, string path)
         {
-            var dType = wallpaper.Type.DType;
             if (_currentRender == null)
                 _currentRender = RenderFactory.GetRender(dType);
             else if (_currentRender != null && !_currentRender.SupportTypes.Exists(m => m.DType == dType))
@@ -73,8 +71,9 @@ namespace LiveWallpaperEngine.Wallpaper
                 _currentRender = RenderFactory.GetRender(dType);
             }
             SendToBackground(_currentRender);
-            _currentRender.LaunchWallpaper(wallpaper.Path);
+            _currentRender.LaunchWallpaper(path);
         }
+
         public void RestoreParent(bool refreshWallpaper = true)
         {
             if (!Shown)

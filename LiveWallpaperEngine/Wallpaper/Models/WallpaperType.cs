@@ -14,6 +14,7 @@ namespace LiveWallpaperEngine.Wallpaper.Models
             Image,
             Web,
             Exe,
+            NotSupport
         }
 
         public WallpaperType(DefinedType type, params string[] extesion)

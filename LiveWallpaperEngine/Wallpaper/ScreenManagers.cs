@@ -28,9 +28,14 @@ namespace LiveWallpaperEngine.Wallpaper
         }
         static internal void ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
+            if (wallpaper.Type == null)
+            {
+                //根据文件路径解析type
+                wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
+            }
             foreach (var index in screenIndexs)
-            {                
-                _screenManagers[index].ShowWallpaper(wallpaper);
+            {
+                _screenManagers[index].ShowWallpaper(wallpaper.Type.DType, wallpaper.Path);
             }
         }
         static internal void CloseWallpaper(params int[] screenIndexs)

@@ -13,10 +13,10 @@ namespace LiveWallpaperEngine.Renders
         Process _currentProcess = null;
         public List<WallpaperType> SupportTypes => new List<WallpaperType>()
         {
-            new WallpaperType(WallpaperType.DefinedType.Exe,".exe"),
-            new WallpaperType(WallpaperType.DefinedType.Video,".mp4", ".flv", ".blv", ".avi"),
-            new WallpaperType(WallpaperType.DefinedType.Image,".jpg", ".jpeg", ".png", ".bmp"),
-            new WallpaperType(WallpaperType.DefinedType.Web,".html", ".htm")
+            new ExeWallpaperType(),
+            new VideoWallpaperType(),
+            new ImageWallpaperType(),
+            new WebWallpaperType()
         };
 
         public int GetVolume()
@@ -26,7 +26,6 @@ namespace LiveWallpaperEngine.Renders
 
         public void LaunchWallpaper(string path)
         {
-            throw new NotImplementedException();
         }
 
         public void Pause()
@@ -52,7 +51,7 @@ namespace LiveWallpaperEngine.Renders
 
         public IntPtr GetWindowHandle()
         {
-            _currentProcess = Process.Start("");
+            _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", $"{0} {@"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\video.mp4"}");
             return _currentProcess.MainWindowHandle;
         }
     }

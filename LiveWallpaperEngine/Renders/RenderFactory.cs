@@ -1,6 +1,7 @@
 ﻿using LiveWallpaperEngine.Renders;
 using LiveWallpaperEngine.Wallpaper.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace LiveWallpaperEngine
@@ -30,6 +31,17 @@ namespace LiveWallpaperEngine
                     return render;
             }
             return null;
+        }
+
+        public static WallpaperType ResoveType(string filePath)
+        {
+            var extension = Path.GetExtension(filePath);
+            foreach (var render in Renders)
+            {
+                var exist = render.SupportTypes.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
+                return exist;
+            }
+            return new WallpaperType(WallpaperType.DefinedType.NotSupport);
         }
     }
 }

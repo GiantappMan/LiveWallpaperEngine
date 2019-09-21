@@ -8,9 +8,26 @@
     <StartupObject>LiveWallpaperEngineRender.Program</StartupObject>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\bin\Debug</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="VideoRender.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
+    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperType.cs" Link="Models\WallpaperType.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="MpvPlayer" Version="1.0.12" />
     <PackageReference Include="TinyIpc" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
