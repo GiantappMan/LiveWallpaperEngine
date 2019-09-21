@@ -1,6 +1,7 @@
 ﻿using LiveWallpaperEngine.Wallpaper.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
 {
@@ -9,15 +10,12 @@ namespace LiveWallpaperEngine
     /// </summary>
     public interface IRender
     {
-        /// <summary>
-        /// 支持的类型
-        /// </summary>
         List<WallpaperType> SupportTypes { get; }
         /// <summary>
         /// 获取窗口句柄
         /// </summary>
         /// <returns></returns>
-        IntPtr GetWindowHandle();
+        Task<IntPtr> GetWindowHandle();
         /// <summary>
         /// 释放
         /// </summary>

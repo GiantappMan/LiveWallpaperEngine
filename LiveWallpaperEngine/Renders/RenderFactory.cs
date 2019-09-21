@@ -1,5 +1,6 @@
 ﻿using LiveWallpaperEngine.Renders;
 using LiveWallpaperEngine.Wallpaper.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,20 +16,20 @@ namespace LiveWallpaperEngine
         /// <summary>
         /// 公开属性，方便外部库自定义
         /// </summary>
-        public static List<IRender> Renders = new List<IRender>();
+        public static Dictionary<Type, List<WallpaperType>> Renders = new Dictionary<Type, List<WallpaperType>>();
 
         static RenderFactory()
         {
-            Renders.Add(new RemoteRender());
+            Renders.Add(typeof(RemoteRender), RemoteRender.StaticSupportTypes);
         }
 
-        public static IRender GetRender(WallpaperType.DefinedType dType)
+        public static IRender CreateRender(WallpaperType.DefinedType dType)
         {
             foreach (var render in Renders)
             {
-                var exist = render.SupportTypes.FirstOrDefault(m => m.DType == dType);
+                var exist = render.Value.FirstOrDefault(m => m.DType == dType);
                 if (exist != null)
-                    return render;
+                    return Activator.CreateInstance(render.Key) as IRender;
             }
             return null;
         }
@@ -38,7 +39,7 @@ namespace LiveWallpaperEngine
             var extension = Path.GetExtension(filePath);
             foreach (var render in Renders)
             {
-                var exist = render.SupportTypes.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
+                var exist = render.Value.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
                 return exist;
             }
             return new WallpaperType(WallpaperType.DefinedType.NotSupport);

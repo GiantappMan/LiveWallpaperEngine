@@ -6,6 +6,7 @@ using DZY.WinAPI.Desktop.API;
 using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Wallpaper.Models;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Wallpaper
@@ -22,9 +23,9 @@ namespace LiveWallpaperEngine.Wallpaper
         IRender _currentRender;
         IntPtr _currentHandler;
         IntPtr _parentHandler;
-        RECT? _originalRect;//窗口原始大小，恢复时使用
+        //RECT? _originalRect;//窗口原始大小，恢复时使用
 
-        static IDesktopWallpaper _desktopWallpaperAPI;
+        //static IDesktopWallpaper _desktopWallpaperAPI;
         private static IntPtr _workerw = IntPtr.Zero;
         //static uint _slideshowTick;
 
@@ -60,37 +61,38 @@ namespace LiveWallpaperEngine.Wallpaper
 
         #region  public methods
 
-        internal void ShowWallpaper(WallpaperType.DefinedType dType, string path)
+        internal async void ShowWallpaper(WallpaperType.DefinedType dType, string path)
         {
             if (_currentRender == null)
-                _currentRender = RenderFactory.GetRender(dType);
+                _currentRender = RenderFactory.CreateRender(dType);
             else if (_currentRender != null && !_currentRender.SupportTypes.Exists(m => m.DType == dType))
             {
                 //类型不一样，关闭旧的render
                 _currentRender.Dispose();
-                _currentRender = RenderFactory.GetRender(dType);
+                _currentRender = RenderFactory.CreateRender(dType);
             }
-            SendToBackground(_currentRender);
+            var handler = await _currentRender.GetWindowHandle();
+            SendToBackground(handler);
             _currentRender.LaunchWallpaper(path);
         }
 
-        public void RestoreParent(bool refreshWallpaper = true)
-        {
-            if (!Shown)
-                return;
+        //public void RestoreParent(bool refreshWallpaper = true)
+        //{
+        //    if (!Shown)
+        //        return;
 
-            if (refreshWallpaper)
-                _desktopWallpaperAPI = RefreshWallpaper(_desktopWallpaperAPI);
+        //    if (refreshWallpaper)
+        //        _desktopWallpaperAPI = RefreshWallpaper(_desktopWallpaperAPI);
 
-            if (_workerw == IntPtr.Zero)
-                _workerw = GetWorkerW();
+        //    if (_workerw == IntPtr.Zero)
+        //        _workerw = GetWorkerW();
 
-            User32Wrapper.SetParent(_currentHandler, _parentHandler);
+        //    User32Wrapper.SetParent(_currentHandler, _parentHandler);
 
-            if (_originalRect != null)
-                User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
-            Shown = false;
-        }
+        //    if (_originalRect != null)
+        //        User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
+        //    Shown = false;
+        //}
 
         public void Close()
         {
@@ -99,22 +101,19 @@ namespace LiveWallpaperEngine.Wallpaper
             _currentRender = null;
         }
 
-        public bool SendToBackground(IRender render)
+        private bool SendToBackground(IntPtr handler)
         {
-            _currentRender = render;
-            var handler = render.GetWindowHandle();
             if (Shown && handler != _currentHandler)
-            {
-                //已经换了窗口，恢复上一个窗口
-                RestoreParent(false);
-            }
+                Close();
+            //已经换了窗口，恢复上一个窗口
+            //RestoreParent(false);
 
             if (handler == IntPtr.Zero || Shown)
                 return false;
 
             var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
-            if (ok)
-                _originalRect = react;
+            //if (ok)
+            //    _originalRect = react;
 
             Shown = true;
             _currentHandler = handler;

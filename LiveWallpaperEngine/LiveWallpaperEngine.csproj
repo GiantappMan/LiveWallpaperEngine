@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <Version>2.0.2</Version>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -16,5 +16,6 @@
   <ItemGroup>
     <PackageReference Include="DZY.WinAPI" Version="2.0.2" />
     <PackageReference Include="GiantappConfiger" Version="1.0.4" />
+    <PackageReference Include="TinyIpc" Version="2.0.0" />
   </ItemGroup>  
 </Project>
