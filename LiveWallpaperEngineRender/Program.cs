@@ -12,6 +12,7 @@ namespace LiveWallpaperEngineRender
     static class Program
     {
         private static IPCHelper _ipc = null;
+        private static DateTime test;
         //private static string _serverIpcID = null;
         //private static string _handshakeID = null;
 
@@ -25,6 +26,7 @@ namespace LiveWallpaperEngineRender
         [STAThread]
         static void Main(string[] args)
         {
+            test = DateTime.Now;
             //System.Windows.MessageBox.Show("1");
 
             var parent = Process.GetCurrentProcess().Parent();
@@ -62,6 +64,7 @@ namespace LiveWallpaperEngineRender
 
         private static void _videoForm_Load(object sender, EventArgs e)
         {
+            System.Windows.Forms.MessageBox.Show((DateTime.Now - test).ToString());
             _ipc.Send(new RenderInitlized()
             {
                 Handle = _videoForm.Handle

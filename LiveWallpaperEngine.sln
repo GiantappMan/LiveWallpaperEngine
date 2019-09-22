@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine", "LiveWallpaperEngine\LiveWallpaperEngine.csproj", "{B81B6B65-081C-4035-99C9-543BDA79D05F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5E72E15-423E-4540-AE03-A70B8B8E58EA} = {C5E72E15-423E-4540-AE03-A70B8B8E58EA}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{B5707277-42B0-4BDA-8EAF-33612CA2ABF0}"
 EndProject

@@ -18,6 +18,6 @@
     <PackageReference Include="GiantappConfiger" Version="1.0.4" />
     <PackageReference Include="TinyIpc" Version="2.0.0" />
     <!--<ContentWithTargetPath Include="..\public\render\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />-->
-    <ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\$(ConfigurationName)\netcoreapp3.0\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\$(ConfigurationName)\netcoreapp3.0\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
 </Project>
