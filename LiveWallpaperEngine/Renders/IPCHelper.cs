@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LiveWallpaperEngine.Wallpaper.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
@@ -20,6 +21,7 @@ namespace LiveWallpaperEngine.Renders
     public class LaunchWallpaper
     {
         public string Path { get; set; }
+        public WallpaperType.DefinedType Type { get; set; }
     }
 
     #endregion

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LiveWallpaperEngineRender
 {
@@ -17,9 +18,6 @@ namespace LiveWallpaperEngineRender
         //private static string _handshakeID = null;
 
         private static MpvForm _videoForm = null;
-
-        private static string path;
-        private static WallpaperType.DefinedType type;
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -29,13 +27,7 @@ namespace LiveWallpaperEngineRender
             test = DateTime.Now;
             //System.Windows.MessageBox.Show("1");
 
-            var parent = Process.GetCurrentProcess().Parent();
-            if (parent != null)
-            {
-                //父进程退出自动退出
-                parent.EnableRaisingEvents = true;
-                parent.Exited += Parent_Exited;
-            }
+            WatchParent();
 
             string serverIpcId = args[0];
             string clientIpcId = args[1];
@@ -45,16 +37,11 @@ namespace LiveWallpaperEngineRender
             //type = Enum.Parse<WallpaperType.DefinedType>(args[0]);
             //path = args[1];
 
-            switch (type)
-            {
-                case WallpaperType.DefinedType.Video:
-                    _videoForm = new MpvForm();
-                    _videoForm.InitPlayer();
-                    _videoForm.Player.AutoPlay = true;
-                    _videoForm.Load += _videoForm_Load;
-                    System.Windows.Forms.Application.Run(_videoForm);
-                    break;
-            }
+            _videoForm = new MpvForm();
+            _videoForm.InitPlayer();
+            _videoForm.Player.AutoPlay = true;
+            _videoForm.Load += _videoForm_Load;
+            System.Windows.Forms.Application.Run(_videoForm);
 
             //Application.SetHighDpiMode(HighDpiMode.SystemAware);
             //Application.EnableVisualStyles();
@@ -62,9 +49,23 @@ namespace LiveWallpaperEngineRender
             //Application.Run(new Form1());            
         }
 
+        private static void WatchParent()
+        {
+            Task.Run(() =>
+            {
+                var parent = Process.GetCurrentProcess().Parent();
+                if (parent != null)
+                {
+                    //父进程退出自动退出
+                    parent.EnableRaisingEvents = true;
+                    parent.Exited += Parent_Exited;
+                }
+            });
+        }
+
         private static void _videoForm_Load(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show((DateTime.Now - test).ToString());
+            //System.Windows.Forms.MessageBox.Show((DateTime.Now - test).ToString());
             _ipc.Send(new RenderInitlized()
             {
                 Handle = _videoForm.Handle
