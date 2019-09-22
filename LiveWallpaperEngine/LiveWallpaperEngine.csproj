@@ -17,5 +17,7 @@
     <PackageReference Include="DZY.WinAPI" Version="2.0.2" />
     <PackageReference Include="GiantappConfiger" Version="1.0.4" />
     <PackageReference Include="TinyIpc" Version="2.0.0" />
-  </ItemGroup>  
+    <!--<ContentWithTargetPath Include="..\public\render\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />-->
+    <ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\$(ConfigurationName)\netcoreapp3.0\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

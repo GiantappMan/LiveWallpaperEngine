@@ -8,10 +8,6 @@
     <StartupObject>LiveWallpaperEngineRender.Program</StartupObject>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath></OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
