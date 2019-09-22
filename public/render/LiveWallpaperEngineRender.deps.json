@@ -1,0 +1,222 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.0": {
+      "LiveWallpaperEngineRender/1.0.0": {
+        "dependencies": {
+          "MpvPlayer": "1.0.12",
+          "Newtonsoft.Json": "12.0.2",
+          "TinyIpc": "2.0.0"
+        },
+        "runtime": {
+          "LiveWallpaperEngineRender.dll": {}
+        }
+      },
+      "GiantappMvvm.Base/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/GiantappMvvm.Base.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/2.1.0": {},
+      "Microsoft.Xaml.Behaviors.Wpf/1.0.1": {
+        "runtime": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {
+            "assemblyVersion": "1.0.1.0",
+            "fileVersion": "1.0.1.0"
+          }
+        }
+      },
+      "Mpv.NET/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/Mpv.NET.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MpvPlayer/1.0.12": {
+        "dependencies": {
+          "GiantappMvvm.Base": "1.0.0",
+          "Microsoft.Xaml.Behaviors.Wpf": "1.0.1",
+          "Mpv.NET": "1.0.0"
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/MpvPlayer.dll": {
+            "assemblyVersion": "1.0.12.0",
+            "fileVersion": "1.0.12.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/12.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.2.23222"
+          }
+        }
+      },
+      "protobuf-net/2.4.0": {
+        "dependencies": {
+          "System.ServiceModel.Primitives": "4.5.3"
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/protobuf-net.dll": {
+            "assemblyVersion": "2.4.0.0",
+            "fileVersion": "2.4.0.8641"
+          }
+        }
+      },
+      "System.Private.ServiceModel/4.5.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.1.0",
+          "System.Reflection.DispatchProxy": "4.5.0",
+          "System.Security.Principal.Windows": "4.5.0"
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netstandard2.0/System.Private.ServiceModel.dll": {
+            "rid": "unix",
+            "assetType": "runtime",
+            "assemblyVersion": "4.5.0.3",
+            "fileVersion": "4.6.26720.1"
+          },
+          "runtimes/win/lib/netstandard2.0/System.Private.ServiceModel.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "4.5.0.3",
+            "fileVersion": "4.6.26720.1"
+          }
+        }
+      },
+      "System.Reflection.DispatchProxy/4.5.0": {},
+      "System.Security.Principal.Windows/4.5.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.1.0"
+        }
+      },
+      "System.ServiceModel.Primitives/4.5.3": {
+        "dependencies": {
+          "System.Private.ServiceModel": "4.5.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.ServiceModel.Primitives.dll": {
+            "assemblyVersion": "4.5.0.3",
+            "fileVersion": "4.6.26720.1"
+          },
+          "lib/netstandard2.0/System.ServiceModel.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.26720.1"
+          }
+        }
+      },
+      "TinyIpc/2.0.0": {
+        "dependencies": {
+          "protobuf-net": "2.4.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/TinyIpc.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LiveWallpaperEngineRender/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GiantappMvvm.Base/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PPc9BLm2flHYeVAiNGcIZ6uRr00G07wA2AvW93pUr4rV4ThdP77gq+sCV01Qzu8OEaPtsKT1hgVx8VDDJmbhEQ==",
+      "path": "giantappmvvm.base/1.0.0",
+      "hashPath": "giantappmvvm.base.1.0.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ok+RPAtESz/9MUXeIEz6Lv5XAGQsaNmEYXMsgVALj4D7kqC8gveKWXWXbufLySR2fWrwZf8smyN5RmHu0e4BHA==",
+      "path": "microsoft.netcore.platforms/2.1.0",
+      "hashPath": "microsoft.netcore.platforms.2.1.0.nupkg.sha512"
+    },
+    "Microsoft.Xaml.Behaviors.Wpf/1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZFmmeTIbRP5a5J47lIUeO6WgFdrU+d2NBPSv1BgsQFVdUK9jgIKs0zOnt6RJDOlSvrvlGWzhv0LgNZfXGz9nEA==",
+      "path": "microsoft.xaml.behaviors.wpf/1.0.1",
+      "hashPath": "microsoft.xaml.behaviors.wpf.1.0.1.nupkg.sha512"
+    },
+    "Mpv.NET/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hRfn9H6jXWMUsb5WDm1DZrTVrrK6E6PLqq3T9rD5a9qvrTDMDcg+x59jv4eAetCbcgjYWnlPDG2zGMe9VYHBkA==",
+      "path": "mpv.net/1.0.0",
+      "hashPath": "mpv.net.1.0.0.nupkg.sha512"
+    },
+    "MpvPlayer/1.0.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2cWo5dxGGTfVpBhbV/c0N1hlbpWX00Kw/NZ1VY1tlpJqveOuNiLqACx9jO1rweHA/mLLJwL3AWdOgKajS5IClg==",
+      "path": "mpvplayer/1.0.12",
+      "hashPath": "mpvplayer.1.0.12.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rTK0s2EKlfHsQsH6Yx2smvcTCeyoDNgCW7FEYyV01drPlh2T243PR2DiDXqtC5N4GDm4Ma/lkxfW5a/4793vbA==",
+      "path": "newtonsoft.json/12.0.2",
+      "hashPath": "newtonsoft.json.12.0.2.nupkg.sha512"
+    },
+    "protobuf-net/2.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-j37MD1p1s9NdX8P5+IaY2J9p2382xiL1VP3mxYu0g+G/kf2YM2grFa1jJPO+0WDJNl1XhNPO0Q5yBEcbX77hBQ==",
+      "path": "protobuf-net/2.4.0",
+      "hashPath": "protobuf-net.2.4.0.nupkg.sha512"
+    },
+    "System.Private.ServiceModel/4.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ancrQgJagx+yC4SZbuE+eShiEAUIF0E1d21TRSoy1C/rTwafAVcBr/fKibkq5TQzyy9uNil2tx2/iaUxsy0S9g==",
+      "path": "system.private.servicemodel/4.5.3",
+      "hashPath": "system.private.servicemodel.4.5.3.nupkg.sha512"
+    },
+    "System.Reflection.DispatchProxy/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+UW1hq11TNSeb+16rIk8hRQ02o339NFyzMc4ma/FqmxBzM30l1c2IherBB4ld1MNcenS48fz8tbt50OW4rVULA==",
+      "path": "system.reflection.dispatchproxy/4.5.0",
+      "hashPath": "system.reflection.dispatchproxy.4.5.0.nupkg.sha512"
+    },
+    "System.Security.Principal.Windows/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-U77HfRXlZlOeIXd//Yoj6Jnk8AXlbeisf1oq1os+hxOGVnuG+lGSfGqTwTZBoORFF6j/0q7HXIl8cqwQ9aUGqQ==",
+      "path": "system.security.principal.windows/4.5.0",
+      "hashPath": "system.security.principal.windows.4.5.0.nupkg.sha512"
+    },
+    "System.ServiceModel.Primitives/4.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Wc9Hgg4Cmqi416zvEgq2sW1YYCGuhwWzspDclJWlFZqY6EGhFUPZU+kVpl5z9kAgrSOQP7/Uiik+PtSQtmq+5A==",
+      "path": "system.servicemodel.primitives/4.5.3",
+      "hashPath": "system.servicemodel.primitives.4.5.3.nupkg.sha512"
+    },
+    "TinyIpc/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6IitanRF7eYhXAjv3853WABWKYMRkER7TjXp8ejHunWxOryQkQhn+pkk78E/vuKiUoZnliXeN6+2ztJlbco4PQ==",
+      "path": "tinyipc/2.0.0",
+      "hashPath": "tinyipc.2.0.0.nupkg.sha512"
+    }
+  }
+}
