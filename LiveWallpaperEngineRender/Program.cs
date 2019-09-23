@@ -1,52 +1,55 @@
-﻿using LiveWallpaperEngine.Renders;
+﻿using DZY.WinAPI;
+using LiveWallpaperEngine.Renders;
 using LiveWallpaperEngine.Wallpaper.Models;
 using MpvPlayer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using wf = System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender
 {
     static class Program
     {
-        private static IPCHelper _ipc = null;
-        private static DateTime test;
-        //private static string _serverIpcID = null;
-        //private static string _handshakeID = null;
+        internal static IPCHelper _ipc = null;
 
         private static MpvForm _videoForm = null;
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
-            test = DateTime.Now;
             //System.Windows.MessageBox.Show("1");
+            //隐藏控制台
+            var handle = Kernel32Wrapper.GetConsoleWindow();
+            User32Wrapper.ShowWindow(handle, WINDOWPLACEMENTFlags.SW_HIDE);
 
             WatchParent();
 
-            string serverIpcId = args[0];
-            string clientIpcId = args[1];
+            string serverIpcId = args.Length > 0 ? args[0] : "serverIpc";
+            string clientIpcId = args.Length > 1 ? args[1] : "clientIpc";
 
             _ipc = new IPCHelper(clientIpcId, serverIpcId);
             _ipc.MsgReceived += Ipc_MsgReceived;
-            //type = Enum.Parse<WallpaperType.DefinedType>(args[0]);
-            //path = args[1];
 
-            _videoForm = new MpvForm();
-            _videoForm.InitPlayer();
-            _videoForm.Player.AutoPlay = true;
-            _videoForm.Load += _videoForm_Load;
-            System.Windows.Forms.Application.Run(_videoForm);
+            //_videoForm = new MpvForm();
+            //_videoForm.InitPlayer();
+            //_videoForm.Player.AutoPlay = true;
+            //_videoForm.Load += _videoForm_Load;
+            //System.Windows.Forms.Application.Run(_videoForm);
 
-            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());            
+            wf.Application.SetHighDpiMode(wf.HighDpiMode.SystemAware);
+            wf.Application.EnableVisualStyles();
+            wf.Application.SetCompatibleTextRenderingDefault(false);
+            //wf.Application.Run(new Main());
+            wf.Application.Run(new Browser());
+            Console.ReadLine();
         }
 
         private static void WatchParent()
