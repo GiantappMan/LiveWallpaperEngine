@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\LiveWallpaperEngine\Renders\IPCHelper.cs" Link="IPCHelper.cs" />
+    <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperType.cs" Link="Models\WallpaperType.cs" />
   </ItemGroup>

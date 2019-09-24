@@ -21,6 +21,7 @@ namespace LiveWallpaperEngine
         static RenderFactory()
         {
             Renders.Add(typeof(RemoteRender), RemoteRender.StaticSupportTypes);
+            Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
         }
 
         public static IRender CreateRender(WallpaperType.DefinedType dType)

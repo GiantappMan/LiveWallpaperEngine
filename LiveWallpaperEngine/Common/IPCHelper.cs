@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TinyIpc.Messaging;
 
-namespace LiveWallpaperEngine.Renders
+namespace LiveWallpaperEngine.Common
 {
     #region ToServerCommands
     public struct RenderInitlized

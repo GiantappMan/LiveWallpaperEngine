@@ -1,4 +1,5 @@
-﻿using LiveWallpaperEngine.Wallpaper.Models;
+﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Wallpaper.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +20,6 @@ namespace LiveWallpaperEngine.Renders
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
-            new ExeWallpaperType(),
             new VideoWallpaperType(),
             new ImageWallpaperType(),
             new WebWallpaperType()
