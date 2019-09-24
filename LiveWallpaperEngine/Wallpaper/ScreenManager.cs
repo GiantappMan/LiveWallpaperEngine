@@ -18,6 +18,8 @@ namespace LiveWallpaperEngine.Wallpaper
     {
         #region fields
 
+        int _screenIndex;
+
         #region static
 
         IRender _currentRender;
@@ -33,16 +35,15 @@ namespace LiveWallpaperEngine.Wallpaper
 
         //公开属性
         public bool Shown { get; private set; }
-        public Screen DisplayScreen { get; private set; }
 
         #endregion
 
         #region construct
 
         //禁止外部程序集直接构造
-        internal ScreenManager(Screen screen)
+        internal ScreenManager(int screenIndex)
         {
-            DisplayScreen = screen;
+            _screenIndex = screenIndex;
             Init();
         }
 
@@ -71,9 +72,9 @@ namespace LiveWallpaperEngine.Wallpaper
                 _currentRender.Dispose();
                 _currentRender = RenderFactory.CreateRender(dType);
             }
-            var handler = await _currentRender.GetWindowHandle();
+            var handler = await _currentRender.LaunchWallpaper(path, dType, _screenIndex);
+            //var handler = await _currentRender.GetWindowHandle();
             SendToBackground(handler);
-            _currentRender.LaunchWallpaper(path);
         }
 
         //public void RestoreParent(bool refreshWallpaper = true)
@@ -130,7 +131,7 @@ namespace LiveWallpaperEngine.Wallpaper
 
             User32Wrapper.SetParent(_currentHandler, _workerw);
 
-            FullScreen(_currentHandler, DisplayScreen);
+            FullScreen(_currentHandler, Screen.AllScreens[_screenIndex]);
 
             return true;
         }

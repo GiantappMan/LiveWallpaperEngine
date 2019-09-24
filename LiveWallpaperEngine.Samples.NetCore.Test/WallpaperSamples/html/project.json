@@ -1,0 +1,23 @@
+{
+	"description" : "修正了三维时间显示的大小比例，提高虚影的透明度、使主要时间更加容易分辨，解决了时间消失的问题、并进行了一些其他的微调。\n\nCorrection of 3 d time shows the size of the scale, improve the transparency of virtual shadow, main time even more easy to distinguish, Fixed the problem of the disappearance of time、and some other fine-tuning.\n\n支持自定义壁纸:\n更换 C:\\SteamLibrary\\steamapps\\workshop\\content\\431960\\898123863\\img 目录下的图像文件即可。(每次 更换图片都要重新加载壁纸！)\n\nSupport custom wallpaper:\nReplace the C: \\ SteamLibrary \\ steamapps \\ workshop \\ content \\ 431960 \\ 898123863 \\ img directory of the image file can be.\n\n支持自定义时间分辨率：\n使用记事本++编辑C：\\ SteamLibrary \\ steamapps \\ workshop \\ content \\ 431960 \\ 918320473中的index.html文件，找到<div style =“position：absolute; left：420px; top：220px;” class =“time”id =“time”data-hours =“”data-minutes =“”>，修改420px和220px为适合您的分辨率。\n\nSupport for custom time resolution:\nUse Notepad ++ to edit the index.html file in the C:\\SteamLibrary\\steamapps\\workshop\\content\\431960\\918320473，find the <div style = \"position: absolute; left: 420px; top: 220px;\" class = \"time\" id = \"time\" data-hours = \"\" data-minutes = \"\">, modify 420px and 220px for you Resolution.\n\n支持自定义时间颜色：\n使用Notepad ++编辑C:\\SteamLibrary\\steamapps\\workshop\\content\\431960\\918320473\\css目录中的style.css文件，Ctrl+F搜索0BFDFD替换成你喜欢的颜色代码。\n\nSupport custom time color:\nUse Notepad ++ to edit the style.css file in the C: \\ SteamLibrary \\ steamapps \\ workshop \\ content \\ 431960 \\ 918320473 \\ css directory, and Ctrl + F to replace 0BFDFD with your favorite color code.\n\n移除三维时间的版本：\nhttp://steamcommunity.com/sharedfiles/filedetails/?id=905691075\nhttp://steamcommunity.com/sharedfiles/filedetails/?id=914053050",
+	"file" : "index.html",
+	"general" : 
+	{
+		"properties" : 
+		{
+			"schemecolor" : 
+			{
+				"order" : 0,
+				"text" : "ui_browse_properties_scheme_color",
+				"type" : "color",
+				"value" : "0 0 0"
+			}
+		}
+	},
+	"preview" : "preview.jpg",
+	"tags" : [ "Sci-Fi" ],
+	"title" : "亚特兰蒂斯火-三维时间修正3",
+	"type" : "web",
+	"visibility" : "public",
+	"workshopid" : 898123863
+}

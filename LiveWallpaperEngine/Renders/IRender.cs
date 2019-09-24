@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static LiveWallpaperEngine.Wallpaper.Models.WallpaperType;
 
 namespace LiveWallpaperEngine
 {
@@ -11,11 +12,11 @@ namespace LiveWallpaperEngine
     public interface IRender
     {
         List<WallpaperType> SupportTypes { get; }
-        /// <summary>
-        /// 获取窗口句柄
-        /// </summary>
-        /// <returns></returns>
-        Task<IntPtr> GetWindowHandle();
+        ///// <summary>
+        ///// 获取窗口句柄
+        ///// </summary>
+        ///// <returns></returns>
+        //Task<IntPtr> GetWindowHandle();
         /// <summary>
         /// 释放
         /// </summary>
@@ -24,7 +25,7 @@ namespace LiveWallpaperEngine
         /// 加载壁纸
         /// </summary>
         /// <param name="path"></param>
-        void LaunchWallpaper(string path);
+        Task<IntPtr> LaunchWallpaper(string path, DefinedType type, int screenIndex = 0);
 
         void Pause();
 

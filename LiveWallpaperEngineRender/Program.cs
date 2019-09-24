@@ -1,37 +1,47 @@
 ﻿using DZY.WinAPI;
 using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Wallpaper.Models;
+using LiveWallpaperEngineRender.Renders;
 using MpvPlayer;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using wf = System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender
 {
     static class Program
     {
-        internal static IPCHelper _ipc = null;
-
-        private static MpvForm _videoForm = null;
-
+        static IPCHelper _ipc = null;
+        static IRender _currentRender = null;
+        static List<IRender> _allRenders = new List<IRender>()
+        {
+            new WebRender(),
+            new VideoRender()
+        };
+        static Form _mainForm;
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
-            //System.Windows.MessageBox.Show("1");
-            //隐藏控制台
-            var handle = Kernel32Wrapper.GetConsoleWindow();
-            User32Wrapper.ShowWindow(handle, WINDOWPLACEMENTFlags.SW_HIDE);
+            //System.Windows.MessageBox.Show(args[0]);
+            ////隐藏控制台
+            //var handle = Kernel32Wrapper.GetConsoleWindow();
+            //User32Wrapper.ShowWindow(handle, WINDOWPLACEMENTFlags.SW_HIDE);
 
             WatchParent();
 
-            string serverIpcId = args.Length > 0 ? args[0] : "serverIpc";
-            string clientIpcId = args.Length > 1 ? args[1] : "clientIpc";
+            string screenIndex = "0";
+            if (args.Length > 0)
+                screenIndex = args[0];
 
-            _ipc = new IPCHelper(clientIpcId, serverIpcId);
+            _ipc = new IPCHelper(IPCHelper.RemoteRenderID + screenIndex, IPCHelper.ServerID + screenIndex);
             _ipc.MsgReceived += Ipc_MsgReceived;
 
             //_videoForm = new MpvForm();
@@ -44,8 +54,28 @@ namespace LiveWallpaperEngineRender
             wf.Application.EnableVisualStyles();
             wf.Application.SetCompatibleTextRenderingDefault(false);
             //wf.Application.Run(new Main());
-            wf.Application.Run(new Browser());
+            //wf.Application.Run(new Browser());
+
+            _mainForm = new Main();
+            _mainForm.Load += Main_Load;
+            _mainForm.Hide();
+            wf.Application.Run(_mainForm);
             Console.ReadLine();
+        }
+
+        private static void Main_Load(object sender, EventArgs e)
+        {
+            _mainForm.Invoke(new Action(() =>
+            {
+                WebRender w = new WebRender();
+                w.Show(new LaunchWallpaper()
+                {
+                    Path = @"file:///D:/Program%20Files%20(x86)/Steam/steamapps/workshop/content/431960/898123863/index.html"
+                }, null);
+            }));
+            _mainForm.Hide();
+            _mainForm.Load -= Main_Load;
+            _ipc.Send(new Ready());
         }
 
         private static void WatchParent()
@@ -62,28 +92,52 @@ namespace LiveWallpaperEngineRender
             });
         }
 
-        private static void _videoForm_Load(object sender, EventArgs e)
-        {
-            //System.Windows.Forms.MessageBox.Show((DateTime.Now - test).ToString());
-            _ipc.Send(new RenderInitlized()
-            {
-                Handle = _videoForm.Handle
-            });
-        }
-
         private static void Ipc_MsgReceived(object sender, Command e)
         {
             if (e.CommandFullName == typeof(LaunchWallpaper).FullName)
             {
-                var dataLaunchWallpaper = JsonConvert.DeserializeObject<LaunchWallpaper>(e.Parameter);
-                if (dataLaunchWallpaper != null)
+                var data = JsonConvert.DeserializeObject<LaunchWallpaper>(e.Parameter);
+                if (_currentRender == null || !_currentRender.SupportTypes.Contains(data.Type))
                 {
-                    //_videoForm.Player.Stop();
-                    _videoForm.Player.Pause();
-                    _videoForm.Player.Load(dataLaunchWallpaper.Path);
-                    _videoForm.Player.Resume();
+                    _currentRender?.Dispose();
+                    _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Type));
                 }
+
+                _mainForm.Invoke(new Action(() =>
+                {
+                    _currentRender.Show(data, SendHandle);
+                }));
+                //switch (data.Type)
+                //{
+                //    case WallpaperType.DefinedType.Image:
+                //    case WallpaperType.DefinedType.Video:
+                //        break;
+                //    case WallpaperType.DefinedType.Web:
+                //        var videoForm = new MpvForm();
+                //        videoForm.InitPlayer();
+                //        videoForm.Player.AutoPlay = true;
+                //        SendHandle();
+                //        break;
+                //}
+                //if (_currentRender is MpvForm)
+                //{
+                //    if (data != null)
+                //    {
+                //        //_videoForm.Player.Stop();
+                //        videoForm.Player.Pause();
+                //        videoForm.Player.Load(data.Path);
+                //        videoForm.Player.Resume();
+                //    }
+                //}
             }
+        }
+
+        private static void SendHandle(IntPtr handle)
+        {
+            _ipc.Send(new LaunchWallpaperResult()
+            {
+                Handle = handle
+            });
         }
 
         private static void Parent_Exited(object sender, EventArgs e)

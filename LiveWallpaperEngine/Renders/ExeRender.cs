@@ -24,16 +24,6 @@ namespace LiveWallpaperEngine.Renders
             throw new NotImplementedException();
         }
 
-        public Task<IntPtr> GetWindowHandle()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void LaunchWallpaper(string path)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Pause()
         {
             throw new NotImplementedException();
@@ -45,6 +35,11 @@ namespace LiveWallpaperEngine.Renders
         }
 
         public void SetVolume(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IntPtr> LaunchWallpaper(string path, WallpaperType.DefinedType type, int screenIndex)
         {
             throw new NotImplementedException();
         }

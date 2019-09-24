@@ -11,13 +11,27 @@ namespace LiveWallpaperEngineRender
 {
     public partial class Browser : Form
     {
+        WebView web = new WebView();
         public Browser()
         {
-            WebView web = new WebView();
-            web.Source = new Uri("https://www.baidu.com");
+            web.IsPrivateNetworkClientServerCapabilityEnabled = true;
+            web.Source = new Uri(@"file:///F:/work/gitee/LiveWallpaperEngine/LiveWallpaperEngine.Samples.NetCore.Test/WallpaperSamples/web.html", UriKind.RelativeOrAbsolute);
+            //web.Source = new Uri("https://www.baidu.com");
             web.Dock = DockStyle.Fill;
             InitializeComponent();
             Controls.Add(web);
+
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            web.Dispose();
+            web = null;
+            base.OnClosed(e);
+        }
+
+        internal void LoadPage(string path)
+        {
+            //web.Source = new Uri(path);
         }
     }
 }

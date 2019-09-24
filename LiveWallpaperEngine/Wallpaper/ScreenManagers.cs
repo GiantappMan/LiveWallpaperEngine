@@ -22,8 +22,7 @@ namespace LiveWallpaperEngine.Wallpaper
             User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
             for (int i = 0; i < Screen.AllScreens.Length; i++)
             {
-                var item = Screen.AllScreens[i];
-                _screenManagers.Add(i, new ScreenManager(item));
+                _screenManagers.Add(i, new ScreenManager(i));
             }
         }
         static internal void ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
@@ -31,7 +30,7 @@ namespace LiveWallpaperEngine.Wallpaper
             if (wallpaper.Type == null)
                 //根据文件路径解析type
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
-            
+
             if (wallpaper.Type == null)
                 return;
             foreach (var index in screenIndexs)

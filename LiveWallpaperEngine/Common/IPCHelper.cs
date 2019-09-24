@@ -9,10 +9,12 @@ using TinyIpc.Messaging;
 namespace LiveWallpaperEngine.Common
 {
     #region ToServerCommands
-    public struct RenderInitlized
+    public struct LaunchWallpaperResult
     {
         public IntPtr Handle { get; set; }
     }
+
+    public struct Ready { }
 
     #endregion
 
@@ -39,6 +41,9 @@ namespace LiveWallpaperEngine.Common
 
     class IPCHelper : IDisposable
     {
+        public const string ServerID = "LivewallpaperServerIPC";
+        public const string RemoteRenderID = "LivewallpaperRemoteRenderIPC";
+
         TinyMessageBus _messageBus;
         ConcurrentQueue<Command> _messages = new ConcurrentQueue<Command>();
         public event EventHandler<Command> MsgReceived;
