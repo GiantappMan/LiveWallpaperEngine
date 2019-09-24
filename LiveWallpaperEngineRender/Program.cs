@@ -67,10 +67,11 @@ namespace LiveWallpaperEngineRender
         {
             _mainForm.Invoke(new Action(() =>
             {
+                //test
                 WebRender w = new WebRender();
                 w.Show(new LaunchWallpaper()
                 {
-                    Path = @"file:///D:/Program%20Files%20(x86)/Steam/steamapps/workshop/content/431960/898123863/index.html"
+                    Path = @"lvp:///work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\web.html"
                 }, null);
             }));
             _mainForm.Hide();

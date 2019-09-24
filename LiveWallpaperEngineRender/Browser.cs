@@ -15,8 +15,9 @@ namespace LiveWallpaperEngineRender
         public Browser()
         {
             web.IsPrivateNetworkClientServerCapabilityEnabled = true;
-            web.Source = new Uri(@"file:///F:/work/gitee/LiveWallpaperEngine/LiveWallpaperEngine.Samples.NetCore.Test/WallpaperSamples/web.html", UriKind.RelativeOrAbsolute);
-            //web.Source = new Uri("https://www.baidu.com");
+            //web.Source = new Uri(@"file:///F:/work/gitee/LiveWallpaperEngine/LiveWallpaperEngine.Samples.NetCore.Test/WallpaperSamples/web.html
+            //", UriKind.RelativeOrAbsolute);
+            web.Source = new Uri("https://www.baidu.com");
             web.Dock = DockStyle.Fill;
             InitializeComponent();
             Controls.Add(web);
@@ -32,6 +33,8 @@ namespace LiveWallpaperEngineRender
         internal void LoadPage(string path)
         {
             //web.Source = new Uri(path);
+            var url = new Uri(path, UriKind.RelativeOrAbsolute);
+            web.NavigateToLocalStreamUri(url, new StreamUriResolver());
         }
     }
 }
