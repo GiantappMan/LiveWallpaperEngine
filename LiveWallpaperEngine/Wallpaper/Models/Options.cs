@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LiveWallpaperEngine.Wallpaper.Models
 {
@@ -12,7 +8,7 @@ namespace LiveWallpaperEngine.Wallpaper.Models
         Pause,
         Stop
     }
-    public struct ScreenSetting
+    public struct ScreenOption
     {
         public int ScreenIndex { get; set; }
         /// <summary>
@@ -21,7 +17,7 @@ namespace LiveWallpaperEngine.Wallpaper.Models
         public ActionWhenMaximized? WhenCurrentScreenMaximized { get; set; }
     }
 
-    public struct LiveWallpaperSetting
+    public struct LiveWallpaperOptions
     {
         /// <summary>
         /// 播放音频的显示器
@@ -30,7 +26,7 @@ namespace LiveWallpaperEngine.Wallpaper.Models
         /// <summary>
         /// 每个屏幕的单独设置
         /// </summary>
-        public List<ScreenSetting> ScreenSettings { get; set; }
+        public List<ScreenOption> ScreenOptions { get; set; }
         /// <summary>
         /// 当explor崩溃后自动重启
         /// </summary>

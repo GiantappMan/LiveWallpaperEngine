@@ -37,11 +37,11 @@ namespace LiveWallpaperEngine
                 return StatusManager.Status;
             }
         }
-        public static LiveWallpaperSetting Setting { get; private set; }
+        public static LiveWallpaperOptions Setting { get; private set; }
         #endregion
 
         #region public methods
-        public static Task ApplySetting(LiveWallpaperSetting setting)
+        public static Task ApplySetting(LiveWallpaperOptions setting)
         {
             Setting = setting;
 

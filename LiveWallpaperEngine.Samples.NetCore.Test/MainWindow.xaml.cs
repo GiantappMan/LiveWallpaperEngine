@@ -47,7 +47,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             }).ToList();
             audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = -1 });
 
-            var screenSetting = Screen.AllScreens.Select(m => new ScreenSetting()
+            var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
                 ScreenIndex = Screen.AllScreens.ToList().IndexOf(m),
                 WhenCurrentScreenMaximized = ActionWhenMaximized.Pause
@@ -62,12 +62,12 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
             var descInfo = new DescriptorInfoDict()
             {
-                { nameof(LiveWallpaperSetting),
+                { nameof(LiveWallpaperOptions),
                     new DescriptorInfo(){
                         Text="壁纸设置",
                         PropertyDescriptors=new DescriptorInfoDict(){
                             {
-                                nameof(LiveWallpaperSetting.AudioScreenIndex),
+                                nameof(LiveWallpaperOptions.AudioScreenIndex),
                                 new DescriptorInfo(){
                                     Text="音源",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
@@ -75,13 +75,13 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 }
                             },
                             {
-                                nameof(LiveWallpaperSetting.AutoRestartWhenExplorerCrash),
+                                nameof(LiveWallpaperOptions.AutoRestartWhenExplorerCrash),
                                 new DescriptorInfo(){
                                     Text="崩溃后自动恢复",
                                     DefaultValue=true,
                                 }},
                             {
-                                nameof(LiveWallpaperSetting.ScreenSettings),
+                                nameof(LiveWallpaperOptions.ScreenOptions),
                                 new DescriptorInfo(){
                                     Text ="显示器设置",
                                     Type =PropertyType.List,
@@ -90,8 +90,8 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     DefaultValue=screenSetting,
                                     PropertyDescriptors=new DescriptorInfoDict()
                                     {
-                                        {nameof(ScreenSetting.ScreenIndex),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
-                                        {nameof(ScreenSetting.WhenCurrentScreenMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
+                                        {nameof(ScreenOption.ScreenIndex),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
+                                        {nameof(ScreenOption.WhenCurrentScreenMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
                                     }
                                 }
                             },
@@ -132,7 +132,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
-            var setting = ConfigerService.GetData<LiveWallpaperSetting>(vm.Nodes);
+            var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
             LiveWallpaper.ApplySetting(setting);
         }
     }
