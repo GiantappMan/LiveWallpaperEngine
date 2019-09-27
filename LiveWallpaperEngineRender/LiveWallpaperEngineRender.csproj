@@ -10,10 +10,15 @@
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|x86'">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.0|x86'">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
@@ -29,7 +34,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="defaultHtml\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="defaultHtml\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="defaultHtml\spinners.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="defaultHtml\spinners.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="defaultHtml\spinners.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="defaultHtml\tawian-frontend.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
   <ItemGroup>

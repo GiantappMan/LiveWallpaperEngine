@@ -52,32 +52,21 @@ namespace LiveWallpaperEngineRender
             _mainForm.Load += Main_Load;
             _mainForm.Hide();
             wf.Application.Run(_mainForm);
-            Console.ReadLine();
         }
 
         private static void Main_Load(object sender, EventArgs e)
         {
             _mainForm.Invoke(new Action(() =>
             {
-                //var browser = new CefSharp.MinimalExample.WinForms.BrowserForm();
-                //browser.Show();
-                //var b = new Browser();
-                //b.Show();
-
                 //test
                 WebRender w = new WebRender();
                 w.Show(new LaunchWallpaper()
                 {
-                    Path = @"lvp:///work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\web.html"
-                }, null);
-
-                WebRender w2 = new WebRender();
-                w2.Show(new LaunchWallpaper()
-                {
-                    Path = @"lvp:///work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\web.html"
+                    Path = @"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\html\index.html"
                 }, null);
             }));
-            _mainForm.Hide();
+            _mainForm.ShowInTaskbar = false;
+            _mainForm.Opacity = 0;
             _mainForm.Load -= Main_Load;
             _ipc.Send(new Ready());
         }
