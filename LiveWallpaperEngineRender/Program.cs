@@ -44,18 +44,10 @@ namespace LiveWallpaperEngineRender
             _ipc = new IPCHelper(IPCHelper.RemoteRenderID + screenIndex, IPCHelper.ServerID + screenIndex);
             _ipc.MsgReceived += Ipc_MsgReceived;
 
-            //_videoForm = new MpvForm();
-            //_videoForm.InitPlayer();
-            //_videoForm.Player.AutoPlay = true;
-            //_videoForm.Load += _videoForm_Load;
-            //System.Windows.Forms.Application.Run(_videoForm);
-
             wf.Application.SetHighDpiMode(wf.HighDpiMode.SystemAware);
             wf.Application.EnableVisualStyles();
             wf.Application.SetCompatibleTextRenderingDefault(false);
-            //wf.Application.Run(new Main());
-            //wf.Application.Run(new Browser());
-
+   
             _mainForm = new Main();
             _mainForm.Load += Main_Load;
             _mainForm.Hide();
@@ -67,9 +59,20 @@ namespace LiveWallpaperEngineRender
         {
             _mainForm.Invoke(new Action(() =>
             {
+                //var browser = new CefSharp.MinimalExample.WinForms.BrowserForm();
+                //browser.Show();
+                //var b = new Browser();
+                //b.Show();
+
                 //test
                 WebRender w = new WebRender();
                 w.Show(new LaunchWallpaper()
+                {
+                    Path = @"lvp:///work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\web.html"
+                }, null);
+
+                WebRender w2 = new WebRender();
+                w2.Show(new LaunchWallpaper()
                 {
                     Path = @"lvp:///work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\web.html"
                 }, null);
