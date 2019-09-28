@@ -9,7 +9,7 @@
 	z-index: 1;
 }
 .demo-1 .large-header {
-	background-image: url('../img/image.jpg');
+	background-image: url('../img/demo-1-bg.jpg');
 }
 video#bgvid { 
   position: fixed; right: 0; bottom: 0; 

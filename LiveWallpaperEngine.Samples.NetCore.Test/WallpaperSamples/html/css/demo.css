@@ -14,8 +14,9 @@
 .clearfix:after { clear: both; }
 
 body {
+	overflow:hidden;
 	background: #fff;
-	color: #383a3c;
+	color: #fff;
 	font-weight: 400;
 	font-size: 1em;
 	line-height: 1.25;
@@ -27,12 +28,12 @@ a, button {
 }
 
 a {
-	color: #566473;
+	color: #fff;
 	text-decoration: none;
 }
 
 a:hover, a:focus {
-	color: #34495e;
+	color: #fff;
 }
 
 section {
@@ -128,7 +129,7 @@ p.ref {
 
 .codrops-demos a:hover,
 .codrops-demos a.current-demo {
-	border-color: #383a3c;
+	border-color: #fff;
 }
 
 .codrops-demos h3 {

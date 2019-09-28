@@ -68,14 +68,26 @@
         }
     }
 
-    // Event handling
+    // Event handling       thx for @nicandris's code!
     function addListeners() {
-        if(!('ontouchstart' in window)) {
-            window.addEventListener('mousemove', mouseMove);
-        }
-        window.addEventListener('scroll', scrollCheck);
-        window.addEventListener('resize', resize);
-    }
+		if(!('ontouchstart' in window)) {
+		window.addEventListener('mousemove', mouseMove);
+		}
+		window.addEventListener('scroll', scrollCheck);
+		window.addEventListener('resize', resize);
+		window.addEventListener('mouseout', mouseLeave);
+		window.addEventListener('mouseover', mouseEnter);
+	}
+    function mouseLeave(e) {
+		window.removeEventListener('mousemove', mouseMove);
+		animateHeader = false;
+		ctx.clearRect(0,0,width,height);
+	}
+
+	function mouseEnter(e) {
+		animateHeader = true;
+		window.addEventListener('mousemove', mouseMove);
+	}
 
     function mouseMove(e) {
         var posx = posy = 0;
