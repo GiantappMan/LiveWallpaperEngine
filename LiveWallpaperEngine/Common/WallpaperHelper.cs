@@ -29,6 +29,7 @@ namespace LiveWallpaperEngine.Common
         #region construct
         static WallpaperHelper()
         {
+            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
             _desktopWallpaperAPI = GetDesktopWallpaperAPI();
             _desktopWallpaperAPI?.GetSlideshowOptions(out _, out _slideshowTick);
             _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);

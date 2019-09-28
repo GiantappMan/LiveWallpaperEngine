@@ -19,16 +19,16 @@ namespace LiveWallpaperEngine.Wallpaper
         #region fields
 
         int _screenIndex;
-
+        WallpaperHelper wallpaperHelper = null;
         #region static
 
         IRender _currentRender;
-        IntPtr _currentHandler;
-        IntPtr _parentHandler;
+        //IntPtr _currentHandler;
+        //IntPtr _parentHandler;
         //RECT? _originalRect;//窗口原始大小，恢复时使用
 
         //static IDesktopWallpaper _desktopWallpaperAPI;
-        private static IntPtr _workerw = IntPtr.Zero;
+        //private static IntPtr _workerw = IntPtr.Zero;
         //static uint _slideshowTick;
 
         #endregion
@@ -44,12 +44,13 @@ namespace LiveWallpaperEngine.Wallpaper
         internal ScreenManager(int screenIndex)
         {
             _screenIndex = screenIndex;
+            wallpaperHelper = new WallpaperHelper(Screen.AllScreens[screenIndex].Bounds);
             Init();
         }
 
         internal void Init()
         {
-            _workerw = GetWorkerW();
+            //_workerw = GetWorkerW();
             //explore重启后，之前的窗口已经挂了不能恢复
             Shown = false;
 
@@ -74,7 +75,7 @@ namespace LiveWallpaperEngine.Wallpaper
             }
             var handler = await _currentRender.LaunchWallpaper(path, dType, _screenIndex);
             //var handler = await _currentRender.GetWindowHandle();
-            SendToBackground(handler);
+            wallpaperHelper.SendToBackground(handler);
         }
 
         //public void RestoreParent(bool refreshWallpaper = true)
@@ -102,39 +103,39 @@ namespace LiveWallpaperEngine.Wallpaper
             _currentRender = null;
         }
 
-        private bool SendToBackground(IntPtr handler)
-        {
-            if (Shown && handler != _currentHandler)
-                Close();
-            //已经换了窗口，恢复上一个窗口
-            //RestoreParent(false);
+        //private bool SendToBackground(IntPtr handler)
+        //{
+        //    if (Shown && handler != _currentHandler)
+        //        Close();
+        //    //已经换了窗口，恢复上一个窗口
+        //    //RestoreParent(false);
 
-            if (handler == IntPtr.Zero || Shown)
-                return false;
+        //    if (handler == IntPtr.Zero || Shown)
+        //        return false;
 
-            var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
-            //if (ok)
-            //    _originalRect = react;
+        //    var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
+        //    //if (ok)
+        //    //    _originalRect = react;
 
-            Shown = true;
-            _currentHandler = handler;
-            if (_workerw == IntPtr.Zero)
-            {
-                _workerw = GetWorkerW();
-                if (_workerw == IntPtr.Zero)
-                    return false;
-            }
+        //    Shown = true;
+        //    _currentHandler = handler;
+        //    if (_workerw == IntPtr.Zero)
+        //    {
+        //        _workerw = GetWorkerW();
+        //        if (_workerw == IntPtr.Zero)
+        //            return false;
+        //    }
 
-            _parentHandler = User32Wrapper.GetParent(_currentHandler);
-            if (_parentHandler == IntPtr.Zero)
-                _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
+        //    _parentHandler = User32Wrapper.GetParent(_currentHandler);
+        //    if (_parentHandler == IntPtr.Zero)
+        //        _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
 
-            User32Wrapper.SetParent(_currentHandler, _workerw);
+        //    User32Wrapper.SetParent(_currentHandler, _workerw);
 
-            FullScreen(_currentHandler, Screen.AllScreens[_screenIndex]);
+        //    FullScreen(_currentHandler, Screen.AllScreens[_screenIndex]);
 
-            return true;
-        }
+        //    return true;
+        //}
 
         ///// <summary>
         ///// 恢复WorkerW中的所有句柄到桌面
@@ -179,68 +180,68 @@ namespace LiveWallpaperEngine.Wallpaper
         #endregion
 
         #region private
-        internal static IntPtr GetWorkerW()
-        {
-            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
-            User32Wrapper.SendMessageTimeout(progman,
-                                   0x052C,
-                                   new IntPtr(0),
-                                   IntPtr.Zero,
-                                   SendMessageTimeoutFlags.SMTO_NORMAL,
-                                   1000,
-                                   out IntPtr unusefulResult);
-            IntPtr workerw = IntPtr.Zero;
-            var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
-            {
-                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
-                                            IntPtr.Zero,
-                                            "SHELLDLL_DefView",
-                                            IntPtr.Zero);
-                if (p != IntPtr.Zero)
-                {
-                    workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
-                                             tophandle,
-                                             "WorkerW",
-                                             IntPtr.Zero);
-                    return false;
-                }
+        //internal static IntPtr GetWorkerW()
+        //{
+        //    IntPtr progman = User32Wrapper.FindWindow("Progman", null);
+        //    User32Wrapper.SendMessageTimeout(progman,
+        //                           0x052C,
+        //                           new IntPtr(0),
+        //                           IntPtr.Zero,
+        //                           SendMessageTimeoutFlags.SMTO_NORMAL,
+        //                           1000,
+        //                           out IntPtr unusefulResult);
+        //    IntPtr workerw = IntPtr.Zero;
+        //    var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
+        //    {
+        //        IntPtr p = User32Wrapper.FindWindowEx(tophandle,
+        //                                    IntPtr.Zero,
+        //                                    "SHELLDLL_DefView",
+        //                                    IntPtr.Zero);
+        //        if (p != IntPtr.Zero)
+        //        {
+        //            workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
+        //                                     tophandle,
+        //                                     "WorkerW",
+        //                                     IntPtr.Zero);
+        //            return false;
+        //        }
 
-                return true;
-            }), IntPtr.Zero);
-            return workerw;
-        }
+        //        return true;
+        //    }), IntPtr.Zero);
+        //    return workerw;
+        //}
 
-        private static void FullScreen(IntPtr targeHandler, Screen displayScreen)
-        {
-            RECT rect = new RECT(displayScreen.Bounds);
+        //private static void FullScreen(IntPtr targeHandler, Screen displayScreen)
+        //{
+        //    RECT rect = new RECT(displayScreen.Bounds);
 
-            User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
-            var ok = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
-            return;
-        }
+        //    User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
+        //    var ok = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
+        //    return;
+        //}
 
-        //刷新壁纸
-        private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
-        {
-            var explorer = ExplorerMonitor.ExploreProcess;
-            if (explorer == null)
-                return null;
+        ////刷新壁纸
+        //private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
+        //{
+        //    var explorer = ExplorerMonitor.ExploreProcess;
+        //    if (explorer == null)
+        //        return null;
 
-            if (desktopWallpaperAPI == null)
-                desktopWallpaperAPI = GetDesktopWallpaperAPI();
+        //    if (desktopWallpaperAPI == null)
+        //        desktopWallpaperAPI = GetDesktopWallpaperAPI();
 
-            try
-            {
-                desktopWallpaperAPI.Enable(false);
-                desktopWallpaperAPI.Enable(true);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-                desktopWallpaperAPI = GetDesktopWallpaperAPI();
-            }
-            return desktopWallpaperAPI;
-        }
+        //    try
+        //    {
+        //        desktopWallpaperAPI.Enable(false);
+        //        desktopWallpaperAPI.Enable(true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine(ex);
+        //        desktopWallpaperAPI = GetDesktopWallpaperAPI();
+        //    }
+        //    return desktopWallpaperAPI;
+        //}
 
         #endregion
     }

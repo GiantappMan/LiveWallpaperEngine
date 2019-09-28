@@ -56,7 +56,7 @@ namespace LiveWallpaperEngine.Common
 
             if (_lastTriggerTime != null)
             {
-                var workw = ScreenManager.GetWorkerW();
+                var workw = WallpaperHelper.GetWorkerW();
                 if (workw != IntPtr.Zero)
                 {
                     ExpolrerCreated?.Invoke(null, new EventArgs());
