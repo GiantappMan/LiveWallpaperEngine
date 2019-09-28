@@ -44,7 +44,7 @@ namespace LiveWallpaperEngine.Common
         public WallpaperHelper(Rectangle bounds)
         {
             _targetBounds = bounds;
-            _workerw = GetWorkerW();
+            //_workerw = GetWorkerW();
         }
 
         #endregion
@@ -77,12 +77,17 @@ namespace LiveWallpaperEngine.Common
                 _originalRect = react;
 
             _currentHandler = handler;
+            //if (_workerw == IntPtr.Zero)
+            //{
+            var _workerw = GetWorkerW();
             if (_workerw == IntPtr.Zero)
             {
+                //有时候突然又不行了，在来一次
+                _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
                 _workerw = GetWorkerW();
-                if (_workerw == IntPtr.Zero)
-                    return false;
+                return false;
             }
+            //}
 
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
             if (_parentHandler == IntPtr.Zero)
@@ -91,7 +96,6 @@ namespace LiveWallpaperEngine.Common
             User32Wrapper.SetParent(_currentHandler, _workerw);
 
             FullScreen(_currentHandler, _targetBounds);
-
             return true;
         }
 
