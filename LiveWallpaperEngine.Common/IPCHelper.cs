@@ -39,7 +39,7 @@ namespace LiveWallpaperEngine.Common
         public string Parameter { get; set; }
     }
 
-    class IPCHelper : IDisposable
+    public class IPCHelper : IDisposable
     {
         public const string ServerID = "LivewallpaperServerIPC";
         public const string RemoteRenderID = "LivewallpaperRemoteRenderIPC";
@@ -87,7 +87,7 @@ namespace LiveWallpaperEngine.Common
             return _messageBus.PublishAsync(Encoding.UTF8.GetBytes(json));
         }
 
-        internal async Task<R> SendAndWait<T, R>(T command, int timeOut = 1000 * 60)
+        public async Task<R> SendAndWait<T, R>(T command, int timeOut = 1000 * 60)
         {
             R r = default;
             Task wait = Task.Run((async () =>
@@ -100,7 +100,7 @@ namespace LiveWallpaperEngine.Common
             return r;
         }
 
-        internal async Task<T> Wait<T>(int timeOut = 1000 * 30)
+        public async Task<T> Wait<T>(int timeOut = 1000 * 30)
         {
             DateTime startTime = DateTime.Now;
             while (_messages.TryDequeue(out var msg) || DateTime.Now - startTime < TimeSpan.FromSeconds(timeOut))

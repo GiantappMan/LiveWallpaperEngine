@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GiantappConfiger" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
   </ItemGroup>
 

@@ -28,16 +28,10 @@
   <ItemGroup>
     <None Remove="lib\mpv-1-x64.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CefSharp.WinForms" Version="76.1.90" />
-    <PackageReference Include="DZY.WinAPI" Version="2.0.7" />
     <PackageReference Include="Mpv.NET" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="TinyIpc" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
