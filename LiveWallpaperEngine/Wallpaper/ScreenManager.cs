@@ -19,7 +19,6 @@ namespace LiveWallpaperEngine.Wallpaper
         #region fields
 
         int _screenIndex;
-        WallpaperHelper wallpaperHelper = null;
         #region static
 
         IRender _currentRender;
@@ -44,7 +43,6 @@ namespace LiveWallpaperEngine.Wallpaper
         internal ScreenManager(int screenIndex)
         {
             _screenIndex = screenIndex;
-            wallpaperHelper = new WallpaperHelper(Screen.AllScreens[screenIndex].Bounds);
             Init();
         }
 
@@ -63,19 +61,19 @@ namespace LiveWallpaperEngine.Wallpaper
 
         #region  public methods
 
-        internal async void ShowWallpaper(WallpaperType.DefinedType dType, string path)
+        internal async void ShowWallpaper(WallpaperModel wallpaper)
         {
             if (_currentRender == null)
-                _currentRender = RenderFactory.CreateRender(dType);
-            else if (_currentRender != null && !_currentRender.SupportTypes.Exists(m => m.DType == dType))
+                _currentRender = RenderFactory.CreateRender(wallpaper.Type.DType);
+            else if (_currentRender != null && !_currentRender.SupportTypes.Exists(m => m.DType == wallpaper.Type.DType))
             {
                 //类型不一样，关闭旧的render
                 _currentRender.Dispose();
-                _currentRender = RenderFactory.CreateRender(dType);
+                _currentRender = RenderFactory.CreateRender(wallpaper.Type.DType);
             }
-            var handler = await _currentRender.LaunchWallpaper(path, dType, _screenIndex);
+            await _currentRender.LaunchWallpaper(wallpaper, _screenIndex);
             //var handler = await _currentRender.GetWindowHandle();
-            wallpaperHelper.SendToBackground(handler);
+            //wallpaperHelper.SendToBackground(handler);
         }
 
         //public void RestoreParent(bool refreshWallpaper = true)

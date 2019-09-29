@@ -31,7 +31,7 @@ namespace LiveWallpaperEngineRender.Renders
                 //mpvForm.Load += MpvForm_Load;
                 browserForm.Show();
             }
-            browserForm.LoadPage(data.Path);
+            browserForm.LoadPage(data.Wallpaper.Path);
             callBack?.Invoke(browserForm.Handle);
         }
     }

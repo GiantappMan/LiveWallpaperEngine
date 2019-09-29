@@ -22,8 +22,8 @@ namespace LiveWallpaperEngine.Common
 
     public class LaunchWallpaper
     {
-        public string Path { get; set; }
-        public WallpaperType.DefinedType Type { get; set; }
+        public WallpaperModel Wallpaper { get; set; }
+        public int ScreenIndex { get; set; }
     }
 
     #endregion
@@ -92,7 +92,7 @@ namespace LiveWallpaperEngine.Common
             R r = default;
             Task wait = Task.Run((async () =>
             {
-                r = await Wait<R>();
+                r = await Wait<R>(timeOut);
             }));
 
             _ = Send(command);
@@ -100,9 +100,10 @@ namespace LiveWallpaperEngine.Common
             return r;
         }
 
-        internal async Task<T> Wait<T>()
+        internal async Task<T> Wait<T>(int timeOut = 1000 * 30)
         {
-            while (_messages.TryDequeue(out var msg) || true)
+            DateTime startTime = DateTime.Now;
+            while (_messages.TryDequeue(out var msg) || DateTime.Now - startTime < TimeSpan.FromSeconds(timeOut))
             {
                 if (msg == null)
                     //还没有消息多等n毫秒

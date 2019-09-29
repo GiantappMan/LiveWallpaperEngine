@@ -39,7 +39,7 @@ namespace LiveWallpaperEngine.Renders
             throw new NotImplementedException();
         }
 
-        public Task<IntPtr> LaunchWallpaper(string path, WallpaperType.DefinedType type, int screenIndex)
+        public Task LaunchWallpaper(WallpaperModel wallpaper, int screenIndex)
         {
             throw new NotImplementedException();
         }

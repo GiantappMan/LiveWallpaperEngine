@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Wallpaper.Models;
-using MpvPlayer;
+using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
     class VideoRender : IRender
     {
-        MpvForm mpvForm;
+        Video videoForm;
         public List<WallpaperType.DefinedType> SupportTypes => new List<WallpaperType.DefinedType>() {
                 WallpaperType.DefinedType.Video,
                 WallpaperType.DefinedType.Image
@@ -19,31 +18,19 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Dispose()
         {
-            mpvForm.Player.Dispose();
-            mpvForm.Close();
+            videoForm.DiposePlayer();
+            videoForm.Close();
         }
 
         public void Show(LaunchWallpaper data, Action<IntPtr> callBack)
         {
-            if (mpvForm == null)
+            if (videoForm == null)
             {
-                mpvForm = new MpvForm();
-                mpvForm.InitPlayer();
-                mpvForm.Player.AutoPlay = true;
-                //mpvForm.Load += MpvForm_Load;
-                mpvForm.Show();
+                videoForm = new Video();
+                videoForm.Show();
             }
-            mpvForm.Player.Pause();
-            mpvForm.Player.Load(data.Path);
-            mpvForm.Player.Resume();
-            callBack?.Invoke(mpvForm.Handle);
+            videoForm.LoadFile(data.Wallpaper.Path);
+            callBack?.Invoke(videoForm.Handle);
         }
-
-        //private void MpvForm_Load(object sender, EventArgs e)
-        //{
-        //    mpvForm.Load -= MpvForm_Load;
-        //    Handle = mpvForm.Handle;
-        //    System.Windows.Forms.MessageBox.Show(mpvForm.Handle.ToString());
-        //}
     }
 }

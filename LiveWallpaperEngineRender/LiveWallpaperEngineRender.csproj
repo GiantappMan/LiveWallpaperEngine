@@ -22,13 +22,14 @@
   <ItemGroup>
     <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
+    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperModel.cs" Link="Models\WallpaperModel.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperType.cs" Link="Models\WallpaperType.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CefSharp.WinForms" Version="76.1.90" />
     <PackageReference Include="DZY.WinAPI" Version="2.0.7" />
-    <PackageReference Include="MpvPlayer" Version="1.0.12" />
+    <PackageReference Include="Mpv.NET" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="TinyIpc" Version="2.0.0" />
   </ItemGroup>

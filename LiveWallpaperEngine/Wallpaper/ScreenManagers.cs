@@ -35,7 +35,7 @@ namespace LiveWallpaperEngine.Wallpaper
                 return;
             foreach (var index in screenIndexs)
             {
-                _screenManagers[index].ShowWallpaper(wallpaper.Type.DType, wallpaper.Path);
+                _screenManagers[index].ShowWallpaper(wallpaper);
             }
         }
         static internal void CloseWallpaper(params int[] screenIndexs)

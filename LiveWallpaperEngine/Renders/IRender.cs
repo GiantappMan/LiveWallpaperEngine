@@ -25,7 +25,7 @@ namespace LiveWallpaperEngine
         /// 加载壁纸
         /// </summary>
         /// <param name="path"></param>
-        Task<IntPtr> LaunchWallpaper(string path, DefinedType type, int screenIndex = 0);
+        Task LaunchWallpaper(WallpaperModel wallpaper, int screenIndex = 0);
 
         void Pause();
 

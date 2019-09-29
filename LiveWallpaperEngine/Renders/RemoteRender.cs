@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Renders
 {
@@ -13,8 +14,8 @@ namespace LiveWallpaperEngine.Renders
     public class RemoteRender : IRender
     {
         Process _currentProcess = null;
-        IntPtr _cacheHandler;
         IPCHelper _ipc = null;
+        WallpaperHelper wallpaperHelper = null;
 
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
 
@@ -65,37 +66,33 @@ namespace LiveWallpaperEngine.Renders
             _ipc = null;
         }
 
-        //public async Task<IntPtr> GetWindowHandle()
-        //{
-        //    if (_cacheHandler != IntPtr.Zero)
-        //        return _cacheHandler;
-        //    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe");
-        //    //发送server信息给指定render
-        //    var handle = await ipc.Wait<RenderInitlized>();
-        //    _cacheHandler = handle.Handle;
-        //    return _cacheHandler;
-        //}
-
-        public async Task<IntPtr> LaunchWallpaper(string path, WallpaperType.DefinedType type, int screenIndex)
+        public async Task LaunchWallpaper(WallpaperModel wallpaper, int screenIndex)
         {
             if (_ipc == null)
-                _ipc = new IPCHelper(IPCHelper.ServerID + screenIndex, IPCHelper.RemoteRenderID + screenIndex);
+                _ipc = new IPCHelper(IPCHelper.ServerID, IPCHelper.RemoteRenderID);
 
             if (_currentProcess == null)
             {
-                _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", screenIndex.ToString());
-                //等待render初始完成
-                await _ipc.Wait<Ready>();
+                _currentProcess = Process.GetProcessesByName("LiveWallpaperEngineRender")?[0];
+                if (_currentProcess == null)
+                {
+                    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", screenIndex.ToString());
+                    //等待render初始完成
+                    await _ipc.Wait<Ready>();
+                }
             }
 
             //显示壁纸
             LaunchWallpaperResult handle = await _ipc.SendAndWait<LaunchWallpaper, LaunchWallpaperResult>(new LaunchWallpaper()
             {
-                Path = path,
-                Type = type
+                Wallpaper = wallpaper,
+                ScreenIndex = screenIndex
             });
-            _cacheHandler = handle.Handle;
-            return _cacheHandler;
+
+            if (wallpaperHelper == null)
+                wallpaperHelper = new WallpaperHelper(Screen.AllScreens[screenIndex].Bounds);
+
+            wallpaperHelper.SendToBackground(handle.Handle);
         }
     }
 }

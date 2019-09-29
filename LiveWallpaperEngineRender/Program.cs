@@ -2,7 +2,6 @@
 using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Wallpaper.Models;
 using LiveWallpaperEngineRender.Renders;
-using MpvPlayer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,11 +36,11 @@ namespace LiveWallpaperEngineRender
 
             WatchParent();
 
-            string screenIndex = "0";
-            if (args.Length > 0)
-                screenIndex = args[0];
+            //string screenIndex = "0";
+            //if (args.Length > 0)
+            //    screenIndex = args[0];
 
-            _ipc = new IPCHelper(IPCHelper.RemoteRenderID + screenIndex, IPCHelper.ServerID + screenIndex);
+            _ipc = new IPCHelper(IPCHelper.RemoteRenderID, IPCHelper.ServerID);
             _ipc.MsgReceived += Ipc_MsgReceived;
 
             wf.Application.SetHighDpiMode(wf.HighDpiMode.SystemAware);
@@ -102,8 +101,8 @@ namespace LiveWallpaperEngineRender
             //        Path = @"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\html\index.html"
             //    }, null);
             //}));
-            _mainForm.ShowInTaskbar = false;
-            _mainForm.Opacity = 0;
+            //_mainForm.ShowInTaskbar = false;
+            //_mainForm.Opacity = 0;
             _mainForm.Load -= Main_Load;
             _ipc.Send(new Ready());
         }
@@ -127,10 +126,10 @@ namespace LiveWallpaperEngineRender
             if (e.CommandFullName == typeof(LaunchWallpaper).FullName)
             {
                 var data = JsonConvert.DeserializeObject<LaunchWallpaper>(e.Parameter);
-                if (_currentRender == null || !_currentRender.SupportTypes.Contains(data.Type))
+                if (_currentRender == null || !_currentRender.SupportTypes.Contains(data.Wallpaper.Type.DType))
                 {
                     _currentRender?.Dispose();
-                    _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Type));
+                    _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Wallpaper.Type.DType));
                 }
 
                 _mainForm.Invoke(new Action(() =>

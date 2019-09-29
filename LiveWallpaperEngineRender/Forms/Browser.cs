@@ -32,7 +32,12 @@ namespace LiveWallpaperEngineRender
         private string _lastUrl = null;
         public Browser()
         {
+            //UI
+            BackColor = Color.Magenta;
+            TransparencyKey = Color.Magenta;
+            ShowInTaskbar = false;
             FormBorderStyle = FormBorderStyle.None;
+
             InitializeComponent();
             browser = new ChromiumWebBrowser(address: @"F:/work/gitee/LiveWallpaperEngine/LiveWallpaperEngineRender/defaultHtml/index.html
 ")

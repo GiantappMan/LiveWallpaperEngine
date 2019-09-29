@@ -13,6 +13,8 @@ namespace LiveWallpaperEngineRender
         public Main()
         {
             InitializeComponent();
+            ShowInTaskbar = false;
+            Opacity = 0;
         }
     }
 }
