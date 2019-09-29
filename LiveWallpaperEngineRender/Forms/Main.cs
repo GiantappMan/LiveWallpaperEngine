@@ -13,6 +13,7 @@ namespace LiveWallpaperEngineRender
         public Main()
         {
             InitializeComponent();
+            WindowState = FormWindowState.Maximized;
             ShowInTaskbar = false;
             Opacity = 0;
         }

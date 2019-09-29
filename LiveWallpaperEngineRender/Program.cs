@@ -132,7 +132,7 @@ namespace LiveWallpaperEngineRender
                     _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Wallpaper.Type.DType));
                 }
 
-                _mainForm.Invoke(new Action(() =>
+                _mainForm.BeginInvoke(new Action(() =>
                 {
                     _currentRender.Show(data, SendHandle);
                 }));

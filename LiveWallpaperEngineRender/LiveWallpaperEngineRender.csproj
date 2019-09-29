@@ -20,6 +20,9 @@
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="lib\mpv-1-x64.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
     <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperModel.cs" Link="Models\WallpaperModel.cs" />
@@ -53,6 +56,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="defaultHtml\tawian-frontend.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="lib\mpv-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

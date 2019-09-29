@@ -73,7 +73,8 @@ namespace LiveWallpaperEngine.Renders
 
             if (_currentProcess == null)
             {
-                _currentProcess = Process.GetProcessesByName("LiveWallpaperEngineRender")?[0];
+                var pList = Process.GetProcessesByName("LiveWallpaperEngineRender");
+                _currentProcess = pList?.Length > 0 ? pList[0] : null;
                 if (_currentProcess == null)
                 {
                     _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", screenIndex.ToString());

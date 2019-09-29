@@ -20,7 +20,7 @@ namespace LiveWallpaperEngine.Wallpaper.Models
         public WallpaperType(DefinedType type, params string[] extesion)
         {
             DType = type;
-            SupportExtensions = extesion.ToList();
+            SupportExtensions = extesion?.ToList();
         }
         public DefinedType DType { get; private set; }
         public List<string> SupportExtensions { get; private set; }

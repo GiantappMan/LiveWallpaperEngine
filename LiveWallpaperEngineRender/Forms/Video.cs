@@ -12,6 +12,7 @@ namespace LiveWallpaperEngineRender.Forms
     public partial class Video : Form
     {
         private Mpv.NET.Player.MpvPlayer _player;
+        private string _lastPath;
         public Video()
         {
             //UI
@@ -23,19 +24,30 @@ namespace LiveWallpaperEngineRender.Forms
 
             //callback
             FormClosing += RenderForm_FormClosing;
+            Load += Video_Load;
+        }
+
+        private void Video_Load(object sender, EventArgs e)
+        {
+            Load -= Video_Load;
             InitPlayer();
         }
 
         public void LoadFile(string path)
         {
-            _player.Pause();
-            _player.Load(path);
-            _player.Resume();
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            _lastPath = path;
+
+            _player?.Pause();
+            _player?.Load(path);
+            _player?.Resume();
         }
 
         private void InitPlayer()
         {
-            Invoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
                 var assembly = Assembly.GetEntryAssembly();
                 string appDir = System.IO.Path.GetDirectoryName(assembly.Location);
@@ -50,6 +62,7 @@ namespace LiveWallpaperEngineRender.Forms
                 //防止视频黑边
                 _player.API.SetPropertyString("panscan", "1.0");
                 _player.AutoPlay = true;
+                LoadFile(_lastPath);
             }));
         }
 
