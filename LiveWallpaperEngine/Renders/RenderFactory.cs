@@ -1,5 +1,5 @@
-﻿using LiveWallpaperEngine.Renders;
-using LiveWallpaperEngine.Wallpaper.Models;
+﻿using LiveWallpaperEngine.Common.Models;
+using LiveWallpaperEngine.Renders;
 using System;
 using System.Collections.Generic;
 using System.IO;

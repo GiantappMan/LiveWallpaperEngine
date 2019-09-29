@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LiveWallpaperEngine.Wallpaper.Models
+namespace LiveWallpaperEngine.Common.Models
 {
     public enum ActionWhenMaximized
     {

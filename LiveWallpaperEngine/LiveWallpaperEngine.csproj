@@ -20,4 +20,7 @@
     <!--<ContentWithTargetPath Include="..\public\render\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />-->
     <ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\netcoreapp3.0\**" TargetPath="%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
+  </ItemGroup>
 </Project>

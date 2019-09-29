@@ -1,5 +1,5 @@
 using LiveWallpaperEngine;
-using LiveWallpaperEngine.Wallpaper.Models;
+using LiveWallpaperEngine.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test.LiveWallpaperEngine

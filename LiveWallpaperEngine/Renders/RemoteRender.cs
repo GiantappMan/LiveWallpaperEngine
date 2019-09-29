@@ -1,5 +1,5 @@
 ﻿using LiveWallpaperEngine.Common;
-using LiveWallpaperEngine.Wallpaper.Models;
+using LiveWallpaperEngine.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

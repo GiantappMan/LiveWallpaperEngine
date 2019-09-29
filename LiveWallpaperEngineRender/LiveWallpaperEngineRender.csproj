@@ -17,6 +17,12 @@
     <OutputPath>bin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+    <Page Remove="Models\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -24,9 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\LiveWallpaperEngine\Common\IPCHelper.cs" Link="IPCHelper.cs" />
-    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\ConstWallpaperTypes.cs" Link="Models\ConstWallpaperTypes.cs" />
-    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperModel.cs" Link="Models\WallpaperModel.cs" />
-    <Compile Include="..\LiveWallpaperEngine\Wallpaper\Models\WallpaperType.cs" Link="Models\WallpaperType.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,7 +42,10 @@
 
   <ItemGroup>
     <Folder Include="defaultHtml\" />
-    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,4 @@
-﻿using DZY.WinAPI;
-using LiveWallpaperEngine.Common;
-using LiveWallpaperEngine.Wallpaper.Models;
+﻿using LiveWallpaperEngine.Common;
 using LiveWallpaperEngineRender.Renders;
 using Newtonsoft.Json;
 using System;

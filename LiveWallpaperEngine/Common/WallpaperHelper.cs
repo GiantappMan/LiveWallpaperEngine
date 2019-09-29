@@ -1,10 +1,7 @@
 ﻿using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Common
 {

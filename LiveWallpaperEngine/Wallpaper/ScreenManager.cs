@@ -1,13 +1,9 @@
 ﻿//原理参考
 //https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows 
 //https://github.com/Francesco149/weebp/blob/master/src/weebp.c 
-using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
-using LiveWallpaperEngine.Common;
-using LiveWallpaperEngine.Wallpaper.Models;
+using LiveWallpaperEngine.Common.Models;
 using System;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Wallpaper
 {

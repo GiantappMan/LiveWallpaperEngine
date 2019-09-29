@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine.Wallpaper.Models
+namespace LiveWallpaperEngine.Common.Models
 {
     /// <summary>
     /// 表示一个壁纸

@@ -1,6 +1,6 @@
 ﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Wallpaper;
-using LiveWallpaperEngine.Wallpaper.Models;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
