@@ -18,17 +18,23 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void Dispose()
         {
-            browserForm.Close();
-            browserForm = null;
+            Main.UIInvoke(() =>
+            {
+                browserForm.Close();
+                browserForm = null;
+            });
         }
 
         public void Show(LaunchWallpaper data, Action<IntPtr> callBack)
         {
             if (browserForm == null)
             {
-                browserForm = new Browser();
-                //mpvForm.Load += MpvForm_Load;
-                browserForm.Show();
+                Main.UIInvoke(() =>
+                {
+                    browserForm = new Browser();
+                    browserForm.Show();
+                    WallpaperHelper.GetInstance(data.ScreenIndex).SendToBackground(browserForm.Handle);
+                });
             }
             browserForm.LoadPage(data.Wallpaper.Path);
             callBack?.Invoke(browserForm.Handle);

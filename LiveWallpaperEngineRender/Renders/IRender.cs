@@ -2,6 +2,7 @@
 using LiveWallpaperEngine.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {

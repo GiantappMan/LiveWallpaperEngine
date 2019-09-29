@@ -1,38 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Reflection;
+using System.Data;
+using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace LiveWallpaperEngineRender.Forms
 {
-    public partial class Video : Form
+    public partial class VideoControl : UserControl
     {
+        public VideoControl()
+        {
+            InitializeComponent();
+        }
+
         private Mpv.NET.Player.MpvPlayer _player;
         private string _lastPath;
-        public Video()
-        {
-            //UI
-            BackColor = Color.Magenta;
-            TransparencyKey = Color.Magenta;
-            ShowInTaskbar = false;
-            InitializeComponent();
-            FormBorderStyle = FormBorderStyle.None;
-
-            //callback
-            FormClosing += RenderForm_FormClosing;
-            //Controls.Add(new Label()
-            //{
-            //    Dock = DockStyle.Fill,
-            //    Text = "Loading..."
-            //});
-            Load += Video_Load;
-        }
-
-        private void Video_Load(object sender, EventArgs e)
-        {
-            Load -= Video_Load;
-            InitPlayer();
-        }
 
         public void LoadFile(string path)
         {
@@ -46,7 +31,7 @@ namespace LiveWallpaperEngineRender.Forms
             _player?.Resume();
         }
 
-        private void InitPlayer()
+        public void InitPlayer()
         {
             BeginInvoke(new Action(() =>
             {
@@ -74,13 +59,6 @@ namespace LiveWallpaperEngineRender.Forms
                 _player?.Dispose();
                 _player = null;
             }));
-        }
-
-        private void RenderForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            FormClosing -= RenderForm_FormClosing;
-            _player?.Dispose();
-            _player = null;
         }
     }
 }

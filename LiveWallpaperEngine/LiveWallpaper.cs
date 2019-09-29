@@ -16,6 +16,10 @@ namespace LiveWallpaperEngine
     /// </summary>
     public static class LiveWallpaper
     {
+        static LiveWallpaper()
+        {
+            ScreenManagers.Initlize();
+        }
         private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
         {
             try

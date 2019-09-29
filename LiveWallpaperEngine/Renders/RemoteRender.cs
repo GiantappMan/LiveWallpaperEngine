@@ -15,7 +15,6 @@ namespace LiveWallpaperEngine.Renders
     {
         Process _currentProcess = null;
         IPCHelper _ipc = null;
-        WallpaperHelper wallpaperHelper = null;
 
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
 
@@ -84,16 +83,11 @@ namespace LiveWallpaperEngine.Renders
             }
 
             //显示壁纸
-            LaunchWallpaperResult handle = await _ipc.SendAndWait<LaunchWallpaper, LaunchWallpaperResult>(new LaunchWallpaper()
+            await _ipc.Send(new LaunchWallpaper()
             {
                 Wallpaper = wallpaper,
                 ScreenIndex = screenIndex
             });
-
-            if (wallpaperHelper == null)
-                wallpaperHelper = new WallpaperHelper(Screen.AllScreens[screenIndex].Bounds);
-
-            wallpaperHelper.SendToBackground(handle.Handle);
         }
     }
 }

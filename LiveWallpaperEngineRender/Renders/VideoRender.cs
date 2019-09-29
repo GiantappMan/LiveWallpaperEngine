@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngineRender.Forms;
@@ -19,15 +21,22 @@ namespace LiveWallpaperEngineRender.Renders
         public void Dispose()
         {
             videoForm.DiposePlayer();
-            videoForm.Close();
+            Main.UIInvoke(() =>
+            {
+                videoForm.Close();
+            });
         }
 
         public void Show(LaunchWallpaper data, Action<IntPtr> callBack)
         {
             if (videoForm == null)
             {
-                videoForm = new Video();
-                videoForm.Show();
+                Main.UIInvoke(() =>
+                {
+                    videoForm = new Video();
+                    videoForm.Show();
+                    WallpaperHelper.GetInstance(data.ScreenIndex).SendToBackground(videoForm.Handle);
+                });
             }
             videoForm.LoadFile(data.Wallpaper.Path);
             callBack?.Invoke(videoForm.Handle);

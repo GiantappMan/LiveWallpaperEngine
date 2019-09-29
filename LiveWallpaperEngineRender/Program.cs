@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using wf = System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender
 {
@@ -41,9 +40,9 @@ namespace LiveWallpaperEngineRender
             _ipc = new IPCHelper(IPCHelper.RemoteRenderID, IPCHelper.ServerID);
             _ipc.MsgReceived += Ipc_MsgReceived;
 
-            wf.Application.SetHighDpiMode(wf.HighDpiMode.SystemAware);
-            wf.Application.EnableVisualStyles();
-            wf.Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
 
             //处理未捕获的异常   
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -55,7 +54,7 @@ namespace LiveWallpaperEngineRender
             _mainForm = new Main();
             _mainForm.Load += Main_Load;
             _mainForm.Hide();
-            wf.Application.Run(_mainForm);
+            Application.Run(_mainForm);
         }
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
@@ -130,42 +129,17 @@ namespace LiveWallpaperEngineRender
                     _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Wallpaper.Type.DType));
                 }
 
-                _mainForm.BeginInvoke(new Action(() =>
-                {
-                    _currentRender.Show(data, SendHandle);
-                }));
-                //switch (data.Type)
-                //{
-                //    case WallpaperType.DefinedType.Image:
-                //    case WallpaperType.DefinedType.Video:
-                //        break;
-                //    case WallpaperType.DefinedType.Web:
-                //        var videoForm = new MpvForm();
-                //        videoForm.InitPlayer();
-                //        videoForm.Player.AutoPlay = true;
-                //        SendHandle();
-                //        break;
-                //}
-                //if (_currentRender is MpvForm)
-                //{
-                //    if (data != null)
-                //    {
-                //        //_videoForm.Player.Stop();
-                //        videoForm.Player.Pause();
-                //        videoForm.Player.Load(data.Path);
-                //        videoForm.Player.Resume();
-                //    }
-                //}
+                _currentRender.Show(data, null);
             }
         }
 
-        private static void SendHandle(IntPtr handle)
-        {
-            _ipc.Send(new LaunchWallpaperResult()
-            {
-                Handle = handle
-            });
-        }
+        //private static void SendHandle(IntPtr handle)
+        //{
+        //    _ipc.Send(new LaunchWallpaperResult()
+        //    {
+        //        Handle = handle
+        //    });
+        //}
 
         private static void Parent_Exited(object sender, EventArgs e)
         {

@@ -23,6 +23,8 @@
     <Page Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Forms\VideoControl.cs" />
+    <Compile Remove="Forms\VideoControl.Designer.cs" />
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
   <ItemGroup>

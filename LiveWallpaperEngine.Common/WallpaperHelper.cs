@@ -1,7 +1,9 @@
 ﻿using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Common
 {
@@ -9,15 +11,17 @@ namespace LiveWallpaperEngine.Common
     {
         #region fields
 
-        #region static
-
         IntPtr _currentHandler;
         IntPtr _parentHandler;
         RECT? _originalRect;//窗口原始大小，恢复时使用
         Rectangle _targetBounds;
+
+        #region static
+
+        static Dictionary<int, WallpaperHelper> _cacheInstances = new Dictionary<int, WallpaperHelper>();
         static IDesktopWallpaper _desktopWallpaperAPI;
         static IntPtr _workerw = IntPtr.Zero;
-        static readonly uint _slideshowTick;
+        static uint _slideshowTick;
 
         #endregion
 
@@ -26,15 +30,7 @@ namespace LiveWallpaperEngine.Common
         #region construct
         static WallpaperHelper()
         {
-            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
-            _desktopWallpaperAPI = GetDesktopWallpaperAPI();
-            _desktopWallpaperAPI?.GetSlideshowOptions(out _, out _slideshowTick);
-            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
-        }
 
-        ~WallpaperHelper()
-        {
-            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         }
 
         //禁止外部程序集直接构造
@@ -86,13 +82,13 @@ namespace LiveWallpaperEngine.Common
             }
             //}
 
+            FullScreen(_currentHandler, _targetBounds);
+            User32Wrapper.SetParent(_currentHandler, _workerw);
+
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
             if (_parentHandler == IntPtr.Zero)
                 _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
 
-            User32Wrapper.SetParent(_currentHandler, _workerw);
-
-            FullScreen(_currentHandler, _targetBounds);
             return true;
         }
 
@@ -118,6 +114,21 @@ namespace LiveWallpaperEngine.Common
             RefreshWallpaper(desktopWallpaperAPI);
         }
 
+        /// <summary>
+        /// 获取指定屏幕的实例
+        /// </summary>
+        /// <param name="screenIndex"></param>
+        /// <returns></returns>
+        public static WallpaperHelper GetInstance(int screenIndex)
+        {
+            if (!_cacheInstances.ContainsKey(screenIndex))
+            {
+                var bounds = Screen.AllScreens[screenIndex].Bounds;
+                _cacheInstances.Add(screenIndex, new WallpaperHelper(bounds));
+            }
+            return _cacheInstances[screenIndex];
+        }
+
         public static IDesktopWallpaper GetDesktopWallpaperAPI()
         {
             try
@@ -130,6 +141,20 @@ namespace LiveWallpaperEngine.Common
                 System.Diagnostics.Debug.WriteLine(ex);
                 return null;
             }
+        }
+
+        public static void DoSomeMagic()
+        {
+            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
+            _desktopWallpaperAPI = GetDesktopWallpaperAPI();
+            _desktopWallpaperAPI?.GetSlideshowOptions(out _, out _slideshowTick);
+            if (_slideshowTick < 86400000)
+                _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+        }
+
+        public static void RestoreMagic()
+        {
+            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         }
 
         #endregion

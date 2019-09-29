@@ -17,5 +17,18 @@ namespace LiveWallpaperEngineRender
             ShowInTaskbar = false;
             Opacity = 0;
         }
+
+
+        public static void UIInvoke(Action a)
+        {
+            var mainForm = Application.OpenForms[0];
+            if (mainForm == null)
+                return;
+
+            if (mainForm.InvokeRequired)
+                mainForm.Invoke(a);
+            else
+                a();
+        }
     }
 }
