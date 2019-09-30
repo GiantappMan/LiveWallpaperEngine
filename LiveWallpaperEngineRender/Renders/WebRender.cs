@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Common.Renders;
+using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
     class WebRender : IRender
     {
-        Browser browserForm;
+        readonly Dictionary<int, WebControl> _controls = new Dictionary<int, WebControl>();
         public WebRender()
         {
         }
@@ -24,16 +25,22 @@ namespace LiveWallpaperEngineRender.Renders
 
         public void CloseWallpaper(params int[] screenIndexs)
         {
-            throw new NotImplementedException();
+            foreach (var index in screenIndexs)
+            {
+                _controls[index].StopPage();
+                var screen = RenderHost.GetHost(index);
+                screen.RemoveWallpaper(_controls[index]);
+            }
         }
 
         public void Dispose()
         {
-            RenderHost.UIInvoke(() =>
+            foreach (var item in _controls)
             {
-                browserForm.Close();
-                browserForm = null;
-            });
+                item.Value.DisposeWebBrowser();
+                item.Value.Dispose();
+            }
+            _controls.Clear();
         }
 
         public int GetVolume()
@@ -56,18 +63,21 @@ namespace LiveWallpaperEngineRender.Renders
             throw new NotImplementedException();
         }
 
-        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndex)
+        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            if (browserForm == null)
+            foreach (var index in screenIndexs)
             {
-                RenderHost.UIInvoke(() =>
+                if (!_controls.ContainsKey(index))
                 {
-                    browserForm = new Browser();
-                    browserForm.Show();
-                    //WallpaperHelper.GetInstance(data.ScreenIndexs).SendToBackground(browserForm.Handle);
-                });
+                    RenderHost.UIInvoke(() =>
+                    {
+                        _controls[index] = new WebControl();
+                    });
+                }
+                var screen = RenderHost.GetHost(index);
+                screen.ShowWallpaper(_controls[index], this);
+                _controls[index].LoadPage(wallpaper.Path);
             }
-            browserForm.LoadPage(wallpaper.Path);
             return Task.CompletedTask;
         }
     }

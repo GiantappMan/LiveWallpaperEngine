@@ -9,7 +9,7 @@ namespace LiveWallpaperEngineRender.Renders
 {
     class VideoRender : IRender
     {
-        readonly Dictionary<int, VideoControl> _videoControls = new Dictionary<int, VideoControl>();
+        readonly Dictionary<int, VideoControl> _controls = new Dictionary<int, VideoControl>();
 
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
@@ -23,20 +23,20 @@ namespace LiveWallpaperEngineRender.Renders
         {
             foreach (var index in screenIndexs)
             {
-                _videoControls[index].Stop();
+                _controls[index].Stop();
                 var screen = RenderHost.GetHost(index);
-                screen.RemoveWallpaper(_videoControls[index]);
+                screen.RemoveWallpaper(_controls[index]);
             }
         }
 
         public void Dispose()
         {
-            foreach (var item in _videoControls)
+            foreach (var item in _controls)
             {
                 item.Value.DiposePlayer();
                 item.Value.Dispose();
             }
-            _videoControls.Clear();
+            _controls.Clear();
         }
 
         public int GetVolume()
@@ -63,17 +63,17 @@ namespace LiveWallpaperEngineRender.Renders
         {
             foreach (var index in screenIndexs)
             {
-                if (!_videoControls.ContainsKey(index))
+                if (!_controls.ContainsKey(index))
                 {
                     RenderHost.UIInvoke(() =>
                     {
-                        _videoControls[index] = new VideoControl();
-                        _videoControls[index].InitPlayer();
+                        _controls[index] = new VideoControl();
+                        _controls[index].InitPlayer();
                     });
                 }
                 var screen = RenderHost.GetHost(index);
-                screen.ShowWallpaper(_videoControls[index], this);
-                _videoControls[index].Load(wallpaper.Path);
+                screen.ShowWallpaper(_controls[index], this);
+                _controls[index].Load(wallpaper.Path);
             }
             return Task.CompletedTask;
         }
