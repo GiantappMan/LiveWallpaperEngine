@@ -9,11 +9,11 @@ namespace LiveWallpaperEngine.Common.Models
 {
     public enum WalllpaperDefinedType
     {
+        NotSupport,
         Video,
         Image,
         Web,
-        Exe,
-        NotSupport
+        Exe
     }
 
     public class WallpaperType

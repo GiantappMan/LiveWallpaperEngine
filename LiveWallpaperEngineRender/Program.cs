@@ -82,15 +82,24 @@ namespace LiveWallpaperEngineRender
             {
                 var data = JsonConvert.DeserializeObject<InvokeRender>(e.Parameter);
 
-                var currentRender = RenderFactory.GetOrCreateRender(data.DType);
-                var method = currentRender.GetType().GetMethod(data.InvokeMethod);
-                var methodParameters = method.GetParameters();
+                switch (data.InvokeMethod)
+                {
+                    case nameof(IRender.CloseWallpaper):
+                        //todo
+                        RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(JsonConvert.DeserializeObject<int[]>(data.Parameters)));
+                        break;
+                    default:
+                        //转发到本地IRender
+                        var currentRender = RenderFactory.GetOrCreateRender(data.DType);
+                        var method = currentRender.GetType().GetMethod(data.InvokeMethod);
+                        var methodParameters = method.GetParameters();
+                        var parameters = new object[methodParameters.Length];
 
-                var parameters = new object[methodParameters.Length];
-                for (int i = 0; i < methodParameters.Length; i++)
-                    parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
-                //转发到本地IRender
-                method.Invoke(currentRender, parameters);
+                        for (int i = 0; i < methodParameters.Length; i++)
+                            parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
+                        method.Invoke(currentRender, parameters);
+                        break;
+                }
             }
         }
 
