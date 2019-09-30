@@ -8,18 +8,18 @@ namespace LiveWallpaperEngine.Common.Models
 {
     public class ExeWallpaperType : WallpaperType
     {
-        public ExeWallpaperType() : base(DefinedType.Exe, ".exe") { }
+        public ExeWallpaperType() : base(WalllpaperDefinedType.Exe, ".exe") { }
     }
     public class VideoWallpaperType : WallpaperType
     {
-        public VideoWallpaperType() : base(DefinedType.Video, ".mp4", ".flv", ".blv", ".avi") { }
+        public VideoWallpaperType() : base(WalllpaperDefinedType.Video, ".mp4", ".flv", ".blv", ".avi") { }
     }
     public class ImageWallpaperType : WallpaperType
     {
-        public ImageWallpaperType() : base(DefinedType.Image, ".jpg", ".jpeg", ".png", ".bmp") { }
+        public ImageWallpaperType() : base(WalllpaperDefinedType.Image, ".jpg", ".jpeg", ".png", ".bmp") { }
     }
     public class WebWallpaperType : WallpaperType
     {
-        public WebWallpaperType() : base(DefinedType.Web, ".html", ".htm") { }
+        public WebWallpaperType() : base(WalllpaperDefinedType.Web, ".html", ".htm") { }
     }
 }

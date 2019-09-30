@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LiveWallpaperEngine.Common.Models;
+using LiveWallpaperEngine.Common.Renders;
 
 namespace LiveWallpaperEngine.Renders
 {
@@ -38,7 +39,12 @@ namespace LiveWallpaperEngine.Renders
             throw new NotImplementedException();
         }
 
-        public Task LaunchWallpaper(WallpaperModel wallpaper, int screenIndex)
+        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseWallpaper(params int[] screenIndexs)
         {
             throw new NotImplementedException();
         }

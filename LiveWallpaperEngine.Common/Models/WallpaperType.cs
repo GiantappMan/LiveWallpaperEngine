@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine.Common.Models
 {
+    public enum WalllpaperDefinedType
+    {
+        Video,
+        Image,
+        Web,
+        Exe,
+        NotSupport
+    }
+
     public class WallpaperType
     {
-        public enum DefinedType
-        {
-            Video,
-            Image,
-            Web,
-            Exe,
-            NotSupport
-        }
-
-        public WallpaperType(DefinedType type, params string[] extesion)
+        public WallpaperType(WalllpaperDefinedType type, params string[] extesion)
         {
             DType = type;
             SupportExtensions = extesion?.ToList();
         }
         [JsonProperty]
-        public DefinedType DType { get; private set; }
+        public WalllpaperDefinedType DType { get; private set; }
 
         [JsonProperty]
         public List<string> SupportExtensions { get; private set; }

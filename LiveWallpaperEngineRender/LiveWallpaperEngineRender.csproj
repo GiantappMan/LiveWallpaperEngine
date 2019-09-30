@@ -23,8 +23,9 @@
     <Page Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Forms\VideoControl.cs" />
-    <Compile Remove="Forms\VideoControl.Designer.cs" />
+    <Compile Remove="Forms\Video.cs" />
+    <Compile Remove="Forms\Video.Designer.cs" />
+    <Compile Remove="Renders\IRender.cs" />
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
   <ItemGroup>

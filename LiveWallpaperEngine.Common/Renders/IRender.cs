@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Common.Renders
 {
     /// <summary>
     /// 壁纸渲染器
@@ -10,11 +10,6 @@ namespace LiveWallpaperEngine
     public interface IRender
     {
         List<WallpaperType> SupportTypes { get; }
-        ///// <summary>
-        ///// 获取窗口句柄
-        ///// </summary>
-        ///// <returns></returns>
-        //Task<IntPtr> GetWindowHandle();
         /// <summary>
         /// 释放
         /// </summary>

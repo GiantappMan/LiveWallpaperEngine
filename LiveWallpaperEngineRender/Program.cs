@@ -1,10 +1,10 @@
 ﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Common.Renders;
 using LiveWallpaperEngineRender.Renders;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,93 +13,51 @@ namespace LiveWallpaperEngineRender
     static class Program
     {
         static IPCHelper _ipc = null;
-        static IRender _currentRender = null;
-        static List<IRender> _allRenders = new List<IRender>()
-        {
-            new WebRender(),
-            new VideoRender()
-        };
         static Form _mainForm;
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+
         [STAThread]
         static void Main(string[] args)
         {
-            //System.Windows.MessageBox.Show(args[0]);
-            ////隐藏控制台
-            //var handle = Kernel32Wrapper.GetConsoleWindow();
-            //User32Wrapper.ShowWindow(handle, WINDOWPLACEMENTFlags.SW_HIDE);
+            //注册render
+            RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
+            RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
 
             WatchParent();
-
-            //string screenIndex = "0";
-            //if (args.Length > 0)
-            //    screenIndex = args[0];
 
             _ipc = new IPCHelper(IPCHelper.RemoteRenderID, IPCHelper.ServerID);
             _ipc.MsgReceived += Ipc_MsgReceived;
 
+            //winform设置
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //处理未捕获的异常   
+            //异常捕获
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            //处理UI线程异常   
-            Application.ThreadException += Application_ThreadException;
-            //处理非UI线程异常   
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            _mainForm = new Main();
+            _mainForm = new RenderHost(0);
             _mainForm.Load += Main_Load;
-            _mainForm.Hide();
             Application.Run(_mainForm);
         }
+
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            string str;
-            var strDateInfo = "出现应用程序未处理的异常：" + DateTime.Now + "\r\n";
             var error = e.Exception;
-            if (error != null)
-            {
-                str = string.Format(strDateInfo + "异常类型：{0}\r\n异常消息：{1}\r\n异常信息：{2}\r\n",
-                    error.GetType().Name, error.Message, error.StackTrace);
-            }
-            else
-            {
-                str = string.Format("应用程序线程错误:{0}", e);
-            }
-
-            MessageBox.Show("发生错误，请查看程序日志！", "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(error?.Message, "ThreadException");
             Environment.Exit(0);
         }
-
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var error = e.ExceptionObject as Exception;
-            var strDateInfo = "出现应用程序未处理的异常：" + DateTime.Now + "\r\n";
-            var str = error != null ? string.Format(strDateInfo + "Application UnhandledException:{0};\n\r堆栈信息:{1}", error.Message, error.StackTrace) : string.Format("Application UnhandledError:{0}", e);
-
-
-            MessageBox.Show("发生错误，请查看程序日志！", "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(error?.Message, "UnhandledException");
             Environment.Exit(0);
         }
 
         private static void Main_Load(object sender, EventArgs e)
         {
-            //_mainForm.Invoke(new Action(() =>
-            //{
-            //    //test
-            //    WebRender w = new WebRender();
-            //    w.Show(new LaunchWallpaper()
-            //    {
-            //        Path = @"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\html\index.html"
-            //    }, null);
-            //}));
-            //_mainForm.ShowInTaskbar = false;
-            //_mainForm.Opacity = 0;
             _mainForm.Load -= Main_Load;
             _ipc.Send(new Ready());
         }
@@ -120,26 +78,21 @@ namespace LiveWallpaperEngineRender
 
         private static void Ipc_MsgReceived(object sender, Command e)
         {
-            if (e.CommandFullName == typeof(LaunchWallpaper).FullName)
+            if (e.CommandFullName == typeof(InvokeRender).FullName)
             {
-                var data = JsonConvert.DeserializeObject<LaunchWallpaper>(e.Parameter);
-                if (_currentRender == null || !_currentRender.SupportTypes.Contains(data.Wallpaper.Type.DType))
-                {
-                    _currentRender?.Dispose();
-                    _currentRender = _allRenders.FirstOrDefault(m => m.SupportTypes.Contains(data.Wallpaper.Type.DType));
-                }
+                var data = JsonConvert.DeserializeObject<InvokeRender>(e.Parameter);
 
-                _currentRender.Show(data, null);
+                var currentRender = RenderFactory.GetOrCreateRender(data.DType);
+                var method = currentRender.GetType().GetMethod(data.InvokeMethod);
+                var methodParameters = method.GetParameters();
+
+                var parameters = new object[methodParameters.Length];
+                for (int i = 0; i < methodParameters.Length; i++)
+                    parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
+                //转发到本地IRender
+                method.Invoke(currentRender, parameters);
             }
         }
-
-        //private static void SendHandle(IntPtr handle)
-        //{
-        //    _ipc.Send(new LaunchWallpaperResult()
-        //    {
-        //        Handle = handle
-        //    });
-        //}
 
         private static void Parent_Exited(object sender, EventArgs e)
         {

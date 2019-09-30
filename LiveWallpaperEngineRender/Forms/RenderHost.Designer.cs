@@ -1,6 +1,6 @@
 ﻿namespace LiveWallpaperEngineRender
 {
-    partial class Main
+    partial class RenderHost
     {
         /// <summary>
         /// Required designer variable.

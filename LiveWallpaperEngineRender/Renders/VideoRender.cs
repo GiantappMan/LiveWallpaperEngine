@@ -1,45 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
+using LiveWallpaperEngine.Common.Renders;
 using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
     class VideoRender : IRender
     {
-        Video videoForm;
-        public List<WallpaperType.DefinedType> SupportTypes => new List<WallpaperType.DefinedType>() {
-                WallpaperType.DefinedType.Video,
-                WallpaperType.DefinedType.Image
+        readonly Dictionary<int, VideoControl> _videoControls = new Dictionary<int, VideoControl>();
+
+        public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
+        {
+            new VideoWallpaperType(),
+            new ImageWallpaperType()
         };
 
-        public IntPtr Handle { private set; get; }
+        List<WallpaperType> IRender.SupportTypes => StaticSupportTypes;
+
+        public void CloseWallpaper(params int[] screenIndexs)
+        {
+            foreach (var index in screenIndexs)
+            {
+                _videoControls[index].Stop();
+                var screen = RenderHost.GetHost(index);
+                screen.RemoveWallpaper(_videoControls[index]);
+            }
+        }
 
         public void Dispose()
         {
-            videoForm.DiposePlayer();
-            Main.UIInvoke(() =>
+            foreach (var item in _videoControls)
             {
-                videoForm.Close();
-            });
+                item.Value.DiposePlayer();
+                item.Value.Dispose();
+            }
+            _videoControls.Clear();
         }
 
-        public void Show(LaunchWallpaper data, Action<IntPtr> callBack)
+        public int GetVolume()
         {
-            if (videoForm == null)
+            throw new NotImplementedException();
+        }
+
+        public void Pause()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Resum()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetVolume(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        {
+            foreach (var index in screenIndexs)
             {
-                Main.UIInvoke(() =>
+                if (!_videoControls.ContainsKey(index))
                 {
-                    videoForm = new Video();
-                    videoForm.Show();
-                    WallpaperHelper.GetInstance(data.ScreenIndex).SendToBackground(videoForm.Handle);
-                });
+                    RenderHost.UIInvoke(() =>
+                    {
+                        _videoControls[index] = new VideoControl();
+                        _videoControls[index].InitPlayer();
+                    });
+                }
+                var screen = RenderHost.GetHost(index);
+                screen.ShowWallpaper(_videoControls[index], this);
+                _videoControls[index].Load(wallpaper.Path);
             }
-            videoForm.LoadFile(data.Wallpaper.Path);
-            callBack?.Invoke(videoForm.Handle);
+            return Task.CompletedTask;
         }
     }
 }

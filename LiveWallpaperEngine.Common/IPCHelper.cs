@@ -9,10 +9,7 @@ using TinyIpc.Messaging;
 namespace LiveWallpaperEngine.Common
 {
     #region ToServerCommands
-    public struct LaunchWallpaperResult
-    {
-        public IntPtr Handle { get; set; }
-    }
+
 
     public struct Ready { }
 
@@ -20,10 +17,11 @@ namespace LiveWallpaperEngine.Common
 
     #region ToClientCommands
 
-    public class LaunchWallpaper
+    public class InvokeRender
     {
-        public WallpaperModel Wallpaper { get; set; }
-        public int ScreenIndex { get; set; }
+        public string InvokeMethod { get; set; }
+        public object[] Parameters { get; set; }
+        public WalllpaperDefinedType DType { get; set; }
     }
 
     #endregion
@@ -39,7 +37,7 @@ namespace LiveWallpaperEngine.Common
         public string Parameter { get; set; }
     }
 
-    public class IPCHelper : IDisposable
+    public sealed class IPCHelper : IDisposable
     {
         public const string ServerID = "LivewallpaperServerIPC";
         public const string RemoteRenderID = "LivewallpaperRemoteRenderIPC";
@@ -69,12 +67,6 @@ namespace LiveWallpaperEngine.Common
             _messages.Enqueue(msg);
         }
 
-        public void Dispose()
-        {
-            _messageBus.MessageReceived -= _messageBus_MessageReceived;
-            _messageBus?.Dispose();
-            _messageBus = null;
-        }
 
         public Task Send<T>(T command)
         {
@@ -117,6 +109,13 @@ namespace LiveWallpaperEngine.Common
                 await Task.Delay(100);
             }
             return default;
+        }
+
+        public void Dispose()
+        {
+            _messageBus.MessageReceived -= _messageBus_MessageReceived;
+            _messageBus?.Dispose();
+            _messageBus = null;
         }
     }
 }

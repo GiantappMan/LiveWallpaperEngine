@@ -16,7 +16,7 @@ namespace Test.LiveWallpaperEngine
             }, 0);
 
             Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Path == "test.mp4");
-            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Type.DType == WallpaperType.DefinedType.Video);
+            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Type.DType == WalllpaperDefinedType.Video);
         }
 
         [TestMethod]
@@ -33,8 +33,8 @@ namespace Test.LiveWallpaperEngine
 
             Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Path == "test.mp4");
             Assert.IsTrue(LiveWallpaper.Status.Wallpapers[1].Value.Path == "test1.jpg");
-            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Type.DType == WallpaperType.DefinedType.Video);
-            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[1].Value.Type.DType == WallpaperType.DefinedType.Image);
+            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[0].Value.Type.DType == WalllpaperDefinedType.Video);
+            Assert.IsTrue(LiveWallpaper.Status.Wallpapers[1].Value.Type.DType == WalllpaperDefinedType.Image);
 
             LiveWallpaper.Close(1);
             Assert.IsTrue(LiveWallpaper.Status.Wallpapers.Count == 1);

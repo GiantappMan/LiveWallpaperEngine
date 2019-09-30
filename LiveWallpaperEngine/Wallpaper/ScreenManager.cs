@@ -48,9 +48,9 @@ namespace LiveWallpaperEngine.Wallpaper
             //explore重启后，之前的窗口已经挂了不能恢复
             Shown = false;
 
-            var _desktopWallpaperAPI = GetDesktopWallpaperAPI();
+            //var _desktopWallpaperAPI = GetDesktopWallpaperAPI();
             //_desktopWallpaperAPI?.GetSlideshowOptions(out DesktopSlideshowOptions temp, out _slideshowTick);
-            _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+            //_desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
         }
 
         #endregion
@@ -67,7 +67,7 @@ namespace LiveWallpaperEngine.Wallpaper
                 _currentRender.Dispose();
                 _currentRender = RenderFactory.CreateRender(wallpaper.Type.DType);
             }
-            await _currentRender.LaunchWallpaper(wallpaper, _screenIndex);
+            await _currentRender.ShowWallpaper(wallpaper, _screenIndex);
             //var handler = await _currentRender.GetWindowHandle();
             //wallpaperHelper.SendToBackground(handler);
         }
@@ -157,19 +157,19 @@ namespace LiveWallpaperEngine.Wallpaper
         //    _desktopWallpaperAPI?.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, _slideshowTick);
         //}
 
-        public static IDesktopWallpaper GetDesktopWallpaperAPI()
-        {
-            try
-            {
-                var result = DesktopWallpaperFactory.Create();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return null;
-            }
-        }
+        //public static IDesktopWallpaper GetDesktopWallpaperAPI()
+        //{
+        //    try
+        //    {
+        //        var result = DesktopWallpaperFactory.Create();
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine(ex);
+        //        return null;
+        //    }
+        //}
 
         #endregion
 

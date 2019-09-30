@@ -1,10 +1,10 @@
 ﻿using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
+using LiveWallpaperEngine.Common.Renders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace LiveWallpaperEngine.Renders
 {
@@ -34,14 +34,6 @@ namespace LiveWallpaperEngine.Renders
             throw new NotImplementedException();
         }
 
-        //public void LaunchWallpaper(string path)
-        //{
-        //    _ = ipc.Send(new LaunchWallpaper()
-        //    {
-        //        Path = path
-        //    });
-        //}
-
         public void Pause()
         {
             throw new NotImplementedException();
@@ -65,7 +57,7 @@ namespace LiveWallpaperEngine.Renders
             _ipc = null;
         }
 
-        public async Task LaunchWallpaper(WallpaperModel wallpaper, int screenIndex)
+        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
             if (_ipc == null)
                 _ipc = new IPCHelper(IPCHelper.ServerID, IPCHelper.RemoteRenderID);
@@ -76,17 +68,27 @@ namespace LiveWallpaperEngine.Renders
                 _currentProcess = pList?.Length > 0 ? pList[0] : null;
                 if (_currentProcess == null)
                 {
-                    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe", screenIndex.ToString());
+                    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe");
                     //等待render初始完成
                     await _ipc.Wait<Ready>();
                 }
             }
 
             //显示壁纸
-            await _ipc.Send(new LaunchWallpaper()
+            await _ipc.Send(new InvokeRender()
             {
-                Wallpaper = wallpaper,
-                ScreenIndex = screenIndex
+                DType = wallpaper.Type.DType,
+                InvokeMethod = nameof(IRender.ShowWallpaper),
+                Parameters = new object[] { wallpaper, screenIndexs },
+            });
+        }
+
+        public async void CloseWallpaper(params int[] screenIndexs)
+        {
+            await _ipc.Send(new InvokeRender()
+            {
+                InvokeMethod = nameof(IRender.CloseWallpaper),
+                Parameters = new object[] { screenIndexs },
             });
         }
     }

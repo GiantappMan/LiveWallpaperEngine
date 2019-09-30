@@ -1,12 +1,11 @@
 ﻿using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
-using LiveWallpaperEngine.Renders;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace LiveWallpaperEngine
+namespace LiveWallpaperEngine.Common.Renders
 {
     /// <summary>
     /// 定义render类型的实现
@@ -20,11 +19,6 @@ namespace LiveWallpaperEngine
         public static Dictionary<Type, List<WallpaperType>> Renders = new Dictionary<Type, List<WallpaperType>>();
         public static List<IRender> CacheInstance = new List<IRender>();
 
-        static RenderFactory()
-        {
-            Renders.Add(typeof(RemoteRender), RemoteRender.StaticSupportTypes);
-            Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
-        }
 
         public static IRender CreateRender(WalllpaperDefinedType dType)
         {
@@ -37,7 +31,7 @@ namespace LiveWallpaperEngine
             return null;
         }
 
-        internal static IRender GetOrCreateRender(WalllpaperDefinedType dType)
+        public static IRender GetOrCreateRender(WalllpaperDefinedType dType)
         {
             foreach (var instance in CacheInstance)
             {
