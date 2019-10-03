@@ -16,7 +16,7 @@ namespace LiveWallpaperEngineRender
         static Form _mainForm;
 
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             //注册render
             RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
@@ -86,21 +86,35 @@ namespace LiveWallpaperEngineRender
                 {
                     case nameof(IRender.CloseWallpaper):
                         //todo
-                        RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(JsonConvert.DeserializeObject<int[]>(data.Parameters)));
+                        //RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(JsonConvert.DeserializeObject<int[]>(data.Parameters)));
+                        RenderFactory.CacheInstance.ForEach(m => AssignToRender(m, data.InvokeMethod, data.Parameters));
                         break;
                     default:
                         //转发到本地IRender
                         var currentRender = RenderFactory.GetOrCreateRender(data.DType);
-                        var method = currentRender.GetType().GetMethod(data.InvokeMethod);
-                        var methodParameters = method.GetParameters();
-                        var parameters = new object[methodParameters.Length];
+                        AssignToRender(currentRender, data.InvokeMethod, data.Parameters);
+                        //var method = currentRender.GetType().GetMethod(data.InvokeMethod);
+                        //var methodParameters = method.GetParameters();
+                        //var parameters = new object[methodParameters.Length];
 
-                        for (int i = 0; i < methodParameters.Length; i++)
-                            parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
-                        method.Invoke(currentRender, parameters);
+                        //for (int i = 0; i < methodParameters.Length; i++)
+                        //    parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
+                        //method.Invoke(currentRender, parameters);
                         break;
                 }
             }
+        }
+
+        //从ipc对象转发到本地Render
+        private static void AssignToRender(IRender targetRender, string invokeMethod, object[] jsonParameters)
+        {
+            var method = targetRender.GetType().GetMethod(invokeMethod);
+            var methodParameters = method.GetParameters();
+            var parameters = new object[methodParameters.Length];
+
+            for (int i = 0; i < methodParameters.Length; i++)
+                parameters[i] = JsonConvert.DeserializeObject(jsonParameters[i].ToString(), methodParameters[i].ParameterType);
+            method.Invoke(targetRender, parameters);
         }
 
         private static void Parent_Exited(object sender, EventArgs e)

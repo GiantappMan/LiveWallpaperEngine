@@ -32,8 +32,7 @@ namespace LiveWallpaperEngineRender.Forms
         public WebControl()
         {
             InitializeComponent();
-            _browser = new ChromiumWebBrowser(address: @"F:/work/gitee/LiveWallpaperEngine/LiveWallpaperEngineRender/defaultHtml/index.html
-")
+            _browser = new ChromiumWebBrowser(address: null)
             {
                 Dock = DockStyle.Fill,
             };
@@ -42,6 +41,7 @@ namespace LiveWallpaperEngineRender.Forms
         }
         internal void StopPage()
         {
+            _browser?.LoadHtml("");
         }
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e)
         {
