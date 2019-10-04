@@ -46,6 +46,7 @@ namespace LiveWallpaperEngineRender
             {
                 if (Controls.Contains(control))
                     Controls.Remove(control);
+                Refresh();
             });
         }
 
@@ -77,6 +78,7 @@ namespace LiveWallpaperEngineRender
                 Opacity = 1;
                 Show();
                 WallpaperHelper.GetInstance(_screenIndex).SendToBackground(Handle);
+                Refresh();
             });
         }
     }
