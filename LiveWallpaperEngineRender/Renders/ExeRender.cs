@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Common.Renders;
 
-namespace LiveWallpaperEngine.Renders
+namespace LiveWallpaperEngineRender.Renders
 {
     public class ExeRender : IRender
     {

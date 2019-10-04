@@ -1,4 +1,5 @@
-﻿using LiveWallpaperEngine.Common;
+﻿using DZY.WinAPI;
+using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Common.Renders;
 using System;
@@ -11,45 +12,49 @@ namespace LiveWallpaperEngine.Renders
     /// <summary>
     /// 用单独进程跑render。因为mpv释放不是很干净，杀进程比较稳妥
     /// </summary>
-    public class RemoteRender : IRender
+    public class RemoteRender
     {
-        Process _currentProcess = null;
-        IPCHelper _ipc = null;
+        static Process _currentProcess = null;
+        static IPCHelper _ipc = null;
 
-        public List<WallpaperType> SupportTypes => StaticSupportTypes;
+        public static List<WallpaperType> SupportTypes => StaticSupportTypes;
 
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
             new VideoWallpaperType(),
             new ImageWallpaperType(),
-            new WebWallpaperType()
+            new WebWallpaperType(),
+            new ExeWallpaperType()
         };
 
-        public RemoteRender()
+        public static void Initlize()
         {
+            //dpi 相关
+            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+            WallpaperHelper.DoSomeMagic();
         }
 
-        public int GetVolume()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Pause()
+        public static int GetVolume()
         {
             throw new NotImplementedException();
         }
 
-        public void Resum()
+        public static void Pause()
         {
             throw new NotImplementedException();
         }
 
-        public void SetVolume(int v)
+        public static void Resum()
         {
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        public static void SetVolume(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Dispose()
         {
             _currentProcess?.Kill();
             _currentProcess = null;
@@ -57,7 +62,7 @@ namespace LiveWallpaperEngine.Renders
             _ipc = null;
         }
 
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        public static async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
             if (_ipc == null)
                 _ipc = new IPCHelper(IPCHelper.ServerID, IPCHelper.RemoteRenderID);
@@ -77,13 +82,12 @@ namespace LiveWallpaperEngine.Renders
             //显示壁纸
             await _ipc.Send(new InvokeRender()
             {
-                DType = wallpaper.Type.DType,
                 InvokeMethod = nameof(IRender.ShowWallpaper),
                 Parameters = new object[] { wallpaper, screenIndexs },
             });
         }
 
-        public async void CloseWallpaper(params int[] screenIndexs)
+        public static async void CloseWallpaper(params int[] screenIndexs)
         {
             await _ipc.Send(new InvokeRender()
             {

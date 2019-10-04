@@ -21,7 +21,6 @@ namespace LiveWallpaperEngine.Common
     {
         public string InvokeMethod { get; set; }
         public object[] Parameters { get; set; }
-        public WalllpaperDefinedType DType { get; set; }
     }
 
     #endregion

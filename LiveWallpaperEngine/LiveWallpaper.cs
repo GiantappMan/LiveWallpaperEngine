@@ -1,5 +1,6 @@
 ﻿using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
+using LiveWallpaperEngine.Renders;
 using LiveWallpaperEngine.Wallpaper;
 using System;
 using System.Diagnostics;
@@ -18,7 +19,7 @@ namespace LiveWallpaperEngine
     {
         static LiveWallpaper()
         {
-            ScreenManagers.Initlize();
+            RemoteRender.Initlize();
         }
         private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
         {
@@ -66,13 +67,13 @@ namespace LiveWallpaperEngine
         /// <remarks>       
         public static void Show(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            ScreenManagers.ShowWallpaper(wallpaper, screenIndexs);
+            _ = RemoteRender.ShowWallpaper(wallpaper, screenIndexs);
             StatusManager.ShowWallpaper(wallpaper, screenIndexs);
         }
-        public static void Close(params int[] screenIndex)
+        public static void Close(params int[] screenIndexs)
         {
-            ScreenManagers.CloseWallpaper(screenIndex);
-            StatusManager.CloseWallpaper(screenIndex);
+            RemoteRender.CloseWallpaper(screenIndexs);
+            StatusManager.CloseWallpaper(screenIndexs);
         }
         #endregion
 

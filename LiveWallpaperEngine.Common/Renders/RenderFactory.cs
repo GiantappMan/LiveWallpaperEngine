@@ -53,7 +53,8 @@ namespace LiveWallpaperEngine.Common.Renders
             foreach (var render in Renders)
             {
                 var exist = render.Value.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
-                return exist;
+                if (exist != null)
+                    return exist;
             }
             return new WallpaperType(WalllpaperDefinedType.NotSupport);
         }

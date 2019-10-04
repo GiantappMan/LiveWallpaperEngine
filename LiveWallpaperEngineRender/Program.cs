@@ -1,4 +1,5 @@
 ﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Common.Renders;
 using LiveWallpaperEngineRender.Renders;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ namespace LiveWallpaperEngineRender
             //注册render
             RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
             RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
+            RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
 
             WatchParent();
 
@@ -85,21 +87,18 @@ namespace LiveWallpaperEngineRender
                 switch (data.InvokeMethod)
                 {
                     case nameof(IRender.CloseWallpaper):
-                        //todo
-                        //RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(JsonConvert.DeserializeObject<int[]>(data.Parameters)));
                         RenderFactory.CacheInstance.ForEach(m => AssignToRender(m, data.InvokeMethod, data.Parameters));
                         break;
-                    default:
+                    case nameof(IRender.ShowWallpaper):
                         //转发到本地IRender
-                        var currentRender = RenderFactory.GetOrCreateRender(data.DType);
-                        AssignToRender(currentRender, data.InvokeMethod, data.Parameters);
-                        //var method = currentRender.GetType().GetMethod(data.InvokeMethod);
-                        //var methodParameters = method.GetParameters();
-                        //var parameters = new object[methodParameters.Length];
+                        var p1 = JsonConvert.DeserializeObject<WallpaperModel>(data.Parameters[0].ToString());
+                        if (p1.Type == null)
+                            p1.Type = RenderFactory.ResoveType(p1.Path);
+                        if (p1.Type.DType == WalllpaperDefinedType.NotSupport)
+                            return;
 
-                        //for (int i = 0; i < methodParameters.Length; i++)
-                        //    parameters[i] = JsonConvert.DeserializeObject(data.Parameters[i].ToString(), methodParameters[i].ParameterType);
-                        //method.Invoke(currentRender, parameters);
+                        var currentRender = RenderFactory.GetOrCreateRender(p1.Type.DType);
+                        AssignToRender(currentRender, data.InvokeMethod, data.Parameters);
                         break;
                 }
             }
