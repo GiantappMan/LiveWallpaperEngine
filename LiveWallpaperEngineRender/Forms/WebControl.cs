@@ -8,10 +8,11 @@ using System.Windows.Forms;
 using CefSharp.WinForms;
 using CefSharp;
 using System.IO;
+using LiveWallpaperEngine.Common.Renders;
 
 namespace LiveWallpaperEngineRender.Forms
 {
-    public partial class WebControl : UserControl
+    public partial class WebControl : UserControl, IRenderControl
     {
         static WebControl()
         {
@@ -39,10 +40,7 @@ namespace LiveWallpaperEngineRender.Forms
             _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
             Controls.Add(_browser);
         }
-        internal void StopPage()
-        {
-            _browser?.LoadHtml("");
-        }
+   
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e)
         {
             _browser.IsBrowserInitializedChanged -= Browser_IsBrowserInitializedChanged;
@@ -52,7 +50,12 @@ namespace LiveWallpaperEngineRender.Forms
                     _browser.Load(_lastUrl);
                 }));
         }
-        internal void LoadPage(string url)
+
+        public void InitRender()
+        {
+        }
+
+        void IRenderControl.Load(string url)
         {
             if (!_browser.IsBrowserInitialized)
             {
@@ -65,10 +68,30 @@ namespace LiveWallpaperEngineRender.Forms
             }));
         }
 
-        public void DisposeWebBrowser()
+        public void Stop()
+        {
+            _browser?.LoadHtml("");
+        }
+
+        public void Pause()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Resum()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DisposeRender()
         {
             //_browser.Dispose();
             _browser = null;
+        }
+
+        public void SetVolume(int volume)
+        {
+            throw new NotImplementedException();
         }
     }
 }

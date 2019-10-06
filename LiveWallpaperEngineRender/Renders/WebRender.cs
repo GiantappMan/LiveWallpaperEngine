@@ -7,82 +7,12 @@ using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
-    class WebRender : IRender
+    class WebRender : BaseRender<WebControl>
     {
-        readonly Dictionary<int, WebControl> _controls = new Dictionary<int, WebControl>();
-        public WebRender()
-        {
-        }
-
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
             new WebWallpaperType(),
         };
-        public List<WallpaperType> SupportTypes => StaticSupportTypes;
-
-        public IntPtr Handle { private set; get; }
-
-
-        public void CloseWallpaper(params int[] screenIndexs)
-        {
-            foreach (var index in screenIndexs)
-            {
-                _controls[index].StopPage();
-                var screen = RenderHost.GetHost(index);
-                screen.RemoveWallpaper(_controls[index]);
-            }
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            RenderHost.UIInvoke(() =>
-            {
-                foreach (var item in _controls)
-                {
-                    item.Value.DisposeWebBrowser();
-                    item.Value.Dispose();
-                }
-                _controls.Clear();
-            });
-        }
-
-        public int GetVolume(params int[] screenIndexs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Pause(params int[] screenIndexs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Resum(params int[] screenIndexs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetVolume(int v, params int[] screenIndexs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
-        {
-            foreach (var index in screenIndexs)
-            {
-                if (!_controls.ContainsKey(index))
-                {
-                    RenderHost.UIInvoke(() =>
-                    {
-                        _controls[index] = new WebControl();
-                    });
-                }
-                var screen = RenderHost.GetHost(index);
-                screen.ShowWallpaper(_controls[index], this);
-                _controls[index].LoadPage(wallpaper.Path);
-            }
-            return Task.CompletedTask;
-        }
+        public override List<WallpaperType> SupportTypes => StaticSupportTypes;
     }
 }

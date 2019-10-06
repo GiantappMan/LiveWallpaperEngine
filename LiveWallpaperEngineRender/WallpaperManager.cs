@@ -79,6 +79,8 @@ namespace LiveWallpaperEngineRender
             if (wallpaper.Type.DType == WalllpaperDefinedType.NotSupport)
                 return;
 
+            //关闭上次显示的壁纸
+            CloseWallpaper(screenIndexs);
             var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type.DType);
             await currentRender.ShowWallpaper(wallpaper, screenIndexs);
 

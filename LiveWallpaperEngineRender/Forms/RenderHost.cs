@@ -11,7 +11,6 @@ namespace LiveWallpaperEngineRender
     {
         static Dictionary<int, RenderHost> _hosts = new Dictionary<int, RenderHost>();
         int _screenIndex;
-        IRender _currentRender;
 
         public RenderHost(int screenIndex)
         {
@@ -66,11 +65,8 @@ namespace LiveWallpaperEngineRender
             return _hosts[screenIndex];
         }
 
-        internal void ShowWallpaper(Control control, IRender render)
+        internal void ShowWallpaper(Control control)
         {
-            //关闭上一个壁纸
-            _currentRender?.CloseWallpaper(_screenIndex);
-            _currentRender = render;
             UIInvoke(() =>
             {
                 Controls.Clear();
