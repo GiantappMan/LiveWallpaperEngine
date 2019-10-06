@@ -1,7 +1,4 @@
 ﻿using LiveWallpaperEngine.Common;
-using LiveWallpaperEngine.Common.Models;
-using LiveWallpaperEngine.Common.Renders;
-using LiveWallpaperEngineRender.Renders;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;

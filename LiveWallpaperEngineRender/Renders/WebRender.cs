@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using LiveWallpaperEngine.Common.Models;
-using LiveWallpaperEngine.Common.Renders;
 using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
