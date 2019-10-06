@@ -4,7 +4,6 @@ using LiveWallpaperEngine.Common.Renders;
 using LiveWallpaperEngineRender.Renders;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,11 +18,7 @@ namespace LiveWallpaperEngineRender
         [STAThread]
         static void Main()
         {
-            //注册render
-            RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
-            RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
-            RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
-
+            WallpaperManager.Initlize();
             WatchParent();
 
             _ipc = new IPCHelper(IPCHelper.RemoteRenderID, IPCHelper.ServerID);
@@ -80,40 +75,23 @@ namespace LiveWallpaperEngineRender
 
         private static void Ipc_MsgReceived(object sender, Command e)
         {
-            if (e.CommandFullName == typeof(InvokeRender).FullName)
+            if (e.CommandFullName == typeof(InvokeILiveWallpaperAPI).FullName)
             {
-                var data = JsonConvert.DeserializeObject<InvokeRender>(e.Parameter);
-
-                switch (data.InvokeMethod)
-                {
-                    case nameof(IRender.CloseWallpaper):
-                        RenderFactory.CacheInstance.ForEach(m => AssignToRender(m, data.InvokeMethod, data.Parameters));
-                        break;
-                    case nameof(IRender.ShowWallpaper):
-                        //转发到本地IRender
-                        var p1 = JsonConvert.DeserializeObject<WallpaperModel>(data.Parameters[0].ToString());
-                        if (p1.Type == null)
-                            p1.Type = RenderFactory.ResoveType(p1.Path);
-                        if (p1.Type.DType == WalllpaperDefinedType.NotSupport)
-                            return;
-
-                        var currentRender = RenderFactory.GetOrCreateRender(p1.Type.DType);
-                        AssignToRender(currentRender, data.InvokeMethod, data.Parameters);
-                        break;
-                }
+                var data = JsonConvert.DeserializeObject<InvokeILiveWallpaperAPI>(e.Parameter);
+                AssignToTarget(WallpaperManager.Instance, data.InvokeMethod, data.Parameters);
             }
         }
 
-        //从ipc对象转发到本地Render
-        private static void AssignToRender(IRender targetRender, string invokeMethod, object[] jsonParameters)
+        //把ipc远程对象转发到本地对象
+        private static void AssignToTarget(object target, string invokeMethod, object[] jsonParameters)
         {
-            var method = targetRender.GetType().GetMethod(invokeMethod);
+            var method = target.GetType().GetMethod(invokeMethod);
             var methodParameters = method.GetParameters();
             var parameters = new object[methodParameters.Length];
 
             for (int i = 0; i < methodParameters.Length; i++)
                 parameters[i] = JsonConvert.DeserializeObject(jsonParameters[i].ToString(), methodParameters[i].ParameterType);
-            method.Invoke(targetRender, parameters);
+            method.Invoke(target, parameters);
         }
 
         private static void Parent_Exited(object sender, EventArgs e)

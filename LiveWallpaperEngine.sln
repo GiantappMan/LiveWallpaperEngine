@@ -37,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LiveWallpaperEngineRender",
 		Docs\LiveWallpaperEngineRender\README.md = Docs\LiveWallpaperEngineRender\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngine.Common", "LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj", "{1D7347A3-9025-4FF3-9771-ADB7499CDD24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Common", "LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj", "{1D7347A3-9025-4FF3-9771-ADB7499CDD24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

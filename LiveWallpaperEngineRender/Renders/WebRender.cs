@@ -31,16 +31,20 @@ namespace LiveWallpaperEngineRender.Renders
                 var screen = RenderHost.GetHost(index);
                 screen.RemoveWallpaper(_controls[index]);
             }
+            Dispose();
         }
 
         public void Dispose()
         {
-            foreach (var item in _controls)
+            RenderHost.UIInvoke(() =>
             {
-                item.Value.DisposeWebBrowser();
-                item.Value.Dispose();
-            }
-            _controls.Clear();
+                foreach (var item in _controls)
+                {
+                    item.Value.DisposeWebBrowser();
+                    item.Value.Dispose();
+                }
+                _controls.Clear();
+            });
         }
 
         public int GetVolume()

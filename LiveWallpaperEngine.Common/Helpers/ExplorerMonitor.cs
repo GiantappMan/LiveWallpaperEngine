@@ -8,7 +8,6 @@ namespace LiveWallpaperEngine.Common
     /// </summary>
     public static class ExplorerMonitor
     {
-        private static System.Timers.Timer _timer;
         private static DateTime? _lastTriggerTime;
 
         public static Process ExploreProcess { get; private set; }
@@ -20,30 +19,8 @@ namespace LiveWallpaperEngine.Common
             ExploreProcess = GetExplorer();
         }
 
-        public static void Start()
+        public static void Check()
         {
-            if (_timer == null)
-            {
-                _timer = new System.Timers.Timer(1000);
-                _timer.Elapsed += _timer_Elapsed;
-                _timer.Start();
-            }
-        }
-
-        public static void Stop()
-        {
-            if (_timer != null)
-            {
-                _timer.Stop();
-                _timer.Elapsed -= _timer_Elapsed;
-            }
-            _timer = null;
-        }
-
-        private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            _timer.Stop();
-
             //explorer 进程已死
             if (ExploreProcess == null || ExploreProcess.HasExited)
             {
@@ -60,10 +37,6 @@ namespace LiveWallpaperEngine.Common
                     _lastTriggerTime = null;
                 }
             }
-
-            if (_timer == null)
-                return;//disposed
-            _timer.Start();
         }
 
         private static Process GetExplorer()

@@ -3,7 +3,6 @@ using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
 using LiveWallpaperEngine.Common.Renders;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -16,16 +15,6 @@ namespace LiveWallpaperEngine.Renders
     {
         static Process _currentProcess = null;
         static IPCHelper _ipc = null;
-
-        public static List<WallpaperType> SupportTypes => StaticSupportTypes;
-
-        public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
-        {
-            new VideoWallpaperType(),
-            new ImageWallpaperType(),
-            new WebWallpaperType(),
-            new ExeWallpaperType()
-        };
 
         public static void Initlize()
         {

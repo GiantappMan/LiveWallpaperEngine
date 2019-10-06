@@ -25,7 +25,7 @@ namespace LiveWallpaperEngineRender.Forms
             settings.CefCommandLineArgs.Add("enable-media-stream", "1");
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
         }
-          
+
         private ChromiumWebBrowser _browser;
         private string _lastUrl = null;
 
@@ -67,7 +67,7 @@ namespace LiveWallpaperEngineRender.Forms
 
         public void DisposeWebBrowser()
         {
-            _browser.Dispose();
+            //_browser.Dispose();
             _browser = null;
         }
     }

@@ -86,7 +86,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                             },
                 }}}
             };
-            var vm = ConfigerService.GetVM(LiveWallpaper.Setting, descInfo);
+            var vm = ConfigerService.GetVM(new LiveWallpaperOptions(), descInfo);
             configer.DataContext = vm;
         }
 
@@ -100,7 +100,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
-                    LiveWallpaper.Show(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
+                    _ = LiveWallpaper.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -115,14 +115,14 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
-            LiveWallpaper.Close(displayIds);
+            LiveWallpaper.Instance.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
-            LiveWallpaper.ApplySetting(setting);
+            _ = LiveWallpaper.Instance.SetOptions(setting);
         }
     }
 }

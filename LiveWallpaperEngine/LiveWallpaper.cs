@@ -1,100 +1,101 @@
-﻿using LiveWallpaperEngine.Common;
+﻿using DZY.WinAPI;
+using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
-using LiveWallpaperEngine.Renders;
-using LiveWallpaperEngine.Wallpaper;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace LiveWallpaperEngine
 {
     /// <summary>
     /// 巨应动态壁纸API
-    /// 官网
-    /// mscoder.cn
     /// giantapp.cn
     /// </summary>
-    public static class LiveWallpaper
+    public class LiveWallpaper : ILiveWallpaperAPI
     {
-        static LiveWallpaper()
-        {
-            RemoteRender.Initlize();
-        }
-        private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
-        {
-            try
-            {
-                Process.Start(Application.ResourceAssembly.Location);
-                Application.Current.Shutdown();
-            }
-            catch (Exception)
-            {
+        Process _currentProcess = null;
+        IPCHelper _ipc = null;
 
-            }
+        private LiveWallpaper()
+        {
+            //dpi 相关
+            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+            WallpaperHelper.DoSomeMagic();
         }
+
+        public static LiveWallpaper Instance { get; private set; } = new LiveWallpaper();
 
         #region properties
-        public static Status Status
-        {
-            get
-            {
-                return StatusManager.Status;
-            }
-        }
-        public static LiveWallpaperOptions Setting { get; private set; }
+
         #endregion
+
+        private async Task<IPCHelper> GetIPCHelper()
+        {
+            if (_ipc == null)
+                _ipc = new IPCHelper(IPCHelper.ServerID, IPCHelper.RemoteRenderID);
+
+            if (_currentProcess == null)
+            {
+                var pList = Process.GetProcessesByName("LiveWallpaperEngineRender");
+                _currentProcess = pList?.Length > 0 ? pList[0] : null;
+                if (_currentProcess == null)
+                {
+                    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe");
+                    //等待render初始完成
+                    await _ipc.Wait<Ready>();
+                }
+            }
+            return _ipc;
+        }
 
         #region public methods
-        public static Task ApplySetting(LiveWallpaperOptions setting)
-        {
-            Setting = setting;
 
-            ExplorerMonitor.ExpolrerCreated -= ExplorerMonitor_ExpolrerCreated;
-            if (setting.AutoRestartWhenExplorerCrash == true)
+        public int GetVolume()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetVolume(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            _currentProcess?.Kill();
+            _currentProcess = null;
+            _ipc.Dispose();
+            _ipc = null;
+        }
+
+        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        {
+            var ipc = await GetIPCHelper();
+            await ipc.Send(new InvokeILiveWallpaperAPI()
             {
-                ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
-                ExplorerMonitor.Start();
-            }
-            else
-                ExplorerMonitor.Stop();
-
-            return Task.CompletedTask;
-        }
-        /// <summary>
-        /// 显示壁纸                
-        /// </summary>
-        /// <remarks>       
-        public static void Show(WallpaperModel wallpaper, params int[] screenIndexs)
-        {
-            _ = RemoteRender.ShowWallpaper(wallpaper, screenIndexs);
-            StatusManager.ShowWallpaper(wallpaper, screenIndexs);
-        }
-        public static void Close(params int[] screenIndexs)
-        {
-            RemoteRender.CloseWallpaper(screenIndexs);
-            StatusManager.CloseWallpaper(screenIndexs);
-        }
-        #endregion
-
-        #region private methods
-
-        /// <summary>
-        /// 暂停壁纸
-        /// </summary>
-        /// <param name="screendIndexs"></param>
-        private static void Pause(int[] screendIndexs)
-        {
-
+                InvokeMethod = nameof(ILiveWallpaperAPI.ShowWallpaper),
+                Parameters = new object[] { wallpaper, screenIndexs }
+            });
         }
 
-        /// <summary>
-        /// 恢复壁纸
-        /// </summary>
-        /// <param name="screendIndexs"></param>
-        private static void Resume(int[] screendIndexs)
+        public async void CloseWallpaper(params int[] screenIndexs)
         {
+            var ipc = await GetIPCHelper();
+            await ipc.Send(new InvokeILiveWallpaperAPI()
+            {
+                InvokeMethod = nameof(ILiveWallpaperAPI.CloseWallpaper),
+                Parameters = new object[] { screenIndexs }
+            });
+        }
 
+        public async Task SetOptions(LiveWallpaperOptions setting)
+        {
+            var ipc = await GetIPCHelper();
+            await ipc.Send(new InvokeILiveWallpaperAPI()
+            {
+                InvokeMethod = nameof(ILiveWallpaperAPI.SetOptions),
+                Parameters = new object[] { setting }
+            });
         }
 
         #endregion

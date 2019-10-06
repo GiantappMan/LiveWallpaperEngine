@@ -17,7 +17,7 @@ namespace LiveWallpaperEngine.Common
 
     #region ToClientCommands
 
-    public class InvokeRender
+    public class InvokeILiveWallpaperAPI
     {
         public string InvokeMethod { get; set; }
         public object[] Parameters { get; set; }
