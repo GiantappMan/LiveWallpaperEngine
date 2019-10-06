@@ -38,12 +38,10 @@ namespace LiveWallpaperEngineRender
 
         public void Pause()
         {
-            throw new NotImplementedException();
         }
 
         public void Resum()
         {
-            throw new NotImplementedException();
         }
 
         public void SetVolume(int v)
@@ -82,6 +80,11 @@ namespace LiveWallpaperEngineRender
                 if (_currentWalpapers.ContainsKey(index))
                     _currentWalpapers.Remove(index);
             }
+            InnerCloseWallpaper(screenIndexs);
+        }
+
+        public void InnerCloseWallpaper(params int[] screenIndexs)
+        {
             RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(screenIndexs));
         }
 
@@ -95,11 +98,11 @@ namespace LiveWallpaperEngineRender
             if (options.AutoRestartWhenExplorerCrash == true)
                 ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
 
-            bool enableMaximized = !options.ScreenOptions.Exists(m => m.WhenCurrentScreenMaximized == ActionWhenMaximized.Stop);
+            bool enableMaximized = options.ScreenOptions.Exists(m => m.WhenCurrentScreenMaximized != ActionWhenMaximized.Play);
             if (enableMaximized)
                 MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
 
-            StartTimer(enableMaximized);
+            StartTimer(options.AutoRestartWhenExplorerCrash != null && options.AutoRestartWhenExplorerCrash.Value || enableMaximized);
 
             return Task.CompletedTask;
         }
@@ -156,8 +159,9 @@ namespace LiveWallpaperEngineRender
                         break;
                     case ActionWhenMaximized.Stop:
                         if (e.Maximized)
-                            CloseWallpaper(screenIndex);
+                            InnerCloseWallpaper(screenIndex);
                         else
+                            if (_currentWalpapers.ContainsKey(screenIndex))
                             _ = ShowWallpaper(_currentWalpapers[screenIndex], screenIndex);
                         break;
                     case ActionWhenMaximized.Play:
