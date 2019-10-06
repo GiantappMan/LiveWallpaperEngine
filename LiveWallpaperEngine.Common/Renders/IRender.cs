@@ -20,13 +20,13 @@ namespace LiveWallpaperEngine.Common.Renders
         /// <param name="path"></param>
         Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndex);
 
-        void Pause();
+        void Pause(params int[] screenIndexs);
 
-        void Resum();
+        void Resum(params int[] screenIndexs);
 
-        void SetVolume(int v);
+        void SetVolume(int v, params int[] screenIndexs);
 
-        int GetVolume();
+        int GetVolume(params int[] screenIndexs);
         void CloseWallpaper(params int[] screenIndexs);
     }
 }

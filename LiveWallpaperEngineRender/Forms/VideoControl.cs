@@ -54,5 +54,15 @@ namespace LiveWallpaperEngineRender.Forms
             _player?.Dispose();
             _player = null;
         }
+
+        internal void Pause()
+        {
+            _player?.Pause();
+        }
+
+        internal void Resum()
+        {
+            _player?.Resume();
+        }
     }
 }

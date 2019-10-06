@@ -30,9 +30,10 @@ namespace LiveWallpaperEngineRender
 
         public static void UIInvoke(Action a)
         {
-            var mainForm = Application.OpenForms[0];
-            if (mainForm == null)
+            if (Application.OpenForms.Count == 0)
                 return;
+
+            var mainForm = Application.OpenForms[0];
 
             if (mainForm.InvokeRequired)
                 mainForm.Invoke(a);

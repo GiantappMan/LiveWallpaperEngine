@@ -39,22 +39,28 @@ namespace LiveWallpaperEngineRender.Renders
             _controls.Clear();
         }
 
-        public int GetVolume()
+        public int GetVolume(params int[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
-        public void Pause()
+        public void Pause(params int[] screenIndexs)
         {
-            throw new NotImplementedException();
+            foreach (var index in screenIndexs)
+            {
+                _controls[index].Pause();
+            }
         }
 
-        public void Resum()
+        public void Resum(params int[] screenIndexs)
         {
-            throw new NotImplementedException();
+            foreach (var index in screenIndexs)
+            {
+                _controls[index].Resum();
+            }
         }
 
-        public void SetVolume(int v)
+        public void SetVolume(int v, params int[] screenIndexs)
         {
             throw new NotImplementedException();
         }

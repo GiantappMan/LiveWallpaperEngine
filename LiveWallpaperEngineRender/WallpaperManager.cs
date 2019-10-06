@@ -36,12 +36,30 @@ namespace LiveWallpaperEngineRender
             throw new NotImplementedException();
         }
 
-        public void Pause()
+        public void Pause(params int[] screenIndexs)
         {
+            foreach (var index in screenIndexs)
+            {
+                if (_currentWalpapers.ContainsKey(index))
+                {
+                    var wallpaper = _currentWalpapers[index];
+                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type.DType);
+                    currentRender.Pause(screenIndexs);
+                }
+            }
         }
 
-        public void Resum()
+        public void Resum(params int[] screenIndexs)
         {
+            foreach (var index in screenIndexs)
+            {
+                if (_currentWalpapers.ContainsKey(index))
+                {
+                    var wallpaper = _currentWalpapers[index];
+                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type.DType);
+                    currentRender.Resum(screenIndexs);
+                }
+            }
         }
 
         public void SetVolume(int v)
@@ -153,9 +171,9 @@ namespace LiveWallpaperEngineRender
                 {
                     case ActionWhenMaximized.Pause:
                         if (e.Maximized)
-                            Pause();
+                            Pause(screenIndex);
                         else
-                            Resum();
+                            Resum(screenIndex);
                         break;
                     case ActionWhenMaximized.Stop:
                         if (e.Maximized)
