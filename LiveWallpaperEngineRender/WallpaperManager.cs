@@ -22,7 +22,7 @@ namespace LiveWallpaperEngineRender
         }
         public static LiveWallpaperOptions Options { get; private set; }
         public static WallpaperManager Instance { get; private set; } = new WallpaperManager();
-        public static void Initlize()
+        public void Initlize()
         {
             //注册render
             RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
@@ -117,7 +117,7 @@ namespace LiveWallpaperEngineRender
             if (options.AutoRestartWhenExplorerCrash == true)
                 ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
 
-            bool enableMaximized = options.ScreenOptions.Exists(m => m.WhenCurrentScreenMaximized != ActionWhenMaximized.Play);
+            bool enableMaximized = options.ScreenOptions.Exists(m => m.WhenAppMaximized != ActionWhenMaximized.Play);
             if (enableMaximized)
                 MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
 
@@ -162,26 +162,27 @@ namespace LiveWallpaperEngineRender
 
         private void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var screenIndex = Screen.AllScreens.ToList().IndexOf(e.MaximizedScreen);
+            var maximizedScreenIndex = Screen.AllScreens.ToList().IndexOf(e.MaximizedScreen);
             foreach (var item in Options.ScreenOptions)
             {
-                if (item.ScreenIndex != screenIndex)
+                int currentScreenIndex = item.ScreenIndex;
+                if (Options.AppMaximizedEffectAllScreen != true && currentScreenIndex != maximizedScreenIndex)
                     continue;
 
-                switch (item.WhenCurrentScreenMaximized)
+                switch (item.WhenAppMaximized)
                 {
                     case ActionWhenMaximized.Pause:
                         if (e.Maximized)
-                            Pause(screenIndex);
+                            Pause(currentScreenIndex);
                         else
-                            Resum(screenIndex);
+                            Resum(currentScreenIndex);
                         break;
                     case ActionWhenMaximized.Stop:
                         if (e.Maximized)
-                            InnerCloseWallpaper(screenIndex);
+                            InnerCloseWallpaper(currentScreenIndex);
                         else
-                            if (_currentWalpapers.ContainsKey(screenIndex))
-                            _ = ShowWallpaper(_currentWalpapers[screenIndex], screenIndex);
+                            if (_currentWalpapers.ContainsKey(currentScreenIndex))
+                            _ = ShowWallpaper(_currentWalpapers[currentScreenIndex], currentScreenIndex);
                         break;
                     case ActionWhenMaximized.Play:
                         break;

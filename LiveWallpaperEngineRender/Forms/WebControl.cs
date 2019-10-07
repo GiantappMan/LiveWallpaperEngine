@@ -75,12 +75,12 @@ namespace LiveWallpaperEngineRender.Forms
 
         public void Pause()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void Resum()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void DisposeRender()

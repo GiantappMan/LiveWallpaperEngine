@@ -39,7 +39,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
                 ScreenIndex = Screen.AllScreens.ToList().IndexOf(m),
-                WhenCurrentScreenMaximized = ActionWhenMaximized.Pause
+                WhenAppMaximized = ActionWhenMaximized.Pause
             }).ToList();
 
             var screenSettingOptions = new List<DescriptorInfo>()
@@ -68,7 +68,13 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 new DescriptorInfo(){
                                     Text="崩溃后自动恢复",
                                     DefaultValue=true,
-                                }},
+                            }},
+                            {
+                                nameof(LiveWallpaperOptions.AppMaximizedEffectAllScreen),
+                                new DescriptorInfo(){
+                                    Text="全屏检测影响所有屏幕",
+                                    DefaultValue=true,
+                            }},
                             {
                                 nameof(LiveWallpaperOptions.ScreenOptions),
                                 new DescriptorInfo(){
@@ -80,7 +86,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     PropertyDescriptors=new DescriptorInfoDict()
                                     {
                                         {nameof(ScreenOption.ScreenIndex),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
-                                        {nameof(ScreenOption.WhenCurrentScreenMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
+                                        {nameof(ScreenOption.WhenAppMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
                                     }
                                 }
                             },
@@ -100,6 +106,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
+                    btnApply_Click(null, null);
                     _ = LiveWallpaper.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;

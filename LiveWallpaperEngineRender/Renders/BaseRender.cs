@@ -65,17 +65,17 @@ namespace LiveWallpaperEngineRender.Renders
         {
             foreach (var index in screenIndexs)
             {
-                if (!_controls.ContainsKey(index))
+                RenderHost.UIInvoke(() =>
                 {
-                    RenderHost.UIInvoke(() =>
+                    if (!_controls.ContainsKey(index))
                     {
                         _controls[index] = new RenderControl();
                         _controls[index].InitRender();
-                    });
-                }
-                var screen = RenderHost.GetHost(index);
-                screen.ShowWallpaper(_controls[index]);
-                _controls[index].Load(wallpaper.Path);
+                    }
+                    var screen = RenderHost.GetHost(index);
+                    screen.ShowWallpaper(_controls[index]);
+                    _controls[index].Load(wallpaper.Path);
+                });
             }
             return Task.CompletedTask;
         }

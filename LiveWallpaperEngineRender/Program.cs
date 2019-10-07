@@ -15,7 +15,7 @@ namespace LiveWallpaperEngineRender
         [STAThread]
         static void Main()
         {
-            WallpaperManager.Initlize();
+            WallpaperManager.Instance.Initlize();
             WatchParent();
 
             _ipc = new IPCHelper(IPCHelper.RemoteRenderID, IPCHelper.ServerID);

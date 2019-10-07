@@ -14,7 +14,7 @@ namespace LiveWallpaperEngine.Common.Models
         /// <summary>
         /// 当前窗口其他程序全屏时
         /// </summary>
-        public ActionWhenMaximized? WhenCurrentScreenMaximized { get; set; }
+        public ActionWhenMaximized? WhenAppMaximized { get; set; }
     }
 
     public struct LiveWallpaperOptions
@@ -23,6 +23,10 @@ namespace LiveWallpaperEngine.Common.Models
         /// 播放音频的显示器
         /// </summary>
         public int? AudioScreenIndex { get; set; }
+        /// <summary>
+        /// 其他程序全屏时影响所有屏幕
+        /// </summary>
+        public bool? AppMaximizedEffectAllScreen { get; set; }
         /// <summary>
         /// 每个屏幕的单独设置
         /// </summary>

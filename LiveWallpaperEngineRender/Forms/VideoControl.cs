@@ -31,6 +31,8 @@ namespace LiveWallpaperEngineRender.Forms
             _player.API.SetPropertyString("panscan", "1.0");
             _player.AutoPlay = true;
             Load(_lastPath);
+
+            Controls.Add(new Button() { Text = "test", Dock = DockStyle.Fill });
         }
 
         public new void Load(string path)
