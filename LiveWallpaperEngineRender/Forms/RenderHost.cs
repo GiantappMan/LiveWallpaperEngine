@@ -15,6 +15,7 @@ namespace LiveWallpaperEngineRender
         public RenderHost(int screenIndex)
         {
             InitializeComponent();
+            Shown += RenderHost_Shown;
             Text = "RenderHost" + screenIndex;
             _screenIndex = screenIndex;
             //UI
@@ -76,20 +77,26 @@ namespace LiveWallpaperEngineRender
             return _hosts[screenIndex];
         }
 
-        internal async void ShowWallpaper(Control control)
+        internal void ShowWallpaper(Control control)
         {
-            //WallpaperHelper.GetInstance(_screenIndex).RestoreParent();
             Load += RenderHost_Load;
+            Show();
+            Application.DoEvents();
             Controls.Clear();
             control.Dock = DockStyle.Fill;
             Controls.Add(control);
-            Show();
+            Update();
             //Invalidate();
 
-            await Task.Delay(200);
+            //await Task.Delay(200);
             Opacity = 1;
             Refresh();
             WallpaperHelper.GetInstance(_screenIndex).SendToBackground(Handle);
+        }
+
+        private void RenderHost_Shown(object sender, EventArgs e)
+        {
+            Shown -= RenderHost_Shown;
         }
 
         private void RenderHost_Load(object sender, EventArgs e)
@@ -98,7 +105,6 @@ namespace LiveWallpaperEngineRender
             //WallpaperHelper.GetInstance(_screenIndex).SendToBackground(Handle);
             //WallpaperHelper.GetInstance(_screenIndex).SendToBackground(Handle);
         }
-
 
         //protected override void OnLoad(EventArgs e)
         //{
