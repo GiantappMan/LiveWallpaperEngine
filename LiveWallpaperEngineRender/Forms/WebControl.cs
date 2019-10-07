@@ -45,7 +45,7 @@ namespace LiveWallpaperEngineRender.Forms
         {
             _browser.IsBrowserInitializedChanged -= Browser_IsBrowserInitializedChanged;
             if (_lastUrl != null)
-                Invoke(new Action(() =>
+                BeginInvoke(new Action(() =>
                 {
                     _browser.Load(_lastUrl);
                 }));
@@ -62,7 +62,7 @@ namespace LiveWallpaperEngineRender.Forms
                 _lastUrl = url;
                 return;
             }
-            Invoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
                 _browser.Load(url);
             }));
