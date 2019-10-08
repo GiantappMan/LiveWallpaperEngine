@@ -32,10 +32,10 @@ namespace LiveWallpaperEngineRender.Forms
         public WebControl()
         {
             InitializeComponent();
-            //UI
-            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            SetStyle(ControlStyles.Opaque, true);
-            BackColor = Color.Transparent;
+            ////UI
+            //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            //SetStyle(ControlStyles.Opaque, true);
+            //BackColor = Color.Transparent;
         }
 
         public void InitRender()
@@ -46,30 +46,42 @@ namespace LiveWallpaperEngineRender.Forms
         {
             if (_browser == null || !_browser.IsBrowserInitialized)
             {
-                _browser = new ChromiumWebBrowser(address: url)
+                _browser = new ChromiumWebBrowser(address: null)
                 {
                     Dock = DockStyle.Fill,
                 };
 
-                BeginInvoke(new Action(() =>
+                void _browser_IsBrowserInitializedChanged(object sender, EventArgs e)
                 {
-                    Controls.Add(_browser);
-                    Refresh();
-                }));
-            }
-            else
-                BeginInvoke(new Action(() =>
-                {
+                    if (!_browser.IsBrowserInitialized)
+                        return;
+                    _browser.IsBrowserInitializedChanged -= _browser_IsBrowserInitializedChanged;
                     _browser.Load(url);
-                }));
+                }
+
+                _browser.IsBrowserInitializedChanged += _browser_IsBrowserInitializedChanged;
+
+                //BeginInvoke(new Action(() =>
+                //{
+                Controls.Add(_browser);
+                Refresh();
+                //}));
+            }
+            //else
+            //BeginInvoke(new Action(() =>
+            //{
+            //}));
         }
+
+
 
         public void Stop()
         {
             if (IsDisposed)
                 return;
-            BeginInvoke(new Action(() =>
+            Invoke(new Action(() =>
             {
+                Controls.Clear();
                 _browser?.Dispose();
                 _browser = null;
             }));

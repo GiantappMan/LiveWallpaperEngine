@@ -73,18 +73,18 @@ namespace LiveWallpaperEngineRender
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            CloseWallpaper(screenIndexs);
+            //CloseWallpaper(screenIndexs);
             if (wallpaper.Type == null)
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
             if (wallpaper.Type.DType == WalllpaperDefinedType.NotSupport)
                 return;
 
-            //foreach (var index in screenIndexs)
-            //{
-            //    //类型不一致关闭上次显示的壁纸
-            //    if (_currentWalpapers.ContainsKey(index) && wallpaper.Type.DType != _currentWalpapers[index].Type.DType)
-            //        CloseWallpaper(screenIndexs);
-            //}
+            foreach (var index in screenIndexs)
+            {
+                //类型不一致关闭上次显示的壁纸
+                if (_currentWalpapers.ContainsKey(index) && wallpaper.Type.DType != _currentWalpapers[index].Type.DType)
+                    CloseWallpaper(screenIndexs);
+            }
 
             var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type.DType);
             await currentRender.ShowWallpaper(wallpaper, screenIndexs);

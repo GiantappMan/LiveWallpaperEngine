@@ -18,15 +18,21 @@ namespace LiveWallpaperEngineRender
             Shown += RenderHost_Shown;
             Text = "RenderHost" + screenIndex;
             _screenIndex = screenIndex;
-            //UI
-            BackColor = Color.Magenta;
+            ////UI
+            //BackColor = Color.Magenta;
             //TransparencyKey = Color.Magenta;
-            ShowInTaskbar = false;
-            FormBorderStyle = FormBorderStyle.None;
-            Opacity = 0;
+            //ShowInTaskbar = false;
+            //FormBorderStyle = FormBorderStyle.None;
+            //Opacity = 0;
 
             _hosts[screenIndex] = this;
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+        }
+
         //public static void UIBeginInvoke(Action a)
         //{
         //    if (Application.OpenForms.Count == 0)
