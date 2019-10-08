@@ -1,4 +1,5 @@
 ﻿using LiveWallpaperEngine.Common;
+using LiveWallpaperEngineRender.Forms;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace LiveWallpaperEngineRender
             Application.ThreadException += Application_ThreadException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            _mainForm = new RenderHost(0);
+            _mainForm = new Main();
             _mainForm.Load += Main_Load;
             Application.Run(_mainForm);
         }

@@ -2,18 +2,22 @@
 using System.Windows.Forms;
 using System.Reflection;
 using LiveWallpaperEngine.Common.Renders;
+using System.Drawing;
 
 namespace LiveWallpaperEngineRender.Forms
 {
     public partial class VideoControl : UserControl, IRenderControl
     {
-        public VideoControl()
-        {
-            InitializeComponent();
-        }
 
         private Mpv.NET.Player.MpvPlayer _player;
         private string _lastPath;
+
+        public VideoControl()
+        {
+            InitializeComponent();
+            //UI
+            BackColor = Color.Magenta;
+        }
 
         public void InitRender()
         {

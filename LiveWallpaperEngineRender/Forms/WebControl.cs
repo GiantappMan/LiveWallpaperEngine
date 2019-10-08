@@ -28,27 +28,14 @@ namespace LiveWallpaperEngineRender.Forms
         }
 
         private ChromiumWebBrowser _browser;
-        private string _lastUrl = null;
 
         public WebControl()
         {
             InitializeComponent();
-            _browser = new ChromiumWebBrowser(address: null)
-            {
-                Dock = DockStyle.Fill,
-            };
-            _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
-            Controls.Add(_browser);
-        }
-   
-        private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e)
-        {
-            _browser.IsBrowserInitializedChanged -= Browser_IsBrowserInitializedChanged;
-            if (_lastUrl != null)
-                BeginInvoke(new Action(() =>
-                {
-                    _browser.Load(_lastUrl);
-                }));
+            //UI
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.Opaque, true);
+            BackColor = Color.Transparent;
         }
 
         public void InitRender()
@@ -57,20 +44,35 @@ namespace LiveWallpaperEngineRender.Forms
 
         void IRenderControl.Load(string url)
         {
-            if (!_browser.IsBrowserInitialized)
+            if (_browser == null || !_browser.IsBrowserInitialized)
             {
-                _lastUrl = url;
-                return;
+                _browser = new ChromiumWebBrowser(address: url)
+                {
+                    Dock = DockStyle.Fill,
+                };
+
+                BeginInvoke(new Action(() =>
+                {
+                    Controls.Add(_browser);
+                    Refresh();
+                }));
             }
-            BeginInvoke(new Action(() =>
-            {
-                _browser.Load(url);
-            }));
+            else
+                BeginInvoke(new Action(() =>
+                {
+                    _browser.Load(url);
+                }));
         }
 
         public void Stop()
         {
-            _browser?.LoadHtml("");
+            if (IsDisposed)
+                return;
+            BeginInvoke(new Action(() =>
+            {
+                _browser?.Dispose();
+                _browser = null;
+            }));
         }
 
         public void Pause()

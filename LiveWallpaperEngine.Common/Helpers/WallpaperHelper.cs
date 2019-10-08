@@ -85,12 +85,12 @@ namespace LiveWallpaperEngine.Common
             if (workerw == IntPtr.Zero)
                 return false;
 
+            _parentHandler = User32Wrapper.GetParent(_currentHandler);
             FullScreen(_currentHandler, _targetBounds);
             User32Wrapper.SetParent(_currentHandler, workerw);
 
-            _parentHandler = User32Wrapper.GetParent(_currentHandler);
-            if (_parentHandler == IntPtr.Zero)
-                _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
+            //if (_parentHandler == IntPtr.Zero)
+            //    _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
 
             return true;
         }
