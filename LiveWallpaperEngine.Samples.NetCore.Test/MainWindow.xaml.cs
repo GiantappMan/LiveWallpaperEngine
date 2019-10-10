@@ -23,6 +23,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         public MainWindow()
         {
             InitializeComponent();
+
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
                 DeviceName = m.DeviceName,
@@ -39,7 +40,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
                 ScreenIndex = Screen.AllScreens.ToList().IndexOf(m),
-                WhenAppMaximized = ActionWhenMaximized.Pause
+                WhenAppMaximized = ActionWhenMaximized.Pause,
             }).ToList();
 
             var screenSettingOptions = new List<DescriptorInfo>()
@@ -92,7 +93,9 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                             },
                 }}}
             };
-            var vm = ConfigerService.GetVM(new LiveWallpaperOptions(), descInfo);
+            var setting = new LiveWallpaperOptions();
+            setting.ScreenOptions.AddRange(screenSetting);
+            var vm = ConfigerService.GetVM(setting, descInfo);
             configer.DataContext = vm;
         }
 

@@ -18,10 +18,24 @@
     <ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\netcoreapp3.0\**" TargetPath="%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="LiveWallpaper - 复制.cs" />
     <Compile Remove="RemoteRender.cs" />
     <Compile Remove="StatusManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Protos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.23.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\LiveWallpaperEngine\Protos\api.proto">
+      <Link>Protos\api.proto</Link>
+    </Protobuf>
   </ItemGroup>
 </Project>

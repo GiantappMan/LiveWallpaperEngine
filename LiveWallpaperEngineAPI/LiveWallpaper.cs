@@ -1,8 +1,10 @@
 ﻿using DZY.WinAPI;
+using Grpc.Net.Client;
 using LiveWallpaperEngine.Common;
 using LiveWallpaperEngine.Common.Models;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LiveWallpaperEngine
@@ -11,13 +13,16 @@ namespace LiveWallpaperEngine
     /// 巨应动态壁纸API
     /// giantapp.cn
     /// </summary>
-    public class LiveWallpaper : ILiveWallpaperAPI
+    public class LiveWallpaper
     {
         Process _currentProcess = null;
-        IPCHelper _ipc = null;
+        API.APIClient _client = null;
 
         private LiveWallpaper()
         {
+            var channel = GrpcChannel.ForAddress("https://localhost:5001");
+            _client = new API.APIClient(channel);
+
             //dpi 相关
             User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
             WallpaperHelper.DoSomeMagic();
@@ -28,25 +33,6 @@ namespace LiveWallpaperEngine
         #region properties
 
         #endregion
-
-        private async Task<IPCHelper> GetIPCHelper()
-        {
-            if (_ipc == null)
-                _ipc = new IPCHelper(IPCHelper.ServerID, IPCHelper.RemoteRenderID);
-
-            if (_currentProcess == null)
-            {
-                var pList = Process.GetProcessesByName("LiveWallpaperEngineRender");
-                _currentProcess = pList?.Length > 0 ? pList[0] : null;
-                if (_currentProcess == null)
-                {
-                    _currentProcess = Process.Start("LiveWallpaperEngineRender.exe");
-                    //等待render初始完成
-                    await _ipc.Wait<Ready>();
-                }
-            }
-            return _ipc;
-        }
 
         #region public methods
 
@@ -64,38 +50,31 @@ namespace LiveWallpaperEngine
         {
             _currentProcess?.Kill();
             _currentProcess = null;
-            _ipc.Dispose();
-            _ipc = null;
+            _client = null;
         }
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            var ipc = await GetIPCHelper();
-            await ipc.Send(new InvokeILiveWallpaperAPI()
-            {
-                InvokeMethod = nameof(ILiveWallpaperAPI.ShowWallpaper),
-                Parameters = new object[] { wallpaper, screenIndexs }
-            });
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+
+            var reply = await _client.ShowWallpaperAsync(new ShowWallpaperRequest() { Name = "test" });
         }
 
         public async void CloseWallpaper(params int[] screenIndexs)
         {
-            var ipc = await GetIPCHelper();
-            await ipc.Send(new InvokeILiveWallpaperAPI()
-            {
-                InvokeMethod = nameof(ILiveWallpaperAPI.CloseWallpaper),
-                Parameters = new object[] { screenIndexs }
-            });
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+
+            var reply = await _client.CloseWallpaperAsync(new CloseWallpaperRequest());
         }
 
         public async Task SetOptions(LiveWallpaperOptions setting)
         {
-            var ipc = await GetIPCHelper();
-            await ipc.Send(new InvokeILiveWallpaperAPI()
-            {
-                InvokeMethod = nameof(ILiveWallpaperAPI.SetOptions),
-                Parameters = new object[] { setting }
-            });
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+
+            var reply = await _client.SetOptionsAsync(setting);
         }
 
         #endregion

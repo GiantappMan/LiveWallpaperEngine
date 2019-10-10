@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace LiveWallpaperEngineServer
+namespace LiveWallpaperEngine
 {
     public class Startup
     {
@@ -32,6 +32,7 @@ namespace LiveWallpaperEngineServer
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<APIService>();
 
                 endpoints.MapGet("/", async context =>
                 {

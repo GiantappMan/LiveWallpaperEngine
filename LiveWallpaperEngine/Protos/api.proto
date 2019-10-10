@@ -1,0 +1,42 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "LiveWallpaperEngine";
+
+package LiveWallpaperEngine;
+
+// The greeting service definition.
+service API {
+  // Sends a greeting
+  rpc ShowWallpaper (ShowWallpaperRequest) returns (google.protobuf.Empty);
+  rpc CloseWallpaper (CloseWallpaperRequest) returns (google.protobuf.Empty);
+  rpc SetOptions (LiveWallpaperOptions) returns (google.protobuf.Empty);
+}
+
+// The request message containing the user's name.
+message ShowWallpaperRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message CloseWallpaperRequest {
+  string message = 1;
+}
+
+message LiveWallpaperOptions{
+ int32  AudioScreenIndex = 1;
+ bool AutoRestartWhenExplorerCrash = 2;
+ bool AppMaximizedEffectAllScreen = 3;
+ repeated ScreenOption ScreenOptions = 4;
+}
+
+message ScreenOption{
+ int32 ScreenIndex = 1;
+ ActionWhenMaximized WhenAppMaximized = 2;
+}
+
+ enum ActionWhenMaximized{
+	Play = 0;
+	Pause = 1;
+	Stop = 2;
+ }

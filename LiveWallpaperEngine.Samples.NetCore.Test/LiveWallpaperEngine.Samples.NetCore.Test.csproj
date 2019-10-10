@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GiantappConfiger" Version="1.0.4" />
+    <PackageReference Include="GiantappConfiger" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>

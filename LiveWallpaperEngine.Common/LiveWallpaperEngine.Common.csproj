@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ILiveWallpaperAPI.cs" />
+    <Compile Remove="Models\Options.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DZY.WinAPI" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="TinyIpc" Version="2.0.0" />
