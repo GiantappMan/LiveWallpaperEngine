@@ -5,36 +5,28 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{B5707277-42B0-4BDA-8EAF-33612CA2ABF0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{11F316F1-A6C6-478F-A584-4382EDCFF9F7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E3554D4E-7CD8-4128-9438-95CDBCDE4B25}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\CHANGELOG.md = Docs\CHANGELOG.md
-		Docs\Package.md = Docs\Package.md
+		Docs\Build.md = Docs\Build.md
+		Docs\Changelog.md = Docs\Changelog.md
+		Docs\LiveWallpaperEngine.md = Docs\LiveWallpaperEngine.md
+		Docs\LiveWallpaperEngineRender.md = Docs\LiveWallpaperEngineRender.md
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Samples.NetCore.Test", "LiveWallpaperEngine.Samples.NetCore.Test\LiveWallpaperEngine.Samples.NetCore.Test.csproj", "{C959B22A-239C-4264-8E54-51AFD5A5B7C4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LiveWallpaperEngine", "LiveWallpaperEngine", "{72CDF294-47D8-4A87-BC5D-C330B0A2E324}"
-	ProjectSection(SolutionItems) = preProject
-		Docs\LiveWallpaperEngine\README.md = Docs\LiveWallpaperEngine\README.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02F4F61B-91AC-4F16-939D-EB9B9980A60C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineRender", "LiveWallpaperEngineRender\LiveWallpaperEngineRender.csproj", "{C5E72E15-423E-4540-AE03-A70B8B8E58EA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LiveWallpaperEngineRender", "LiveWallpaperEngineRender", "{D5E78D64-55CE-483A-8D83-C41A3E91598F}"
-	ProjectSection(SolutionItems) = preProject
-		Docs\LiveWallpaperEngineRender\README.md = Docs\LiveWallpaperEngineRender\README.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Common", "LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj", "{1D7347A3-9025-4FF3-9771-ADB7499CDD24}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.WpfApp1", "Test.WpfApp1\Test.WpfApp1.csproj", "{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineAPI", "LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj", "{69BF360A-163D-4838-94A7-2349EACB703D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngine", "LiveWallpaperEngine\LiveWallpaperEngine.csproj", "{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngineServer", "LiveWallpaperEngineServer\LiveWallpaperEngineServer.csproj", "{3231BB9C-9110-4C95-BDC8-19A69B81DD27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,26 +46,29 @@ Global
 		{1D7347A3-9025-4FF3-9771-ADB7499CDD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D7347A3-9025-4FF3-9771-ADB7499CDD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D7347A3-9025-4FF3-9771-ADB7499CDD24}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69BF360A-163D-4838-94A7-2349EACB703D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69BF360A-163D-4838-94A7-2349EACB703D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69BF360A-163D-4838-94A7-2349EACB703D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69BF360A-163D-4838-94A7-2349EACB703D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3231BB9C-9110-4C95-BDC8-19A69B81DD27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3231BB9C-9110-4C95-BDC8-19A69B81DD27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3231BB9C-9110-4C95-BDC8-19A69B81DD27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3231BB9C-9110-4C95-BDC8-19A69B81DD27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C959B22A-239C-4264-8E54-51AFD5A5B7C4} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
-		{72CDF294-47D8-4A87-BC5D-C330B0A2E324} = {E3554D4E-7CD8-4128-9438-95CDBCDE4B25}
 		{C5E72E15-423E-4540-AE03-A70B8B8E58EA} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
-		{D5E78D64-55CE-483A-8D83-C41A3E91598F} = {E3554D4E-7CD8-4128-9438-95CDBCDE4B25}
 		{1D7347A3-9025-4FF3-9771-ADB7499CDD24} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
-		{BE87FBFA-1493-4DF3-8CC9-2A5C67B3B561} = {11F316F1-A6C6-478F-A584-4382EDCFF9F7}
 		{69BF360A-163D-4838-94A7-2349EACB703D} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
+		{782FB6AD-F97B-43FF-9E0F-FCB3E69FBE36} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
+		{3231BB9C-9110-4C95-BDC8-19A69B81DD27} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0CCDD11-AAC6-45FC-883B-0DBE493DA7E9}
