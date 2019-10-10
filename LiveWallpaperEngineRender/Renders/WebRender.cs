@@ -4,7 +4,7 @@ using LiveWallpaperEngineRender.Forms;
 
 namespace LiveWallpaperEngineRender.Renders
 {
-    class WebRender : BaseRender<WebControl>
+    class WebRender : BaseRender<VideoControl>
     {
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {

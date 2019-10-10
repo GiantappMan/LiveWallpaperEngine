@@ -16,8 +16,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LiveWallpaperEngine\LiveWallpaperEngine.csproj" />
-  </ItemGroup>
-
 </Project>

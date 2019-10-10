@@ -31,6 +31,8 @@
     <Compile Remove="Forms\Browser.Designer.cs" />
     <Compile Remove="Forms\Video.cs" />
     <Compile Remove="Forms\Video.Designer.cs" />
+    <Compile Remove="Forms\WebControl.cs" />
+    <Compile Remove="Forms\WebControl.Designer.cs" />
     <Compile Remove="IRender.cs" />
     <Compile Remove="VideoRender.cs" />
   </ItemGroup>
@@ -42,7 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.WinForms" Version="76.1.90" />
     <PackageReference Include="Mpv.NET" Version="1.1.0" />
   </ItemGroup>
 
