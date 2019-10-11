@@ -31,7 +31,6 @@ namespace LiveWallpaperEngine
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
                 endpoints.MapGrpcService<APIService>();
 
                 endpoints.MapGet("/", async context =>

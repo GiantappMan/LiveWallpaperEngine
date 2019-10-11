@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineRender
 {
-    public class WallpaperManager : ILiveWallpaperAPI
+    public class WallpaperManager
     {
         private static System.Timers.Timer _timer;
         private static Dictionary<int, WallpaperModel> _currentWalpapers = new Dictionary<int, WallpaperModel>();

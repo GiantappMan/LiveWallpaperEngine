@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\api.proto" GrpcServices="Server" />
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+    <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Server" />
+    <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

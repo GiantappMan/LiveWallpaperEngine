@@ -26,16 +26,12 @@
     <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Protos\" />
+    <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Client" />
+    <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Server" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.10.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.23.2" />
     <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
-    <Protobuf Include="..\LiveWallpaperEngine\Protos\api.proto">
-      <Link>Protos\api.proto</Link>
-    </Protobuf>
   </ItemGroup>
 </Project>
