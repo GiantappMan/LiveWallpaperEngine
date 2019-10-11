@@ -29,9 +29,10 @@ namespace LiveWallpaperEngine
             return Task.FromResult(new Empty());
         }
 
-        public override Task<Empty> SetOptions(LiveWallpaperOptions request, ServerCallContext context)
+        public override async Task<Empty> SetOptions(LiveWallpaperOptions request, ServerCallContext context)
         {
-            return Task.FromResult(new Empty());
+            await WallpaperManager.Instance.SetOptions(request);
+            return new Empty();
         }
     }
 }
