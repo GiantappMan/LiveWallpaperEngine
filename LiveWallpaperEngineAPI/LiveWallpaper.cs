@@ -56,7 +56,7 @@ namespace LiveWallpaperEngine
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+            cts.CancelAfter(TimeSpan.FromSeconds(31.5));
 
             var reply = await _client.ShowWallpaperAsync(new ShowWallpaperRequest() { Name = "test" });
         }

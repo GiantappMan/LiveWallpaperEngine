@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using LiveWallpaperEngine;
 using Microsoft.Extensions.Logging;
 
 namespace LiveWallpaperEngine
@@ -18,11 +14,19 @@ namespace LiveWallpaperEngine
         }
         public override async Task<Empty> ShowWallpaper(ShowWallpaperRequest request, ServerCallContext context)
         {
+            //System.Windows.Forms.Form f = new System.Windows.Forms.Form();
+            //f.Show();
+            await Task.Delay(100);
             return new Empty();
         }
-        public override async Task<Empty> CloseWallpaper(CloseWallpaperRequest request, ServerCallContext context)
+        public override Task<Empty> CloseWallpaper(CloseWallpaperRequest request, ServerCallContext context)
         {
-            return new Empty();
+            return Task.FromResult(new Empty());
+        }
+
+        public override Task<Empty> SetOptions(LiveWallpaperOptions request, ServerCallContext context)
+        {
+            return Task.FromResult(new Empty());
         }
     }
 }
