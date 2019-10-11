@@ -17,7 +17,14 @@ namespace LiveWallpaperEngine
 
         private LiveWallpaper()
         {
-            var channel = GrpcChannel.ForAddress("https://localhost:5001");
+            CreateClient();
+        }
+
+        private void CreateClient()
+        {
+            //使用http协议
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            var channel = GrpcChannel.ForAddress("http://127.0.0.1:8080");
             _client = new API.APIClient(channel);
         }
 
@@ -48,30 +55,48 @@ namespace LiveWallpaperEngine
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(31.5));
+            try
+            {
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
 
-            var para = new ShowWallpaperRequest() { Wallpaper = wallpaper };
-            para.ScreenIndexs.AddRange(screenIndexs);
-            _ = await _client.ShowWallpaperAsync(para);
+                var para = new ShowWallpaperRequest() { Wallpaper = wallpaper };
+                para.ScreenIndexs.AddRange(screenIndexs);
+                _ = await _client.ShowWallpaperAsync(para);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public async void CloseWallpaper(params int[] screenIndexs)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+            try
+            {
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
 
-            var para = new CloseWallpaperRequest();
-            para.ScreenIndexs.AddRange(screenIndexs);
-            var reply = await _client.CloseWallpaperAsync(para);
+                var para = new CloseWallpaperRequest();
+                para.ScreenIndexs.AddRange(screenIndexs);
+                var reply = await _client.CloseWallpaperAsync(para);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public async Task SetOptions(LiveWallpaperOptions setting)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+            try
+            {
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
 
-            var reply = await _client.SetOptionsAsync(setting);
+                var reply = await _client.SetOptionsAsync(setting);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         #endregion

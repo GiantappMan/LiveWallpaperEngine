@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using DZY.WinAPI;
 using LiveWallpaperEngine.Common;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 
 namespace LiveWallpaperEngine
@@ -12,8 +13,10 @@ namespace LiveWallpaperEngine
         [STAThread]
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().RunAsync();
-            
+            CreateHostBuilder(args)
+                .Build()
+                .RunAsync();
+
             //winformÉèÖÃ
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
@@ -57,7 +60,18 @@ namespace LiveWallpaperEngine
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                    .ConfigureKestrel(options =>
+                      {
+                          // Setup a HTTP/2 endpoint without TLS.
+                          int port = 8080;
+                          if (args.Length > 0)
+                              port = int.Parse(args[0]);
+                          options.ListenLocalhost(port, o => o.Protocols =
+                              HttpProtocols.Http2);
+                      })
+                    .UseStartup<Startup>();
+                    //.UseUrls("http://localhost:9090");
                 });
     }
 }
