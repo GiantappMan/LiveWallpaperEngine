@@ -8,15 +8,13 @@ namespace LiveWallpaperEngine.Common
 {
     public class AppMaximizedEvent : EventArgs
     {
-        public Screen MaximizedScreen { get; set; }
-
-        public bool Maximized { get; set; }
+        public List<Screen> MaximizedScreens { get; set; }
     }
 
     public static class MaximizedMonitor
     {
         static Process _cp;
-        static bool _maximized;
+        static List<Screen> maximizedScreens = new List<Screen>();
 
         public static event EventHandler<AppMaximizedEvent> AppMaximized;
 
@@ -25,17 +23,15 @@ namespace LiveWallpaperEngine.Common
             if (_cp == null)
                 _cp = Process.GetCurrentProcess();
 
-            bool isMaximized = new DZY.WinAPI.Helpers.OtherProgramChecker(_cp.Id).CheckMaximized(out IntPtr fullscreenWindow);
-            if (_maximized == isMaximized)
+            new DZY.WinAPI.Helpers.OtherProgramChecker(_cp.Id).CheckMaximized(out List<Screen> fullscreenWindow);
+            if (maximizedScreens.Count == fullscreenWindow.Count)
                 return;
 
-            _maximized = isMaximized;
+            maximizedScreens = fullscreenWindow;
 
-            Screen maximizedScreen = Screen.FromHandle(fullscreenWindow);
             AppMaximized?.Invoke(null, new AppMaximizedEvent()
             {
-                Maximized = _maximized,
-                MaximizedScreen = maximizedScreen
+                MaximizedScreens = maximizedScreens
             });
         }
     }

@@ -167,23 +167,23 @@ namespace LiveWallpaperEngineRender
 
         private void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var maximizedScreenIndex = Screen.AllScreens.ToList().IndexOf(e.MaximizedScreen);
+            var maximizedScreenIndexs = e.MaximizedScreens.Select(m => Screen.AllScreens.ToList().IndexOf(m)).ToList();
+            bool anyScreenMaximized = maximizedScreenIndexs.Count > 0;
             foreach (var item in Options.ScreenOptions)
             {
                 int currentScreenIndex = item.ScreenIndex;
-                if (Options.AppMaximizedEffectAllScreen != true && currentScreenIndex != maximizedScreenIndex)
-                    continue;
+                bool currentScreenMaximized = maximizedScreenIndexs.Contains(currentScreenIndex) || Options.AppMaximizedEffectAllScreen && anyScreenMaximized;
 
                 switch (item.WhenAppMaximized)
                 {
                     case ActionWhenMaximized.Pause:
-                        if (e.Maximized)
+                        if (currentScreenMaximized)
                             Pause(currentScreenIndex);
                         else
                             Resum(currentScreenIndex);
                         break;
                     case ActionWhenMaximized.Stop:
-                        if (e.Maximized)
+                        if (currentScreenMaximized)
                             InnerCloseWallpaper(currentScreenIndex);
                         else
                             if (_currentWalpapers.ContainsKey(currentScreenIndex))

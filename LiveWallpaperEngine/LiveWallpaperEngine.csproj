@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
-    <PackageReference Include="DZY.WinAPI" Version="2.0.8" />
+    <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.23.2" />
     <PackageReference Include="Mpv.NET" Version="1.1.0" />
   </ItemGroup>
