@@ -23,9 +23,6 @@
     <Compile Remove="StatusManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Client" />
     <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Server" />
   </ItemGroup>

@@ -22,3 +22,21 @@ message ScreenOption{
 	Pause = 1;
 	Stop = 2;
  }
+
+ message WallpaperModel{
+  string Path =1; 
+  WallpaperType Type=2;
+ }
+
+ message WallpaperType{
+ WalllpaperDefinedType DType = 1;
+ repeated string SupportExtensions= 2;
+ }
+
+ enum WalllpaperDefinedType{
+	NotSupport = 0;
+	Video = 1;
+	Image= 2;
+	Web= 3;
+	Exe=4;
+ }

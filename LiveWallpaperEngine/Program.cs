@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using DZY.WinAPI;
+using LiveWallpaperEngine.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -10,9 +9,46 @@ namespace LiveWallpaperEngine
 {
     public class Program
     {
+        [STAThread]
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().RunAsync();
+            
+            //winform设置
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            //异常捕获
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            //dpi 相关
+            //上面已经操作了不用设了
+            //User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+            WallpaperHelper.DoSomeMagic();
+
+            //winform 处理消息循环
+            Application.Run(new Form()
+            {
+                ShowInTaskbar = false,
+                Opacity = 0
+            });
+
+            static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+            {
+                var error = e.Exception;
+                MessageBox.Show(error?.Message, "ThreadException");
+                Environment.Exit(0);
+            }
+
+            static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+            {
+                var error = e.ExceptionObject as Exception;
+                MessageBox.Show(error?.Message, "UnhandledException");
+                Environment.Exit(0);
+            }
         }
 
         // Additional configuration is required to successfully run gRPC on macOS.

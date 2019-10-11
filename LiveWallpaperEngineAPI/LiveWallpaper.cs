@@ -1,7 +1,4 @@
-﻿using DZY.WinAPI;
-using Grpc.Net.Client;
-using LiveWallpaperEngine.Common;
-using LiveWallpaperEngine.Common.Models;
+﻿using Grpc.Net.Client;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -22,10 +19,6 @@ namespace LiveWallpaperEngine
         {
             var channel = GrpcChannel.ForAddress("https://localhost:5001");
             _client = new API.APIClient(channel);
-
-            //dpi 相关
-            User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
-            WallpaperHelper.DoSomeMagic();
         }
 
         public static LiveWallpaper Instance { get; private set; } = new LiveWallpaper();
@@ -58,7 +51,9 @@ namespace LiveWallpaperEngine
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(31.5));
 
-            var reply = await _client.ShowWallpaperAsync(new ShowWallpaperRequest() { Name = "test" });
+            var para = new ShowWallpaperRequest() { Wallpaper = wallpaper };
+            para.ScreenIndexs.AddRange(screenIndexs);
+            _ = await _client.ShowWallpaperAsync(para);
         }
 
         public async void CloseWallpaper(params int[] screenIndexs)
@@ -66,7 +61,9 @@ namespace LiveWallpaperEngine
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(3.5));
 
-            var reply = await _client.CloseWallpaperAsync(new CloseWallpaperRequest());
+            var para = new CloseWallpaperRequest();
+            para.ScreenIndexs.AddRange(screenIndexs);
+            var reply = await _client.CloseWallpaperAsync(para);
         }
 
         public async Task SetOptions(LiveWallpaperOptions setting)
