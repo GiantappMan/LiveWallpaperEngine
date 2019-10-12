@@ -1,15 +1,18 @@
 {
   "name": "livewallpaperrender",
+  "productName": "livewallpaperrender",
   "description": "LivewallpaperRender",
   "keywords": [],
   "main": "./main.js",
   "version": "1.0.0",
   "author": "DaZiYuan",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=out --icon=assets/app-icon/win/app.ico"
   },
   "dependencies": {},
   "devDependencies": {
-    "electron": "6.0.12"
+    "electron": "6.0.12",
+    "electron-packager": "^14.0.6"
   }
 }
