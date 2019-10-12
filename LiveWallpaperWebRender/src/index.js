@@ -19,14 +19,12 @@ app.on('ready', () => {
   var window = new BrowserWindow({
     skipTaskbar: true,
     frame: false,
-    x: 300,
-    y: 300
   });
   let handle = window.getNativeWindowHandle().readUInt32LE();
   windows.push(window)
 
   windows.forEach((window) => {
     // Load our index.html
-    window.loadFile('index.html')
+    window.loadURL(`file://${__dirname}/index.html`);
   })
 })

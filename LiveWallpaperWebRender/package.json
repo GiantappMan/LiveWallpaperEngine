@@ -1,18 +1,60 @@
 {
-  "name": "livewallpaperrender",
-  "productName": "livewallpaperrender",
-  "description": "LivewallpaperRender",
-  "keywords": [],
-  "main": "./main.js",
-  "version": "1.0.0",
-  "author": "DaZiYuan",
+  "name": "livewallpaperwebrender",
+  "productName": "livewallpaperwebrender",
+  "version": "1.0.2",
+  "description": "My Electron application description",
+  "main": "src/index.js",
   "scripts": {
-    "start": "electron .",
-    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=out --icon=assets/app-icon/win/app.ico"
+    "start": "electron-forge start",
+    "package": "electron-forge package --platform=win32 --arch=ia32",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
-  "dependencies": {},
+  "keywords": [],
+  "author": {
+    "name": "DaZiYuan",
+    "email": "mscoder@hotmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "assets/app-icon/win/app.ico"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "livewallpaperwebrender"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
+  },
   "devDependencies": {
     "electron": "6.0.12",
-    "electron-packager": "^14.0.6"
+    "@electron-forge/cli": "6.0.0-beta.34",
+    "@electron-forge/maker-deb": "6.0.0-beta.34",
+    "@electron-forge/maker-rpm": "6.0.0-beta.34",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.34",
+    "@electron-forge/maker-zip": "6.0.0-beta.34"
   }
 }
