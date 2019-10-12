@@ -15,36 +15,15 @@ app.on('ready', () => {
   //
   // Let's make a few windows!
 
-  // A window that's only half visible
-  windows.push(
-    new BrowserWindow({
-      opacity: 0.5,
-      x: 200,
-      y: 200
-    })
-  )
-
   // A transparent window
-  windows.push(
-    new BrowserWindow({
-      transparent: true,
-      x: 300,
-      y: 300
-    })
-  )
-
-  // A window that's fixed and always on top
-  windows.push(
-    new BrowserWindow({
-      movable: false,
-      resizable: false,
-      alwaysOnTop: true,
-      maximizable: false,
-      minimizable: false,
-      x: 600,
-      y: 600
-    })
-  )
+  var window = new BrowserWindow({
+    skipTaskbar: true,
+    frame: false,
+    x: 300,
+    y: 300
+  });
+  let handle = window.getNativeWindowHandle().readUInt32LE();
+  windows.push(window)
 
   windows.forEach((window) => {
     // Load our index.html

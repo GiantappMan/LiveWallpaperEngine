@@ -1,7 +1,6 @@
 {
-  "name": "ashamed-wind-leap",
-  "productName": "ashamed-wind-leap",
-  "description": "My Electron application description",
+  "name": "livewallpaperrender",
+  "description": "LivewallpaperRender",
   "keywords": [],
   "main": "./main.js",
   "version": "1.0.0",
