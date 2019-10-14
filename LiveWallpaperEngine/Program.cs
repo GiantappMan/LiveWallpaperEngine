@@ -1,13 +1,15 @@
 using System;
 using System.Windows.Forms;
 using LiveWallpaperEngineAPI.Common;
+using LiveWallpaperEngineAPI.Renders;
+using LiveWallpaperEngineRemoteWebRender;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 
 namespace LiveWallpaperEngine
 {
-    public class Program
+    public static class Program
     {
         [STAThread]
         public static void Main(string[] args)
@@ -30,6 +32,9 @@ namespace LiveWallpaperEngine
             //上面已经操作了不用设了
             //User32WrapperEx.SetThreadAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
             WallpaperHelper.DoSomeMagic();
+
+            //用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
+            RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
 
             //winform 处理消息循环
             Application.Run(new Form()

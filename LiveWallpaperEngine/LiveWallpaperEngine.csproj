@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
     <ProjectReference Include="..\LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj" />
+    <ProjectReference Include="..\LiveWallpaperEngineRemoteWebRender\LiveWallpaperEngineRemoteWebRender.csproj" />
   </ItemGroup>
 
 </Project>

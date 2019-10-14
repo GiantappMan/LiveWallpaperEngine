@@ -5,11 +5,12 @@ option csharp_namespace = "LiveWallpaperEngine";
 
 package LiveWallpaperEngine;
 
-// The greeting service definition.
 service API {
-  // Sends a greeting
+  // 显示壁纸
   rpc ShowWallpaper (ShowWallpaperRequest) returns (google.protobuf.Empty);
+  // 关闭壁纸
   rpc CloseWallpaper (CloseWallpaperRequest) returns (google.protobuf.Empty);
+  // 设置选项
   rpc SetOptions (wallpaperModel.LiveWallpaperOptions) returns (google.protobuf.Empty);
 }
 

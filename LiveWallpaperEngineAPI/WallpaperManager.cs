@@ -23,7 +23,7 @@ namespace LiveWallpaperEngineAPI
         {
             //注册render
             RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
-            RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
+            //RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
             RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
         }
         public static LiveWallpaperOptions Options { get; private set; }
@@ -72,7 +72,6 @@ namespace LiveWallpaperEngineAPI
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
         {
-            //CloseWallpaper(screenIndexs);
             if (wallpaper.Type == null)
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
             if (wallpaper.Type.DType == WalllpaperDefinedType.NotSupport)

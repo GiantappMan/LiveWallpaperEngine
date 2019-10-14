@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Threading.Tasks;
+using DZY.Util.Common.Helpers;
 using LiveWallpaperEngine;
+using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Common;
-using LiveWallpaperEngineAPI.Forms;
+using LiveWallpaperEngineAPI.Renders;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace LiveWallpaperEngineRemoteWebRender
 {
-    class WebRender : IRender
+    /// <summary>
+    /// 用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
+    /// </summary>
+    public class ElectronWebRender : IRender
     {
         Process _renderProcess = null;
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
@@ -55,7 +56,7 @@ namespace LiveWallpaperEngineAPI.Renders
         {
             if (_renderProcess == null || _renderProcess.HasExited)
             {
-                var renderAPIPort = GetAvailablePort(9000);
+                var renderAPIPort = NetworkHelper.GetAvailablePort(8080);
                 _renderProcess = Process.Start("", renderAPIPort.ToString());
             }
 
@@ -65,33 +66,6 @@ namespace LiveWallpaperEngineAPI.Renders
                 WallpaperHelper.GetInstance(scIndex).SendToBackground(windowHandle);
             }
             throw new System.NotImplementedException();
-        }
-        public static int GetAvailablePort(int startingPort)
-        {
-            var properties = IPGlobalProperties.GetIPGlobalProperties();
-
-            //getting active connections
-            var tcpConnectionPorts = properties.GetActiveTcpConnections()
-                                .Where(n => n.LocalEndPoint.Port >= startingPort)
-                                .Select(n => n.LocalEndPoint.Port);
-
-            //getting active tcp listners - WCF service listening in tcp
-            var tcpListenerPorts = properties.GetActiveTcpListeners()
-                                .Where(n => n.Port >= startingPort)
-                                .Select(n => n.Port);
-
-            //getting active udp listeners
-            var udpListenerPorts = properties.GetActiveUdpListeners()
-                                .Where(n => n.Port >= startingPort)
-                                .Select(n => n.Port);
-
-            var port = Enumerable.Range(startingPort, ushort.MaxValue)
-                .Where(i => !tcpConnectionPorts.Contains(i))
-                .Where(i => !tcpListenerPorts.Contains(i))
-                .Where(i => !udpListenerPorts.Contains(i))
-                .FirstOrDefault();
-
-            return port;
         }
 
         private Task<IntPtr> GetHostFromRemote(int scIndex)

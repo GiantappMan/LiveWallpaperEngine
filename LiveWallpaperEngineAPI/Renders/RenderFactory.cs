@@ -10,7 +10,7 @@ namespace LiveWallpaperEngineAPI.Renders
     /// 定义render类型的实现
     /// </summary>
     /// <typeparam name="Render"></typeparam>
-    public class RenderFactory
+    public static class RenderFactory
     {
         /// <summary>
         /// 公开属性，方便外部库自定义

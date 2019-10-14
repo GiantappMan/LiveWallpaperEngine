@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Remove="Forms\Main.cs" />
     <Compile Remove="Forms\Main.Designer.cs" />
+    <Compile Remove="Renders\WebRender.cs" />
   </ItemGroup>
 
   <ItemGroup>
