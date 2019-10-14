@@ -1,4 +1,4 @@
-﻿namespace LiveWallpaperEngineRender
+﻿namespace LiveWallpaperEngineAPI
 {
     partial class RenderHost
     {

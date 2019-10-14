@@ -2,10 +2,10 @@
 using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing;
-using LiveWallpaperEngineRender.Renders;
+using LiveWallpaperEngineAPI.Renders;
 using DZY.Util.Winform.Extensions;
 
-namespace LiveWallpaperEngineRender.Forms
+namespace LiveWallpaperEngineAPI.Forms
 {
     public partial class VideoControl : UserControl, IRenderControl
     {

@@ -1,4 +1,4 @@
-﻿namespace LiveWallpaperEngineRender.Forms
+﻿namespace LiveWallpaperEngineAPI.Forms
 {
     partial class VideoControl
     {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using LiveWallpaperEngineRender;
+using LiveWallpaperEngineAPI;
 using Microsoft.Extensions.Logging;
 
 namespace LiveWallpaperEngine

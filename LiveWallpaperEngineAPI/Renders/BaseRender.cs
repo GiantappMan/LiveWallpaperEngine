@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineRender.Renders
+namespace LiveWallpaperEngineAPI.Renders
 {
     abstract class BaseRender<RenderControl> : IRender where RenderControl : Control, IRenderControl, new()
     {

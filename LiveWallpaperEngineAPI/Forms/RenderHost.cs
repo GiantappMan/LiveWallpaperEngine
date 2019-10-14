@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DZY.Util.Winform.Extensions;
-using LiveWallpaperEngine.Common;
+using LiveWallpaperEngineAPI.Common;
 
-namespace LiveWallpaperEngineRender
+namespace LiveWallpaperEngineAPI
 {
     public partial class RenderHost : Form
     {

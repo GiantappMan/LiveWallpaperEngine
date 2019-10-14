@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
-using DZY.WinAPI;
-using LiveWallpaperEngine.Common;
+using LiveWallpaperEngineAPI.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;

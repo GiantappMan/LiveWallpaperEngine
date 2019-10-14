@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using LiveWallpaperEngine;
-using LiveWallpaperEngineRender.Forms;
+using LiveWallpaperEngineAPI.Forms;
 
-namespace LiveWallpaperEngineRender.Renders
+namespace LiveWallpaperEngineAPI.Renders
 {
     class VideoRender : BaseRender<VideoControl>
     {

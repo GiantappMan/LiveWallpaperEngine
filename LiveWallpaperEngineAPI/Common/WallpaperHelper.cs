@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngine.Common
+namespace LiveWallpaperEngineAPI.Common
 {
     public class WallpaperHelper
     {

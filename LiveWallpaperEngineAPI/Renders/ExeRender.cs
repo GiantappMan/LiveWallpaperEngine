@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngineRender.Renders
+namespace LiveWallpaperEngineAPI.Renders
 {
     public class ExeRender : IRender
     {

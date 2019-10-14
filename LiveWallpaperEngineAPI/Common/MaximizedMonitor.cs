@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngine.Common
+namespace LiveWallpaperEngineAPI.Common
 {
     public class AppMaximizedEvent : EventArgs
     {

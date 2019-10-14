@@ -1,6 +1,6 @@
 ﻿using LiveWallpaperEngine;
-using LiveWallpaperEngine.Common;
-using LiveWallpaperEngineRender.Renders;
+using LiveWallpaperEngineAPI.Common;
+using LiveWallpaperEngineAPI.Renders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineRender
+namespace LiveWallpaperEngineAPI
 {
     public class WallpaperManager
     {

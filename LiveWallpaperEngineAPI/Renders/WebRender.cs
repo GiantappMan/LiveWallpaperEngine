@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LiveWallpaperEngine;
-using LiveWallpaperEngineRender.Forms;
+using LiveWallpaperEngineAPI.Forms;
 
-namespace LiveWallpaperEngineRender.Renders
+namespace LiveWallpaperEngineAPI.Renders
 {
     class WebRender : IRender
     {

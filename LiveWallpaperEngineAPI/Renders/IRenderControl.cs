@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LiveWallpaperEngineRender.Renders
+namespace LiveWallpaperEngineAPI.Renders
 {
     public interface IRenderControl
     {

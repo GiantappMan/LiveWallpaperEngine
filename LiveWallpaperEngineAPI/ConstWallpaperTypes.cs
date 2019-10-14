@@ -1,7 +1,7 @@
 ﻿using LiveWallpaperEngine;
 using System.Collections.Generic;
 
-namespace LiveWallpaperEngineRender
+namespace LiveWallpaperEngineAPI
 {
     public class ConstWallpaperTypes
     {
