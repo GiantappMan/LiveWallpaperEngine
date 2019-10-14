@@ -1,6 +1,14 @@
 const { app, BrowserWindow } = require('electron')
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
+const express = require('express')
+const httpServer = express()
+
+httpServer.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+httpServer.listen(3000)
 
 let protoFile = `${__dirname}\\..\\..\\Protos\\api.proto`;
 protoLoader.load(protoFile).then(packageDefinition => {
