@@ -1,34 +1,42 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-    <Version>2.0.2</Version>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="_obsolete\**" />
-    <EmbeddedResource Remove="_obsolete\**" />
-    <None Remove="_obsolete\**" />
-    <Page Remove="_obsolete\**" />
+    <Compile Remove="Forms\Main.cs" />
+    <Compile Remove="Forms\Main.Designer.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <!--<ContentWithTargetPath Include="..\public\render\**" TargetPath="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />-->
-    <!--<ContentWithTargetPath Include="..\LiveWallpaperEngineRender\bin\netcoreapp3.0\**" TargetPath="%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />-->
+    <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
+    <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
+    <PackageReference Include="Mpv.NET" Version="1.1.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Remove="LiveWallpaper - 复制.cs" />
-    <Compile Remove="RemoteRender.cs" />
-    <Compile Remove="StatusManager.cs" />
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Client" />
-    <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Server" />
+    <Compile Update="Forms\RenderHost.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\VideoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.23.2" />
-    <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
+    <None Update="lib\mpv-1-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="lib\mpv-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
 </Project>

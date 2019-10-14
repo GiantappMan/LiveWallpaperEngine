@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Both" />
+    <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Both" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.23.2" />
+  </ItemGroup>
+</Project>
