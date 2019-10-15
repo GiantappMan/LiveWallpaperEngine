@@ -1,27 +1,26 @@
-import { app, BrowserWindow } from 'electron';
 import express from 'express'
+import WindowManager from './window_manager'
+
+let windowManager = new WindowManager();
 let httpServer = express()
 
-httpServer.get('/', function (req, res) {
-  res.send('Hello World')
+let hostPort = process.argv.find(m => { return m.indexOf("--hostPort") >= 0 });
+if (hostPort)
+  hostPort = hostPort.replace("--hostPort=", "");
+else
+  hostPort = "3000";
+console.log(hostPort);
+
+httpServer.get('/getInfo', function (req, res) {
+  let result = windowManager.getInfo();
+  res.send(result);
 })
 
-httpServer.listen(3000)
-
-const windows: BrowserWindow[] = []
-console.error("test");
-app.on('ready', () => {
-  let window = new BrowserWindow({
-    skipTaskbar: true,
-    frame: false,
-  });
-
-  // window.webContents.openDevTools();
-
-  let handle = window.getNativeWindowHandle().readUInt32LE(0);
-  windows.push(window)
-
-  windows.forEach((window) => {
-    window.loadURL(`file://${__dirname}/../html/loading/index.html`);
-  })
+httpServer.get('/getHosts', function (req, res) {
+  let indexs = req.query.screenIndexs as string[];
+  let result = windowManager.getHosts(indexs);
+  res.send(result)
 })
+
+httpServer.listen(hostPort);
+
