@@ -94,7 +94,7 @@ namespace LiveWallpaperEngine
 
                 var reply = await _client.SetOptionsAsync(setting);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
             }
         }
