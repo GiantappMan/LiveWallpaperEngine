@@ -23,8 +23,10 @@ namespace LiveWallpaperEngineRemoteWebRender
         };
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
 
-        public void CloseWallpaper(params int[] screenIndexs)
+        public async void CloseWallpaper(params int[] screenIndexs)
         {
+            await _api.CloseWallpaper(screenIndexs);
+            WallpaperHelper.RefreshWallpaper();
         }
 
         public void Dispose()

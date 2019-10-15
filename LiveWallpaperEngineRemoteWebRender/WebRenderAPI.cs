@@ -39,17 +39,28 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
+        internal async Task CloseWallpaper(int[] screenIndexs)
+        {
+            try
+            {
+                string ids = GetIds(screenIndexs);
+                using var client = new HttpClient();
+                string url = _baseUrl + $"/closeWallpaper?screenIndexs={ids}";
+                var json = await client.GetStringAsync(url);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
+
         public async Task<Dictionary<int, IntPtr>> ShowWallpaper(WallpaperModel wallpaper, int[] screenIndexs)
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var i in screenIndexs)
-                {
-                    sb.AppendFormat("{0},", i);
-                }
+                string ids = GetIds(screenIndexs);
                 using var client = new HttpClient();
-                string url = _baseUrl + $"/showWallpaper?path={wallpaper.Path}&screenIndexs={sb.ToString()}";
+                string url = _baseUrl + $"/showWallpaper?path={wallpaper.Path}&screenIndexs={ids}";
                 var json = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<Dictionary<int, IntPtr>>(json);
                 return result;
@@ -59,6 +70,16 @@ namespace LiveWallpaperEngineRemoteWebRender
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return null;
             }
+        }
+
+        private string GetIds(int[] ids)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in ids)
+            {
+                sb.AppendFormat("{0},", i);
+            }
+            return sb.ToString();
         }
     }
 }

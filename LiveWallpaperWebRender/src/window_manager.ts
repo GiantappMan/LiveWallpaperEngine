@@ -12,7 +12,7 @@ export interface Wallpaper {
     path: string
 }
 
-const windows: { [id: number]: BrowserWindow; } = {};
+const windows: { [id: number]: BrowserWindow | undefined; } = {};
 let status: Status = new Status();
 app.on('ready', () => {
     status.initlized = true;
@@ -22,28 +22,28 @@ export default class WindowManager {
     getInfo() {
         return status;
     }
-    // getHosts(indexs: string[]) {
-    //     const result: { [id: number]: number; } = {};
-    //     for (const i of indexs) {
-    //         let tmpIndex = parseInt(i);
-    //         if (isNaN(tmpIndex))
-    //             continue;
+    closeWallpaper(screenIndexs: string[]) {
+        let result = false;
+        for (const i of screenIndexs) {
+            let tmpIndex = parseInt(i);
+            if (isNaN(tmpIndex))
+                continue;
 
-    //         if (!windows[tmpIndex]) {
-    //             let window = new BrowserWindow({
-    //                 skipTaskbar: true,
-    //                 frame: false,
-    //             });
-    //             windows[tmpIndex] = window;
-    //             window.loadURL(`file://${__dirname}/../html/loading/index.html`);
-    //         }
+            let currentWindow = windows[tmpIndex];
+            if (currentWindow) {
+                //防止出现黑屏
+                // currentWindow.hide();
+                // currentWindow.loadURL("");
 
-    //         let handle = windows[tmpIndex].getNativeWindowHandle().readUInt32LE(0);
-    //         result[tmpIndex] = handle;
-    //     }
-
-    //     return result;
-    // }
+                // 直接关会黑屏
+                currentWindow.setOpacity(0);
+                windows[tmpIndex]!.close();
+                windows[tmpIndex] = undefined;
+                result = true;
+            }
+        }
+        return result;
+    }
     showWallpaper(wallpaper: Wallpaper, screenIndexs: string[]) {
         const result: { [id: number]: number; } = {};
         for (const i of screenIndexs) {
@@ -55,6 +55,7 @@ export default class WindowManager {
                 window = new BrowserWindow({
                     skipTaskbar: true,
                     frame: false,
+                    fullscreen: true,
                 });
                 windows[tmpIndex] = window;
                 window.loadURL(`file://${__dirname}/../html/loading/index.html`);
@@ -63,8 +64,9 @@ export default class WindowManager {
                 window = windows[tmpIndex];
 
             window!.loadURL(wallpaper.path);
+            window!.show();
 
-            let handle = windows[tmpIndex].getNativeWindowHandle().readUInt32LE(0);
+            let handle = windows[tmpIndex]!.getNativeWindowHandle().readUInt32LE(0);
             result[tmpIndex] = handle;
         }
         return result;

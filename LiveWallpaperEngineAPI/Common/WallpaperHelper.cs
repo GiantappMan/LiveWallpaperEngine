@@ -15,7 +15,7 @@ namespace LiveWallpaperEngineAPI.Common
         #region fields
 
         IntPtr _currentHandler;
-        IntPtr _parentHandler;
+        IntPtr? _parentHandler;
         RECT? _originalRect;//窗口原始大小，恢复时使用
         Rectangle _targetBounds;
 
@@ -49,14 +49,14 @@ namespace LiveWallpaperEngineAPI.Common
 
         public void RestoreParent()
         {
-            if (_workerw == IntPtr.Zero)
-                _workerw = GetWorkerW();
+            if (_parentHandler != null)
+                User32Wrapper.SetParent(_currentHandler, _parentHandler.Value);
 
-            User32Wrapper.SetParent(_currentHandler, _parentHandler);
+            _parentHandler = null;
 
-            //恢复原始大小
-            if (_originalRect != null)
-                User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
+            ////恢复原始大小
+            //if (_originalRect != null)
+            //    User32WrapperEx.SetWindowPosEx(_currentHandler, _originalRect.Value);
         }
 
         public bool SendToBackground(IntPtr handler)
@@ -87,7 +87,13 @@ namespace LiveWallpaperEngineAPI.Common
 
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
             FullScreen(_currentHandler, _targetBounds);
+
+            //if (newParentHandler != _parentHandler)
+            //{
+            //    //parent没变时不重复调用，有时候会导致不可见
             User32Wrapper.SetParent(_currentHandler, workerw);
+            //_parentHandler = newParentHandler;
+            //}
 
             //if (_parentHandler == IntPtr.Zero)
             //    _parentHandler = User32Wrapper.GetAncestor(_currentHandler, GetAncestorFlags.GetParent);
@@ -203,7 +209,7 @@ namespace LiveWallpaperEngineAPI.Common
         }
 
         //刷新壁纸
-        private static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI)
+        public static IDesktopWallpaper RefreshWallpaper(IDesktopWallpaper desktopWallpaperAPI = null)
         {
             var explorer = ExplorerMonitor.ExploreProcess;
             if (explorer == null)
@@ -220,7 +226,6 @@ namespace LiveWallpaperEngineAPI.Common
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-                desktopWallpaperAPI = GetDesktopWallpaperAPI();
             }
             return desktopWallpaperAPI;
         }

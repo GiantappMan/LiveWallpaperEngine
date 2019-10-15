@@ -16,11 +16,11 @@ httpServer.get('/getInfo', function (req, res) {
   res.send(result);
 })
 
-// httpServer.get('/getHosts', function (req, res) {
-//   let indexs = req.query.screenIndexs as string[];
-//   let result = windowManager.getHosts(indexs);
-//   res.send(result)
-// })
+httpServer.get('/closeWallpaper', function (req, res) {
+  let indexs = req.query.screenIndexs;
+  let result = windowManager.closeWallpaper(indexs);
+  res.send(result);
+})
 
 httpServer.get('/showWallpaper', function (req, res) {
   let indexs = req.query.screenIndexs;
