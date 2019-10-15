@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LiveWallpaperEngine;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -38,7 +39,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
-        public async Task<Dictionary<int, IntPtr>> GetHosts(int[] screenIndexs)
+        public async Task<Dictionary<int, IntPtr>> ShowWallpaper(WallpaperModel wallpaper, int[] screenIndexs)
         {
             try
             {
@@ -47,8 +48,9 @@ namespace LiveWallpaperEngineRemoteWebRender
                 {
                     sb.AppendFormat("{0},", i);
                 }
-                HttpClient client = new HttpClient();
-                var json = await client.GetStringAsync(_baseUrl + "/getHosts?screenIndexs=" + sb.ToString());
+                using var client = new HttpClient();
+                string url = _baseUrl + $"/showWallpaper?path={wallpaper.Path}&screenIndexs={sb.ToString()}";
+                var json = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<Dictionary<int, IntPtr>>(json);
                 return result;
             }

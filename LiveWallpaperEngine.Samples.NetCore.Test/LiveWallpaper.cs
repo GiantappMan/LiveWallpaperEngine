@@ -58,7 +58,7 @@ namespace LiveWallpaperEngine
             try
             {
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+                cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var para = new ShowWallpaperRequest() { Wallpaper = wallpaper };
                 para.ScreenIndexs.AddRange(screenIndexs);
@@ -74,7 +74,7 @@ namespace LiveWallpaperEngine
             try
             {
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+                cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var para = new CloseWallpaperRequest();
                 para.ScreenIndexs.AddRange(screenIndexs);
@@ -90,7 +90,7 @@ namespace LiveWallpaperEngine
             try
             {
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(3.5));
+                cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var reply = await _client.SetOptionsAsync(setting);
             }

@@ -54,8 +54,10 @@ namespace LiveWallpaperEngineRemoteWebRender
             {
                 var renderAPIPort = NetworkHelper.GetAvailablePort(8080);
                 _api = new WebRenderAPI("http://localhost:" + renderAPIPort);
-                _renderProcess = Process.Start(@"D:\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
-                   $"--hostPort={renderAPIPort}");
+                //_renderProcess = Process.Start(@"D:\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
+                //   $"--hostPort={renderAPIPort}");
+                _renderProcess = Process.Start(@"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
+                  $"--hostPort={renderAPIPort}");
             }
 
             HostInfo info = await _api.GetInfo();
@@ -65,7 +67,7 @@ namespace LiveWallpaperEngineRemoteWebRender
                 info = await _api.GetInfo();
             }
 
-            var hosts = await _api.GetHosts(screenIndexs);
+            var hosts = await _api.ShowWallpaper(wallpaper, screenIndexs);
             foreach (var scIndex in screenIndexs)
             {
                 IntPtr windowHandle = hosts[scIndex];
