@@ -23,7 +23,7 @@ namespace LiveWallpaperEngineAPI.Common
 
         static Dictionary<int, WallpaperHelper> _cacheInstances = new Dictionary<int, WallpaperHelper>();
         static IDesktopWallpaper _desktopWallpaperAPI;
-        static IntPtr _workerw = IntPtr.Zero;
+        //static IntPtr _workerw = IntPtr.Zero;
         static uint _slideshowTick;
 
         #endregion
@@ -86,7 +86,7 @@ namespace LiveWallpaperEngineAPI.Common
                 return false;
 
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
-            FullScreen(_currentHandler, _targetBounds);
+            FullScreen(_currentHandler, _targetBounds, workerw);
 
             //if (newParentHandler != _parentHandler)
             //{
@@ -200,11 +200,11 @@ namespace LiveWallpaperEngineAPI.Common
             return workerw;
         }
 
-        private static void FullScreen(IntPtr targeHandler, Rectangle bounds)
+        private static void FullScreen(IntPtr targeHandler, Rectangle bounds,IntPtr workerw)
         {
             RECT rect = new RECT(bounds);
 
-            User32Wrapper.MapWindowPoints(IntPtr.Zero, _workerw, ref rect, 2);
+            User32Wrapper.MapWindowPoints(IntPtr.Zero, workerw, ref rect, 2);
             _ = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
         }
 
