@@ -15,6 +15,7 @@ namespace LiveWallpaperEngineRemoteWebRender
     /// </summary>
     public class ElectronWebRender : IRender
     {
+        WebRenderAPI _api;
         Process _renderProcess = null;
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
@@ -24,32 +25,27 @@ namespace LiveWallpaperEngineRemoteWebRender
 
         public void CloseWallpaper(params int[] screenIndexs)
         {
-            throw new System.NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
         }
 
         public int GetVolume(params int[] screenIndexs)
         {
-            throw new System.NotImplementedException();
+            return 0;
         }
 
         public void Pause(params int[] screenIndexs)
         {
-            throw new System.NotImplementedException();
         }
 
         public void Resum(params int[] screenIndexs)
         {
-            throw new System.NotImplementedException();
         }
 
         public void SetVolume(int v, params int[] screenIndexs)
         {
-            throw new System.NotImplementedException();
         }
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
@@ -57,20 +53,24 @@ namespace LiveWallpaperEngineRemoteWebRender
             if (_renderProcess == null || _renderProcess.HasExited)
             {
                 var renderAPIPort = NetworkHelper.GetAvailablePort(8080);
-                _renderProcess = Process.Start("", renderAPIPort.ToString());
+                _api = new WebRenderAPI("http://localhost:" + renderAPIPort);
+                _renderProcess = Process.Start(@"D:\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
+                   $"--hostPort={renderAPIPort}");
             }
 
+            HostInfo info = await _api.GetInfo();
+            while (info == null || !info.Initlized)
+            {
+                await Task.Delay(1000);
+                info = await _api.GetInfo();
+            }
+
+            var hosts = await _api.GetHosts(screenIndexs);
             foreach (var scIndex in screenIndexs)
             {
-                IntPtr windowHandle = await GetHostFromRemote(scIndex);
+                IntPtr windowHandle = hosts[scIndex];
                 WallpaperHelper.GetInstance(scIndex).SendToBackground(windowHandle);
             }
-            throw new System.NotImplementedException();
-        }
-
-        private Task<IntPtr> GetHostFromRemote(int scIndex)
-        {
-            throw new NotImplementedException();
         }
     }
 }
