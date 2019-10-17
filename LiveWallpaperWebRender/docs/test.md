@@ -5,3 +5,6 @@ http://localhost:8081/showWallpaper?path=F:\work\gitee\LiveWallpaperEngine\LiveW
 
 关闭
 http://localhost:8081/closeWallpaper?screenIndexs=0,1
+
+静音
+http://localhost:8081/muteWindow?screenIndexs=0,1

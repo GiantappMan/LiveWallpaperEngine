@@ -22,6 +22,18 @@ export default class WindowManager {
     getInfo() {
         return status;
     }
+    muteWindow(screenIndexs: string[]) {
+        let result = false;
+        for (const i in windows) {
+            let currentWindow = windows[i];
+            if (!currentWindow)
+                continue;
+
+            var mute = screenIndexs.indexOf(i) >= 0;
+            currentWindow.webContents.setAudioMuted(mute);
+        }
+        return result;
+    }
     closeWallpaper(screenIndexs: string[]) {
         let result = false;
         for (const i of screenIndexs) {

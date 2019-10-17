@@ -16,6 +16,12 @@ httpServer.get('/getInfo', function (req, res) {
   res.send(result);
 })
 
+httpServer.get('/muteWindow', function (req, res) {
+  let indexs = req.query.screenIndexs;
+  let result = windowManager.muteWindow(indexs);
+  res.send(result);
+})
+
 httpServer.get('/closeWallpaper', function (req, res) {
   let indexs = req.query.screenIndexs;
   let result = windowManager.closeWallpaper(indexs);
