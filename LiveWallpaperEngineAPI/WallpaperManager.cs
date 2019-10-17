@@ -94,6 +94,8 @@ namespace LiveWallpaperEngineAPI
                 else
                     _currentWalpapers[index] = wallpaper;
             }
+
+            ApplyAudioSource();
         }
 
         public void CloseWallpaper(params int[] screenIndexs)
@@ -126,8 +128,23 @@ namespace LiveWallpaperEngineAPI
                 MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
 
             StartTimer(options.AutoRestartWhenExplorerCrash || enableMaximized);
+            ApplyAudioSource();
 
             return Task.CompletedTask;
+        }
+
+        private void ApplyAudioSource()
+        {
+            //设置音源
+            for (int screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
+            {
+                if (_currentWalpapers.ContainsKey(screenIndex))
+                {
+                    var wallpaper = _currentWalpapers[screenIndex];
+                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type.DType);
+                    currentRender.SetVolume(screenIndex == Options.AudioScreenIndex ? 100 : 0, screenIndex);
+                }
+            }
         }
 
         private void StartTimer(bool enable)

@@ -11,7 +11,7 @@ namespace LiveWallpaperEngineAPI.Forms
     {
         private Mpv.NET.Player.MpvPlayer _player;
         private string _lastPath;
-
+        private int _volume;
         public VideoControl()
         {
             InitializeComponent();
@@ -51,6 +51,7 @@ namespace LiveWallpaperEngineAPI.Forms
                     //防止视频黑边
                     _player.API.SetPropertyString("panscan", "1.0");
                     _player.AutoPlay = true;
+                    _player.Volume = _volume;
                     Load(_lastPath);
                 });
             }
@@ -88,7 +89,15 @@ namespace LiveWallpaperEngineAPI.Forms
 
         public void SetVolume(int v)
         {
-            throw new NotImplementedException();
+            if (v < 0)
+                v = 0;
+            if (v > 100)
+                v = 100;
+
+            _volume = v;
+
+            if (_player != null)
+                _player.Volume = v;
         }
     }
 }

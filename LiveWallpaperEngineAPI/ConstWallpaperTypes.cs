@@ -16,7 +16,7 @@ namespace LiveWallpaperEngineAPI
         {
             DefinedType[WalllpaperDefinedType.Exe].SupportExtensions.AddRange(new List<string> { ".exe" });
             DefinedType[WalllpaperDefinedType.Video].SupportExtensions.AddRange(new List<string> { ".mp4", ".flv", ".blv", ".avi" });
-            DefinedType[WalllpaperDefinedType.Image].SupportExtensions.AddRange(new List<string> { ".mp4", ".flv", ".blv", ".avi" });
+            DefinedType[WalllpaperDefinedType.Image].SupportExtensions.AddRange(new List<string> { ".jpg", ".png", ".gif", ".jpeg", ".bmp" });
             DefinedType[WalllpaperDefinedType.Web].SupportExtensions.AddRange(new List<string> { ".html", ".htm" });
         }
     }

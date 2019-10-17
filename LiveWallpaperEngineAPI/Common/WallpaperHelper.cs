@@ -86,12 +86,12 @@ namespace LiveWallpaperEngineAPI.Common
                 return false;
 
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
-            FullScreen(_currentHandler, _targetBounds, workerw);
 
             //if (newParentHandler != _parentHandler)
             //{
             //    //parent没变时不重复调用，有时候会导致不可见
             User32Wrapper.SetParent(_currentHandler, workerw);
+            FullScreen(_currentHandler, _targetBounds, workerw);
             //_parentHandler = newParentHandler;
             //}
 
