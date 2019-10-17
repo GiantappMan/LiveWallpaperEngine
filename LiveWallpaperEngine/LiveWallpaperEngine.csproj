@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ContentWithTargetPath Include="..\dist\LiveWallpaperEngine\WebRender\**"
+                           TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)"
+                           CopyToOutputDirectory="PreserveNewest"  />
     <Compile Remove="Common\**" />
     <Compile Remove="lib\**" />
     <Compile Remove="Render\**" />

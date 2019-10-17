@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using DZY.Util.Common.Helpers;
 using LiveWallpaperEngine;
@@ -56,10 +58,9 @@ namespace LiveWallpaperEngineRemoteWebRender
             {
                 var renderAPIPort = NetworkHelper.GetAvailablePort(8080);
                 _api = new WebRenderAPI("http://localhost:" + renderAPIPort);
-                //_renderProcess = Process.Start(@"D:\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
-                //   $"--hostPort={renderAPIPort}");
-                _renderProcess = Process.Start(@"F:\work\gitee\LiveWallpaperEngine\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\livewallpaperwebrender.exe",
-                  $"--hostPort={renderAPIPort}");
+                string appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string path = Path.Combine(appDir, @"WebRender\livewallpaperwebrender.exe");
+                _renderProcess = Process.Start(path, $"--hostPort={renderAPIPort}");
             }
 
             HostInfo info = await _api.GetInfo();
