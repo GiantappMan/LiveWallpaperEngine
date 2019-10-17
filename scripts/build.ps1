@@ -1,29 +1,25 @@
-function build_webrender {
+function build_webrender($target) {
     Write-Host 'Build-WebRender'
     Set-Location -Path "../LiveWallpaperWebRender"
-
-    $Null = @(
-        Write-Host 'Delete out directory'
-        Remove-Item -Recurse -Force "out"
+    $Null = @(               
         Invoke-Expression "npm install"
-        Invoke-Expression "npm run package"
+        Invoke-Expression "npm run package"      
     )
 
     $dir = '.\out\livewallpaperwebrender-win32-ia32'
     $absolutePath = (Get-Item $dir).FullName
-
-    return $absolutePath    
+    Copy-Item $absolutePath -Destination $target -Recurse
+    Remove-Item -Recurse -Force $absolutePath
+    Set-Location -Path "../scripts"
 }
 
-function build_liveWallpaperEngine {
-    
+function build_liveWallpaperEngine ($target) {
+    Set-Location -Path "../"
+    $cmd = "dotnet publish LiveWallpaperEngine -c Release -o " + $target
+    Invoke-Expression $cmd    
+    Set-Location -Path ".\scripts"
 }
 
-$webRenderDir = build_webrender
-Write-Host "webrender:"+$webRenderDir
-
-$lvEngine=build_liveWallpaperEngine
-Write-Host "webrender:"+$lvEngine
-
-Copy-Item $webRenderDir -Destination "../dist/webrender" -Recurse
-Copy-Item $lvEngine -Destination "../dist/" -Recurse
+Remove-Item -Recurse -Force  "../dist"
+build_liveWallpaperEngine ([IO.Path]::GetFullPath( "../dist/LiveWallpaperEngine"))
+build_webrender ([IO.Path]::GetFullPath("../dist/LiveWallpaperEngine/WebRender"))
