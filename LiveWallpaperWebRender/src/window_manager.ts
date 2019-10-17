@@ -13,6 +13,7 @@ export interface Wallpaper {
 }
 
 const windows: { [id: number]: BrowserWindow | undefined; } = {};
+const cacheURL: { [id: number]: string | undefined; } = {};
 let status: Status = new Status();
 app.on('ready', () => {
     status.initlized = true;
@@ -51,6 +52,7 @@ export default class WindowManager {
                 currentWindow.setOpacity(0);
                 windows[tmpIndex]!.close();
                 windows[tmpIndex] = undefined;
+                cacheURL[tmpIndex] = undefined;
                 result = true;
             }
         }
@@ -75,7 +77,12 @@ export default class WindowManager {
             else
                 window = windows[tmpIndex];
 
-            window!.loadURL(wallpaper.path);
+            var currentUrl = cacheURL[tmpIndex];
+            if (!currentUrl || currentUrl.indexOf(wallpaper.path) < 0) {
+                window!.loadURL(wallpaper.path);
+                //地址相同就不加载，防止闪屏
+                cacheURL[tmpIndex] = wallpaper.path;
+            }
             window!.show();
 
             let handle = windows[tmpIndex]!.getNativeWindowHandle().readUInt32LE(0);

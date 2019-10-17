@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ContentWithTargetPath Include="..\dist\LiveWallpaperEngine\WebRender\**"
+    <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**"
                            TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)"
                            CopyToOutputDirectory="PreserveNewest"  />
     <Compile Remove="Common\**" />

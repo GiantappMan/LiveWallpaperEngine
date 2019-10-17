@@ -39,6 +39,21 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
+        internal async Task MuteWindow(int[] screenIndexs)
+        {
+            try
+            {
+                string ids = GetIds(screenIndexs);
+                using var client = new HttpClient();
+                string url = _baseUrl + $"/muteWindow?screenIndexs={ids}";
+                var json = await client.GetStringAsync(url);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
+
         internal async Task CloseWallpaper(int[] screenIndexs)
         {
             try

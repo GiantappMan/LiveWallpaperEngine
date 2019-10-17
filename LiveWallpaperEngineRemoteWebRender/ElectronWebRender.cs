@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DZY.Util.Common.Helpers;
@@ -19,6 +20,7 @@ namespace LiveWallpaperEngineRemoteWebRender
     {
         WebRenderAPI _api;
         Process _renderProcess = null;
+        List<int> _mutedScreenIndex = new List<int>();
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
            ConstWallpaperTypes.DefinedType[WalllpaperDefinedType.Web],
@@ -48,8 +50,19 @@ namespace LiveWallpaperEngineRemoteWebRender
         {
         }
 
-        public void SetVolume(int v, params int[] screenIndexs)
+        public async void SetVolume(int v, params int[] screenIndexs)
         {
+            lock (this)
+            {
+                if (v == 0)
+                {
+                    _mutedScreenIndex.AddRange(screenIndexs);
+                    _mutedScreenIndex = _mutedScreenIndex.Distinct().ToList();
+                }
+                else
+                    _mutedScreenIndex = _mutedScreenIndex.Except(screenIndexs).ToList();
+            }
+            await _api.MuteWindow(_mutedScreenIndex.ToArray());
         }
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
