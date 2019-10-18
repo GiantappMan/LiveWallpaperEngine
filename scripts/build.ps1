@@ -6,10 +6,10 @@ function build_webrender($target) {
         Invoke-Expression "npm run package"      
     )
 
-    $dir = '.\out\livewallpaperwebrender-win32-ia32'
-    $absolutePath = (Get-Item $dir).FullName
-    Copy-Item $absolutePath -Destination $target -Recurse
-    Remove-Item -Recurse -Force $absolutePath
+    # $dir = '.\out\livewallpaperwebrender-win32-ia32'
+    # $absolutePath = (Get-Item $dir).FullName
+    # Copy-Item $absolutePath -Destination $target -Recurse
+    # Remove-Item -Recurse -Force $absolutePath
     Set-Location -Path "../scripts"
 }
 
