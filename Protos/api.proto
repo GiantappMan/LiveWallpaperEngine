@@ -17,10 +17,10 @@ service API {
 // The request message containing the user's name.
 message ShowWallpaperRequest {
   wallpaperModel.WallpaperModel Wallpaper = 1;
-  repeated int32 ScreenIndexs= 2;
+  repeated uint32 ScreenIndexs= 2;
 }
 
 // The response message containing the greetings.
 message CloseWallpaperRequest {
-  repeated int32 ScreenIndexs= 1;
+  repeated uint32 ScreenIndexs= 1;
 }

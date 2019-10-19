@@ -53,7 +53,7 @@ namespace LiveWallpaperEngine
             _client = null;
         }
 
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace LiveWallpaperEngine
             }
         }
 
-        public async void CloseWallpaper(params int[] screenIndexs)
+        public async void CloseWallpaper(params uint[] screenIndexs)
         {
             try
             {

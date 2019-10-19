@@ -20,14 +20,14 @@ namespace LiveWallpaperEngineRemoteWebRender
     {
         WebRenderAPI _api;
         Process _renderProcess = null;
-        List<int> _mutedScreenIndex = new List<int>();
+        List<uint> _mutedScreenIndex = new List<uint>();
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
            ConstWallpaperTypes.DefinedType[WalllpaperDefinedType.Web],
         };
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
 
-        public async void CloseWallpaper(params int[] screenIndexs)
+        public async void CloseWallpaper(params uint[] screenIndexs)
         {
             await _api.CloseWallpaper(screenIndexs);
             WallpaperHelper.RefreshWallpaper();
@@ -37,20 +37,20 @@ namespace LiveWallpaperEngineRemoteWebRender
         {
         }
 
-        public int GetVolume(params int[] screenIndexs)
+        public int GetVolume(params uint[] screenIndexs)
         {
             return 0;
         }
 
-        public void Pause(params int[] screenIndexs)
+        public void Pause(params uint[] screenIndexs)
         {
         }
 
-        public void Resum(params int[] screenIndexs)
+        public void Resum(params uint[] screenIndexs)
         {
         }
 
-        public async void SetVolume(int v, params int[] screenIndexs)
+        public async void SetVolume(int v, params uint[] screenIndexs)
         {
             lock (this)
             {
@@ -65,7 +65,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             await _api.MuteWindow(_mutedScreenIndex.ToArray());
         }
 
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             if (_renderProcess == null || _renderProcess.HasExited)
             {

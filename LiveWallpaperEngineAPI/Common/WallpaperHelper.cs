@@ -21,7 +21,7 @@ namespace LiveWallpaperEngineAPI.Common
 
         #region static
 
-        static Dictionary<int, WallpaperHelper> _cacheInstances = new Dictionary<int, WallpaperHelper>();
+        static Dictionary<uint, WallpaperHelper> _cacheInstances = new Dictionary<uint, WallpaperHelper>();
         static IDesktopWallpaper _desktopWallpaperAPI;
         //static IntPtr _workerw = IntPtr.Zero;
         static uint _slideshowTick;
@@ -128,7 +128,7 @@ namespace LiveWallpaperEngineAPI.Common
         /// </summary>
         /// <param name="screenIndex"></param>
         /// <returns></returns>
-        public static WallpaperHelper GetInstance(int screenIndex)
+        public static WallpaperHelper GetInstance(uint screenIndex)
         {
             if (!_cacheInstances.ContainsKey(screenIndex))
             {

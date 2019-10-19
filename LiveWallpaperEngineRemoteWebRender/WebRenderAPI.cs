@@ -39,7 +39,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
-        internal async Task MuteWindow(int[] screenIndexs)
+        internal async Task MuteWindow(uint[] screenIndexs)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
-        internal async Task CloseWallpaper(int[] screenIndexs)
+        internal async Task CloseWallpaper(uint[] screenIndexs)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
-        public async Task<Dictionary<int, IntPtr>> ShowWallpaper(WallpaperModel wallpaper, int[] screenIndexs)
+        public async Task<Dictionary<uint, IntPtr>> ShowWallpaper(WallpaperModel wallpaper, uint[] screenIndexs)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace LiveWallpaperEngineRemoteWebRender
                 using var client = new HttpClient();
                 string url = _baseUrl + $"/showWallpaper?path={wallpaper.Path}&screenIndexs={ids}";
                 var json = await client.GetStringAsync(url);
-                var result = JsonConvert.DeserializeObject<Dictionary<int, IntPtr>>(json);
+                var result = JsonConvert.DeserializeObject<Dictionary<uint, IntPtr>>(json);
                 return result;
             }
             catch (Exception ex)
@@ -87,7 +87,7 @@ namespace LiveWallpaperEngineRemoteWebRender
             }
         }
 
-        private string GetIds(int[] ids)
+        private string GetIds(uint[] ids)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var i in ids)

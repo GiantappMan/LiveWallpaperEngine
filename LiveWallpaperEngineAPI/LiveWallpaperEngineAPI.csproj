@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -10,6 +10,20 @@
     <Compile Remove="Forms\Main.cs" />
     <Compile Remove="Forms\Main.Designer.cs" />
     <Compile Remove="Renders\WebRender.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="lib\mpv-1-x64.dll" />
+    <None Remove="lib\mpv-1.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="lib\mpv-1-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="lib\mpv-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,15 +43,6 @@
     <Compile Update="Forms\VideoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="lib\mpv-1-x64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="lib\mpv-1.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

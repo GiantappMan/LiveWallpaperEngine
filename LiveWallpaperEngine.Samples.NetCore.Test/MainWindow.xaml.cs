@@ -38,7 +38,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
-                ScreenIndex = Screen.AllScreens.ToList().IndexOf(m),
+                ScreenIndex = (uint)Screen.AllScreens.ToList().IndexOf(m),
                 WhenAppMaximized = ActionWhenMaximized.Pause,
             }).ToList();
 
@@ -107,7 +107,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
+                    var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
                     btnApply_Click(null, null);
                     _ = LiveWallpaper.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
@@ -123,7 +123,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => monitorsVM.IndexOf(m)).ToArray();
+            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
             LiveWallpaper.Instance.CloseWallpaper(displayIds);
         }
 

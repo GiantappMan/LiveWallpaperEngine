@@ -18,32 +18,32 @@ namespace LiveWallpaperEngineAPI.Renders
             throw new NotImplementedException();
         }
 
-        public int GetVolume(params int[] screenIndexs)
+        public int GetVolume(params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
-        public void Pause(params int[] screenIndexs)
+        public void Pause(params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
-        public void Resum(params int[] screenIndexs)
+        public void Resum(params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
-        public void SetVolume(int v, params int[] screenIndexs)
+        public void SetVolume(int v, params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
-        public Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndex)
+        public Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndex)
         {
             throw new NotImplementedException();
         }
 
-        public void CloseWallpaper(params int[] screenIndexs)
+        public void CloseWallpaper(params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }

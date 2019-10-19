@@ -1,4 +1,5 @@
-﻿using LiveWallpaperEngine;
+﻿using DZY.Util.Winform.Extensions;
+using LiveWallpaperEngine;
 using LiveWallpaperEngineAPI.Common;
 using LiveWallpaperEngineAPI.Renders;
 using System;
@@ -13,7 +14,7 @@ namespace LiveWallpaperEngineAPI
     public class WallpaperManager
     {
         private static System.Timers.Timer _timer;
-        private static Dictionary<int, WallpaperModel> _currentWalpapers = new Dictionary<int, WallpaperModel>();
+        private static Dictionary<uint, WallpaperModel> _currentWalpapers = new Dictionary<uint, WallpaperModel>();
 
         private WallpaperManager()
         {
@@ -29,12 +30,17 @@ namespace LiveWallpaperEngineAPI
         public static LiveWallpaperOptions Options { get; private set; }
         public static WallpaperManager Instance { get; private set; } = new WallpaperManager();
 
+        public void Initialize(Action uiInvoker)
+        {
+
+        }
+
         public int GetVolume()
         {
             throw new NotImplementedException();
         }
 
-        public void Pause(params int[] screenIndexs)
+        public void Pause(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -47,7 +53,7 @@ namespace LiveWallpaperEngineAPI
             }
         }
 
-        public void Resum(params int[] screenIndexs)
+        public void Resum(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -67,10 +73,11 @@ namespace LiveWallpaperEngineAPI
 
         public void Dispose()
         {
-
+            var screenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
+            CloseWallpaper(screenIndexs);
         }
 
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             if (wallpaper.Type == null)
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
@@ -98,7 +105,7 @@ namespace LiveWallpaperEngineAPI
             ApplyAudioSource();
         }
 
-        public void CloseWallpaper(params int[] screenIndexs)
+        public void CloseWallpaper(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -108,7 +115,7 @@ namespace LiveWallpaperEngineAPI
             InnerCloseWallpaper(screenIndexs);
         }
 
-        public void InnerCloseWallpaper(params int[] screenIndexs)
+        public void InnerCloseWallpaper(params uint[] screenIndexs)
         {
             RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(screenIndexs));
         }
@@ -136,7 +143,7 @@ namespace LiveWallpaperEngineAPI
         private void ApplyAudioSource()
         {
             //设置音源
-            for (int screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
+            for (uint screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
             {
                 if (_currentWalpapers.ContainsKey(screenIndex))
                 {
@@ -183,11 +190,11 @@ namespace LiveWallpaperEngineAPI
 
         private void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var maximizedScreenIndexs = e.MaximizedScreens.Select(m => Screen.AllScreens.ToList().IndexOf(m)).ToList();
+            var maximizedScreenIndexs = e.MaximizedScreens.Select((m, i) => (uint)i).ToList();
             bool anyScreenMaximized = maximizedScreenIndexs.Count > 0;
             foreach (var item in Options.ScreenOptions)
             {
-                int currentScreenIndex = item.ScreenIndex;
+                uint currentScreenIndex = (uint)item.ScreenIndex;
                 bool currentScreenMaximized = maximizedScreenIndexs.Contains(currentScreenIndex) || Options.AppMaximizedEffectAllScreen && anyScreenMaximized;
 
                 switch (item.WhenAppMaximized)

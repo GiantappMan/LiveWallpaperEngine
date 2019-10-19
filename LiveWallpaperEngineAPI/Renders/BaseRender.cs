@@ -9,11 +9,11 @@ namespace LiveWallpaperEngineAPI.Renders
     abstract class BaseRender<RenderControl> : IRender where RenderControl : Control, IRenderControl, new()
     {
         //屏幕索引和对应的控件
-        protected readonly Dictionary<int, RenderControl> _controls = new Dictionary<int, RenderControl>();
+        protected readonly Dictionary<uint, RenderControl> _controls = new Dictionary<uint, RenderControl>();
 
         public virtual List<WallpaperType> SupportTypes => throw new NotImplementedException();
 
-        public virtual void CloseWallpaper(params int[] screenIndexs)
+        public virtual void CloseWallpaper(params uint[] screenIndexs)
         {
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
             {
@@ -33,25 +33,25 @@ namespace LiveWallpaperEngineAPI.Renders
             _controls.Clear();
         }
 
-        public int GetVolume(params int[] screenIndexs)
+        public int GetVolume(params uint[] screenIndexs)
         {
             throw new NotImplementedException();
         }
 
 
-        public virtual void Pause(params int[] screenIndexs)
+        public virtual void Pause(params uint[] screenIndexs)
         {
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
                 control.Pause();
         }
 
-        public virtual void Resum(params int[] screenIndexs)
+        public virtual void Resum(params uint[] screenIndexs)
         {
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
                 control.Resum();
         }
 
-        public void SetVolume(int v, params int[] screenIndexs)
+        public void SetVolume(int v, params uint[] screenIndexs)
         {
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
                 control.SetVolume(v);
@@ -59,7 +59,7 @@ namespace LiveWallpaperEngineAPI.Renders
 
 
 
-        public virtual Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndexs)
+        public virtual Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -75,7 +75,7 @@ namespace LiveWallpaperEngineAPI.Renders
             return Task.CompletedTask;
         }
 
-        protected IEnumerable<(int screenIndex, RenderControl control)> GetControls(params int[] screenIndexs)
+        protected IEnumerable<(uint screenIndex, RenderControl control)> GetControls(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {

@@ -18,15 +18,15 @@ namespace LiveWallpaperEngineAPI.Renders
         /// 加载壁纸
         /// </summary>
         /// <param name="path"></param>
-        Task ShowWallpaper(WallpaperModel wallpaper, params int[] screenIndex);
+        Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndex);
 
-        void Pause(params int[] screenIndexs);
+        void Pause(params uint[] screenIndexs);
 
-        void Resum(params int[] screenIndexs);
+        void Resum(params uint[] screenIndexs);
 
-        void SetVolume(int v, params int[] screenIndexs);
+        void SetVolume(int v, params uint[] screenIndexs);
 
-        int GetVolume(params int[] screenIndexs);
-        void CloseWallpaper(params int[] screenIndexs);
+        int GetVolume(params uint[] screenIndexs);
+        void CloseWallpaper(params uint[] screenIndexs);
     }
 }

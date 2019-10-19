@@ -9,10 +9,10 @@ namespace LiveWallpaperEngineAPI
 {
     public partial class RenderHost : Form
     {
-        static Dictionary<int, RenderHost> _hosts = new Dictionary<int, RenderHost>();
-        int _screenIndex;
+        static Dictionary<uint, RenderHost> _hosts = new Dictionary<uint, RenderHost>();
+        uint _screenIndex;
 
-        public RenderHost(int screenIndex)
+        public RenderHost(uint screenIndex)
         {
             InitializeComponent();
             Text = "RenderHost" + screenIndex;
@@ -31,13 +31,34 @@ namespace LiveWallpaperEngineAPI
         {
             base.OnClosed(e);
         }
-        public static void MainUIInvoke(Action a)
+
+        public static void WinformInvoke(Action a)
         {
             if (Application.OpenForms.Count == 0)
                 return;
 
             var mainForm = Application.OpenForms[0];
-            mainForm.InvokeIfRequired(a);            
+            mainForm.InvokeIfRequired(a);
+        }
+
+        public static void WPFInvoke(Action a)
+        {
+            var mainWindow = System.Windows.Application.Current.MainWindow;
+            if (mainWindow == null)
+                return;
+
+            if (mainWindow.Dispatcher.CheckAccess()) // CheckAccess returns true if you're on the dispatcher thread
+                mainWindow.Dispatcher.Invoke(a);
+            else
+                a();
+        }
+
+        public static void MainUIInvoke(Action a)
+        {
+            if (Application.OpenForms.Count == 0)
+                WPFInvoke(a);
+            else
+                WinformInvoke(a);
         }
 
         internal void RemoveWallpaper(Control control)
@@ -50,7 +71,7 @@ namespace LiveWallpaperEngineAPI
             });
         }
 
-        public static RenderHost GetHost(int screenIndex = 0)
+        public static RenderHost GetHost(uint screenIndex = 0)
         {
             if (!_hosts.ContainsKey(screenIndex))
             {

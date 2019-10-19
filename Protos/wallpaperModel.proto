@@ -13,7 +13,7 @@ message LiveWallpaperOptions{
 }
 
 message ScreenOption{
- int32 ScreenIndex = 1;
+ uint32 ScreenIndex = 1;
  ActionWhenMaximized WhenAppMaximized = 2;
 }
 
