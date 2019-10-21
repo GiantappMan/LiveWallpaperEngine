@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
     <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
-    <PackageReference Include="Mpv.NET" Version="1.1.0" />
+    <PackageReference Include="Mpv.NET" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>

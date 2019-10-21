@@ -18,8 +18,9 @@ namespace LiveWallpaperEngineAPI.Renders
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
             {
                 control.Stop();
-                var screen = RenderHost.GetHost(screenIndex);
-                screen.RemoveWallpaper(control);
+                var screen = RenderHost.GetHost(screenIndex, false);
+                if (screen != null)
+                    screen.RemoveWallpaper(control);
             }
         }
 
@@ -69,7 +70,7 @@ namespace LiveWallpaperEngineAPI.Renders
                     _controls[index].InitRender();
                 }
                 var screen = RenderHost.GetHost(index);
-                screen.ShowWallpaper(_controls[index]);
+                screen!.ShowWallpaper(_controls[index]);
                 _controls[index].Load(wallpaper.Path);
             }
             return Task.CompletedTask;

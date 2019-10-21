@@ -45,7 +45,10 @@ namespace LiveWallpaperEngineAPI
         {
             var mainWindow = System.Windows.Application.Current.MainWindow;
             if (mainWindow == null)
+            {
+                a();
                 return;
+            }
 
             if (mainWindow.Dispatcher.CheckAccess()) // CheckAccess returns true if you're on the dispatcher thread
                 mainWindow.Dispatcher.Invoke(a);
@@ -71,18 +74,22 @@ namespace LiveWallpaperEngineAPI
             });
         }
 
-        public static RenderHost GetHost(uint screenIndex = 0)
+        public static RenderHost GetHost(uint screenIndex = 0, bool autoCreate = true)
         {
             if (!_hosts.ContainsKey(screenIndex))
             {
-                MainUIInvoke(() =>
-                {
-                    var host = _hosts[screenIndex] = new RenderHost(screenIndex);
-                    host.Show();
-                });
+                if (autoCreate)
+                    MainUIInvoke(() =>
+                    {
+                        var host = _hosts[screenIndex] = new RenderHost(screenIndex);
+                        host.Show();
+                    });
             }
 
-            return _hosts[screenIndex];
+            if (_hosts.ContainsKey(screenIndex))
+                return _hosts[screenIndex];
+            else
+                return null;
         }
 
         internal void ShowWallpaper(Control control)

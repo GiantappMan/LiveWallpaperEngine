@@ -61,6 +61,12 @@ namespace LiveWallpaperEngineAPI.Common
 
         public bool SendToBackground(IntPtr handler)
         {
+            //处理alt+tab可以看见本程序
+            //https://stackoverflow.com/questions/357076/best-way-to-hide-a-window-from-the-alt-tab-program-switcher
+            int exStyle = User32Wrapper.GetWindowLong(handler, WindowLongFlags.GWL_EXSTYLE);
+            exStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+            User32Wrapper.SetWindowLong(handler, WindowLongFlags.GWL_EXSTYLE, exStyle);
+
             if (handler != _currentHandler)
                 //已经换了窗口，恢复上一个窗口
                 RestoreParent();
