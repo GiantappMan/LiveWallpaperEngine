@@ -23,7 +23,7 @@ namespace LiveWallpaperEngineRemoteWebRender
         List<uint> _mutedScreenIndex = new List<uint>();
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
-           ConstWallpaperTypes.DefinedType[WalllpaperDefinedType.Web],
+           WallpaperType.Web,
         };
         public List<WallpaperType> SupportTypes => StaticSupportTypes;
 

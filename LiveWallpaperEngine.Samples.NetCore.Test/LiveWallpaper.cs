@@ -36,15 +36,15 @@ namespace LiveWallpaperEngine
 
         #region public methods
 
-        public int GetVolume()
-        {
-            throw new NotImplementedException();
-        }
+        //public int GetVolume()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public void SetVolume(int v)
-        {
-            throw new NotImplementedException();
-        }
+        //public void SetVolume(int v)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public void Dispose()
         {
@@ -57,7 +57,7 @@ namespace LiveWallpaperEngine
         {
             try
             {
-                var cts = new CancellationTokenSource();
+                using var cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var para = new ShowWallpaperRequest() { Wallpaper = wallpaper };
@@ -73,7 +73,7 @@ namespace LiveWallpaperEngine
         {
             try
             {
-                var cts = new CancellationTokenSource();
+                using var cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var para = new CloseWallpaperRequest();
@@ -89,12 +89,12 @@ namespace LiveWallpaperEngine
         {
             try
             {
-                var cts = new CancellationTokenSource();
+                using var cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var reply = await _client.SetOptionsAsync(setting);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

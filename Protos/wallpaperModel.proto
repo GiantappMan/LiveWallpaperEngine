@@ -38,12 +38,7 @@ message ScreenOption{
   string Tags = 7;
  }
 
- message WallpaperType{
- WalllpaperDefinedType DType = 1;
- repeated string SupportExtensions= 2;
- }
-
- enum WalllpaperDefinedType{
+ enum WallpaperType{
 	NotSupport = 0;
 	Video = 1;
 	Image= 2;

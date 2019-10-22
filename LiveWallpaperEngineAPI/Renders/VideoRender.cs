@@ -8,8 +8,8 @@ namespace LiveWallpaperEngineAPI.Renders
     {
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {
-            ConstWallpaperTypes.DefinedType[WalllpaperDefinedType.Video],
-            ConstWallpaperTypes.DefinedType[WalllpaperDefinedType.Image]
+            WallpaperType.Video,
+            WallpaperType.Image
         };
 
         public override List<WallpaperType> SupportTypes => StaticSupportTypes;

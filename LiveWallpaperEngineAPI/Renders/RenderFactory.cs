@@ -19,23 +19,23 @@ namespace LiveWallpaperEngineAPI.Renders
         public static List<IRender> CacheInstance = new List<IRender>();
 
 
-        public static IRender CreateRender(WalllpaperDefinedType dType)
+        public static IRender CreateRender(WallpaperType dType)
         {
             foreach (var render in Renders)
             {
-                var exist = render.Value.FirstOrDefault(m => m.DType == dType);
-                if (exist != null)
+                var exist = render.Value.FirstOrDefault(m => m == dType);
+                if (exist != WallpaperType.NotSupport)
                     return Activator.CreateInstance(render.Key) as IRender;
             }
             return null;
         }
 
-        public static IRender GetOrCreateRender(WalllpaperDefinedType dType)
+        public static IRender GetOrCreateRender(WallpaperType dType)
         {
             foreach (var instance in CacheInstance)
             {
-                var exist = instance.SupportTypes.FirstOrDefault(m => m.DType == dType);
-                if (exist != null)
+                var exist = instance.SupportTypes.FirstOrDefault(m => m == dType);
+                if (exist != WallpaperType.NotSupport)
                     return instance;
             }
 
@@ -51,14 +51,11 @@ namespace LiveWallpaperEngineAPI.Renders
             var extension = Path.GetExtension(filePath);
             foreach (var render in Renders)
             {
-                var exist = render.Value.FirstOrDefault(m => m.SupportExtensions.Contains(extension.ToLower()));
-                if (exist != null)
+                var exist = render.Value.FirstOrDefault(m => ConstWallpaperTypes.DefinedType[m].Contains(extension.ToLower()));
+                if (exist != WallpaperType.NotSupport)
                     return exist;
             }
-            return new WallpaperType()
-            {
-                DType = WalllpaperDefinedType.NotSupport
-            };
+            return WallpaperType.NotSupport;
         }
     }
 }

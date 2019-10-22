@@ -16,12 +16,12 @@ namespace LiveWallpaperEngineAPI.Common
 
         IntPtr _currentHandler;
         IntPtr? _parentHandler;
-        RECT? _originalRect;//窗口原始大小，恢复时使用
+        //RECT? _originalRect;//窗口原始大小，恢复时使用
         Rectangle _targetBounds;
 
         #region static
 
-        static Dictionary<uint, WallpaperHelper> _cacheInstances = new Dictionary<uint, WallpaperHelper>();
+        static readonly Dictionary<uint, WallpaperHelper> _cacheInstances = new Dictionary<uint, WallpaperHelper>();
         static IDesktopWallpaper _desktopWallpaperAPI;
         //static IntPtr _workerw = IntPtr.Zero;
         static uint _slideshowTick;
@@ -74,9 +74,10 @@ namespace LiveWallpaperEngineAPI.Common
             if (handler == IntPtr.Zero)
                 return false;
 
-            var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
-            if (ok)
-                _originalRect = react;
+            _ = User32Wrapper.GetWindowRect(handler, out _);
+            //var ok = User32Wrapper.GetWindowRect(handler, out RECT react);
+            //if (ok)
+            //    _originalRect = react;
 
             _currentHandler = handler;
 

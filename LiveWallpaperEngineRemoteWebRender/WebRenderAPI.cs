@@ -16,7 +16,7 @@ namespace LiveWallpaperEngineRemoteWebRender
 
     public class WebRenderAPI
     {
-        private string _baseUrl;
+        private readonly string _baseUrl;
 
         public WebRenderAPI(string url)
         {
@@ -27,7 +27,7 @@ namespace LiveWallpaperEngineRemoteWebRender
         {
             try
             {
-                HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient();
                 var json = await client.GetStringAsync(_baseUrl + "/getInfo");
                 var result = JsonConvert.DeserializeObject<HostInfo>(json);
                 return result;

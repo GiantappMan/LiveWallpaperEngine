@@ -5,19 +5,12 @@ namespace LiveWallpaperEngineAPI
 {
     public static class ConstWallpaperTypes
     {
-        public static Dictionary<WalllpaperDefinedType, WallpaperType> DefinedType = new Dictionary<WalllpaperDefinedType, WallpaperType>()
+        public static Dictionary<WallpaperType, string[]> DefinedType = new Dictionary<WallpaperType, string[]>()
         {
-            { WalllpaperDefinedType.Exe,new WallpaperType(){DType=WalllpaperDefinedType.Exe}  },
-            { WalllpaperDefinedType.Video,new WallpaperType(){DType=WalllpaperDefinedType.Video}  },
-            { WalllpaperDefinedType.Image,new WallpaperType(){DType=WalllpaperDefinedType.Image}  },
-            { WalllpaperDefinedType.Web,new WallpaperType(){DType=WalllpaperDefinedType.Web}  },
-        };
-        static ConstWallpaperTypes()
-        {
-            DefinedType[WalllpaperDefinedType.Exe].SupportExtensions.AddRange(new List<string> { ".exe" });
-            DefinedType[WalllpaperDefinedType.Video].SupportExtensions.AddRange(new List<string> { ".mp4", ".flv", ".blv", ".avi" });
-            DefinedType[WalllpaperDefinedType.Image].SupportExtensions.AddRange(new List<string> { ".jpg", ".png", ".gif", ".jpeg", ".bmp" });
-            DefinedType[WalllpaperDefinedType.Web].SupportExtensions.AddRange(new List<string> { ".html", ".htm" });
-        }
+            { WallpaperType.Exe,new string[]{".exe" }},
+            { WallpaperType.Video,new string[]{".mp4", ".flv", ".blv", ".avi" }},
+            { WallpaperType.Image,new string[]{".jpg", ".png", ".gif", ".jpeg", ".bmp" }},
+            { WallpaperType.Web,new string[]{".html", ".htm" }},
+        };        
     }
 }
