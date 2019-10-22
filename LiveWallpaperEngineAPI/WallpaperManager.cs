@@ -1,9 +1,11 @@
-﻿using DZY.Util.Winform.Extensions;
+﻿using DZY.Util.Common.Helpers;
+using DZY.Util.Winform.Extensions;
 using LiveWallpaperEngine;
 using LiveWallpaperEngineAPI.Common;
 using LiveWallpaperEngineAPI.Renders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -35,11 +37,6 @@ namespace LiveWallpaperEngineAPI
 
         }
 
-        public int GetVolume()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Pause(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
@@ -66,15 +63,32 @@ namespace LiveWallpaperEngineAPI
             }
         }
 
-        public void SetVolume(int v)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             var screenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
             CloseWallpaper(screenIndexs);
+        }
+        public static IEnumerable<WallpaperModel> GetWallpapers(string dir)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(dir);
+
+            //test E:\SteamLibrary\steamapps\workshop\content\431960
+            //foreach (var item in Directory.EnumerateFiles(dir, "project.json", SearchOption.AllDirectories))
+            foreach (var item in dirInfo.EnumerateFiles("project.json", SearchOption.AllDirectories).OrderByDescending(m => m.CreationTime))
+            {
+                var info = JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(item.FullName).Result;
+                var wallpaparDir = Path.GetDirectoryName(item.FullName);
+                var result = GetWallpaper(info, wallpaparDir);
+                yield return result;
+            }
+        }
+
+        private static WallpaperModel GetWallpaper(WallpaperInfo info, string saveDir)
+        {
+            return new WallpaperModel()
+            {
+                Path = Path.Combine(saveDir, info.File),
+            };
         }
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)

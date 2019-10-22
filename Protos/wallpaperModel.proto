@@ -28,6 +28,16 @@ message ScreenOption{
   WallpaperType Type=2;
  }
 
+ message WallpaperInfo{
+  string Description = 1;
+  string Title = 2;
+  string File = 3;
+  string Preview = 4;
+  string Type = 5;
+  string Visibility = 6;
+  string Tags = 7;
+ }
+
  message WallpaperType{
  WalllpaperDefinedType DType = 1;
  repeated string SupportExtensions= 2;
