@@ -10,9 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**"
-                           TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)"
-                           CopyToOutputDirectory="PreserveNewest"  />
+    <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**" TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Compile Remove="Common\**" />
     <Compile Remove="lib\**" />
     <Compile Remove="Render\**" />
@@ -34,8 +32,7 @@
   <ItemGroup>
     <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
     <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.23.2" />
-    <PackageReference Include="Mpv.NET" Version="1.1.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
   </ItemGroup>
 
   <ItemGroup>
