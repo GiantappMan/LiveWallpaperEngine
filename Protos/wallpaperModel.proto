@@ -24,8 +24,9 @@ message ScreenOption{
  }
 
  message WallpaperModel{
-  string Path =1; 
-  WallpaperType Type=2;
+  string Path = 1; 
+  WallpaperType Type = 2;
+  WallpaperInfo Info = 3;
  }
 
  message WallpaperInfo{

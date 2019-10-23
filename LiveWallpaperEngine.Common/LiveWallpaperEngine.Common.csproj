@@ -9,7 +9,7 @@
     <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Both" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DZY.Util.Common" Version="2.0.5" />
+    <PackageReference Include="DZY.Util.Common" Version="2.0.6" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
   </ItemGroup>
 </Project>

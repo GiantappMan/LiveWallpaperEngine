@@ -66,23 +66,65 @@ namespace LiveWallpaperEngineAPI
         public static IEnumerable<WallpaperModel> GetWallpapers(string dir)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dir);
-
-            //test E:\SteamLibrary\steamapps\workshop\content\431960
-            //foreach (var item in Directory.EnumerateFiles(dir, "project.json", SearchOption.AllDirectories))
             foreach (var item in dirInfo.EnumerateFiles("project.json", SearchOption.AllDirectories).OrderByDescending(m => m.CreationTime))
             {
                 var info = JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(item.FullName).Result;
                 var wallpaparDir = Path.GetDirectoryName(item.FullName);
-                var result = GetWallpaper(info, wallpaparDir);
-                yield return result;
+                yield return new WallpaperModel()
+                {
+                    Path = Path.Combine(wallpaparDir, info.File),
+                    Info = info
+                };
             }
         }
-
-        private static WallpaperModel GetWallpaper(WallpaperInfo info, string saveDir)
+        public static async Task<bool> Delete(string absolutePath)
         {
+            string dir = Path.GetDirectoryName(absolutePath);
+            for (int i = 0; i < 3; i++)
+            {
+                await Task.Delay(1000);
+                try
+                {
+                    //尝试删除3次 
+                    Directory.Delete(dir, true);
+                    return true;
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return false;
+        }
+        public static async Task<WallpaperModel> CreateLocalPack(string sourceDir, WallpaperInfo info, string destDir)
+        {
+            string infoPath = Path.Combine(sourceDir, "project.json");
+
+            if (File.Exists(infoPath))
+            {
+                var existInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(infoPath);
+                info.Description ??= existInfo.Description;
+                info.File ??= existInfo.File;
+                info.Preview ??= existInfo.Preview;
+                info.Tags ??= existInfo.Tags;
+                info.Title ??= existInfo.Title;
+                info.Type ??= existInfo.Type;
+                info.Visibility ??= existInfo.Visibility;
+            }
+            else
+            {
+                IOHelper.CopyFileToDir(sourceDir, destDir);
+                string previewAbsolutePath = Path.Combine(sourceDir, info.Preview);
+                IOHelper.CopyFileToDir(previewAbsolutePath, destDir);
+            }
+            IOHelper.CopyFolder(sourceDir, destDir);
+
+            string destInfoPath = Path.Combine(destDir, "project.json");
+            JsonHelper.JsonSerialize(info, destInfoPath);
+
             return new WallpaperModel()
             {
-                Path = Path.Combine(saveDir, info.File),
+                Path = Path.Combine(destDir, info.File),
+                Info = info
             };
         }
 
@@ -90,7 +132,7 @@ namespace LiveWallpaperEngineAPI
         {
             if (wallpaper.Type == WallpaperType.NotSupport)
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
-            
+
             if (wallpaper.Type == WallpaperType.NotSupport)
                 return;
 
