@@ -1,5 +1,9 @@
 ﻿using GiantappConfiger;
 using GiantappConfiger.Models;
+using LiveWallpaperEngineAPI;
+using LiveWallpaperEngineAPI.Models;
+using LiveWallpaperEngineAPI.Renders;
+using LiveWallpaperEngineRemoteWebRender;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,7 +25,9 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
+            //用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
+            RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
 
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
@@ -92,8 +98,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                             },
                 }}}
             };
-            var setting = new LiveWallpaperOptions();
-            setting.ScreenOptions.AddRange(screenSetting);
+            var setting = new LiveWallpaperOptions()
+            {
+                ScreenOptions = screenSetting
+            };
             var vm = ConfigerService.GetVM(setting, descInfo);
             configer.DataContext = vm;
         }
@@ -109,7 +117,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
                     btnApply_Click(null, null);
-                    _ = LiveWallpaper.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
+                    _ = WallpaperManager.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -124,14 +132,14 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
-            LiveWallpaper.Instance.CloseWallpaper(displayIds);
+            WallpaperManager.Instance.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
-            _ = LiveWallpaper.Instance.SetOptions(setting);
+            _ = WallpaperManager.Instance.SetOptions(setting);
         }
     }
 }

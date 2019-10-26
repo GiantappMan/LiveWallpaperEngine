@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="lib\**" />
-    <EmbeddedResource Remove="lib\**" />
-    <None Remove="lib\**" />
-    <Page Remove="lib\**" />
+    <!--编译不过限制性bulid.ps1-->
+    <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**" TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="LiveWallpaper.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,16 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj" />
+    <ProjectReference Include="..\LiveWallpaperEngineRemoteWebRender\LiveWallpaperEngineRemoteWebRender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="WallpaperSamples\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.24.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
   </ItemGroup>
 </Project>

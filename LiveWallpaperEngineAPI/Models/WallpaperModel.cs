@@ -6,8 +6,8 @@ namespace LiveWallpaperEngineAPI.Models
 {
     public class WallpaperModel
     {
-        public WallpaperType Type { get; internal set; }
-        public string Path { get; internal set; }
-        public WallpaperInfo Info { get; internal set; }
+        public WallpaperType Type { get; set; }
+        public string Path { get; set; }
+        public WallpaperInfo Info { get; set; }
     }
 }
