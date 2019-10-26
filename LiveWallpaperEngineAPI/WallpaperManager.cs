@@ -1,7 +1,8 @@
 ﻿using DZY.Util.Common.Helpers;
 using DZY.Util.Winform.Extensions;
-using LiveWallpaperEngine;
+using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Common;
+using LiveWallpaperEngineAPI.Models;
 using LiveWallpaperEngineAPI.Renders;
 using System;
 using System.Collections.Generic;
@@ -190,6 +191,11 @@ namespace LiveWallpaperEngineAPI
             ApplyAudioSource();
 
             return Task.CompletedTask;
+        }
+
+        private void StartTimer(object p)
+        {
+            throw new NotImplementedException();
         }
 
         private void ApplyAudioSource()

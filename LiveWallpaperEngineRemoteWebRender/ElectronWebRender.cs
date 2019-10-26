@@ -6,9 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DZY.Util.Common.Helpers;
-using LiveWallpaperEngine;
 using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Common;
+using LiveWallpaperEngineAPI.Models;
 using LiveWallpaperEngineAPI.Renders;
 
 namespace LiveWallpaperEngineRemoteWebRender

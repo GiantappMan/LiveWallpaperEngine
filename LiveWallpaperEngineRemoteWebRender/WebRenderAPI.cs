@@ -1,4 +1,5 @@
-﻿using LiveWallpaperEngine;
+﻿using LiveWallpaperEngineAPI;
+using LiveWallpaperEngineAPI.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

@@ -28,13 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DZY.Util.Common" Version="2.0.6" />
     <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
     <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
     <PackageReference Include="Mpv.NET" Version="1.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

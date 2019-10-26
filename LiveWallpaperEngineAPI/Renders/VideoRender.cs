@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using LiveWallpaperEngine;
+using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Forms;
+using LiveWallpaperEngineAPI.Models;
 
 namespace LiveWallpaperEngineAPI.Renders
 {
