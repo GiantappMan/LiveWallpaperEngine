@@ -25,7 +25,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             //用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
             RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
 

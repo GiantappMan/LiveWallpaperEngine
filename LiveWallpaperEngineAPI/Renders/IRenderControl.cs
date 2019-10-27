@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LiveWallpaperEngineAPI.Renders
+﻿namespace LiveWallpaperEngineAPI.Renders
 {
     public interface IRenderControl
     {

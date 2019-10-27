@@ -1,5 +1,4 @@
-﻿using LiveWallpaperEngineAPI;
-using LiveWallpaperEngineAPI.Models;
+﻿using LiveWallpaperEngineAPI.Models;
 using System.Collections.Generic;
 
 namespace LiveWallpaperEngineAPI
@@ -12,6 +11,6 @@ namespace LiveWallpaperEngineAPI
             { WallpaperType.Video,new string[]{".mp4", ".flv", ".blv", ".avi" }},
             { WallpaperType.Image,new string[]{".jpg", ".png", ".gif", ".jpeg", ".bmp" }},
             { WallpaperType.Web,new string[]{".html", ".htm" }},
-        };        
+        };
     }
 }

@@ -207,7 +207,7 @@ namespace LiveWallpaperEngineAPI.Common
             return workerw;
         }
 
-        private static void FullScreen(IntPtr targeHandler, Rectangle bounds,IntPtr workerw)
+        private static void FullScreen(IntPtr targeHandler, Rectangle bounds, IntPtr workerw)
         {
             RECT rect = new RECT(bounds);
 

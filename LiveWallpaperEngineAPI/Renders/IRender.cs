@@ -1,5 +1,4 @@
-﻿using LiveWallpaperEngineAPI;
-using LiveWallpaperEngineAPI.Models;
+﻿using LiveWallpaperEngineAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
