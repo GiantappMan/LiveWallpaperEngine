@@ -94,13 +94,58 @@ namespace LiveWallpaperEngineAPI
             }
             return false;
         }
-        public static async Task<WallpaperModel> CreateLocalPack(string sourceDir, WallpaperInfo info, string destDir)
+        public static string NormalizePath(string path)
         {
-            string infoPath = Path.Combine(sourceDir, "project.json");
+            if (string.IsNullOrEmpty(path))
+                return null;
+            var result = Path.GetFullPath(new Uri(path).LocalPath)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+            return result;
+        }
+        public static async Task<WallpaperModel> EditLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
+        {
+            string oldInfoPath = Path.Combine(destDir, "project.json");
+            var oldInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(oldInfoPath);
 
-            if (File.Exists(infoPath))
+            string oldFile = null, oldPreview = null;
+            if (oldInfo != null)
             {
-                var existInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(infoPath);
+                oldFile = Path.Combine(destDir, oldInfo.File);
+                if (oldInfo.Preview != null)
+                    oldPreview = Path.Combine(destDir, oldInfo.Preview ?? "");
+            }
+
+            if (NormalizePath(sourceFile) != NormalizePath(oldFile))
+            {
+                await Delete(oldFile);
+                await Task.Run(() =>
+                {
+                    IOHelper.CopyFileToDir(sourceFile, destDir);
+                });
+            }
+            info.Preview = Path.GetFileName(previewPath);
+            if (NormalizePath(oldPreview) != NormalizePath(previewPath))
+            {
+                await Task.Run(() =>
+                {
+                    IOHelper.CopyFileToDir(previewPath, destDir);
+                });
+            }
+
+            await WriteInfo(info, destDir);
+            return new WallpaperModel()
+            {
+                Path = Path.Combine(destDir, info.File),
+                Info = info
+            };
+        }
+        public static async Task<WallpaperModel> CreateLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
+        {
+            string oldInfoPath = Path.Combine(sourceFile, "project.json");
+            if (File.Exists(oldInfoPath))
+            {
+                var existInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(oldInfoPath);
                 info.Description ??= existInfo.Description;
                 info.File ??= existInfo.File;
                 info.Preview ??= existInfo.Preview;
@@ -108,25 +153,33 @@ namespace LiveWallpaperEngineAPI
                 info.Title ??= existInfo.Title;
                 info.Type ??= existInfo.Type;
                 info.Visibility ??= existInfo.Visibility;
+                await Task.Run(() =>
+                {
+                    IOHelper.CopyFolder(sourceFile, destDir);
+                });
             }
             else
             {
-                IOHelper.CopyFileToDir(sourceDir, destDir);
-                string previewAbsolutePath = Path.Combine(sourceDir, info.Preview);
-                IOHelper.CopyFileToDir(previewAbsolutePath, destDir);
+                await Task.Run(() =>
+                {
+                    IOHelper.CopyFileToDir(sourceFile, destDir);
+                    info.Preview = Path.GetFileName(previewPath);
+                    IOHelper.CopyFileToDir(previewPath, destDir);
+                });
             }
-            IOHelper.CopyFolder(sourceDir, destDir);
 
-            string destInfoPath = Path.Combine(destDir, "project.json");
-            JsonHelper.JsonSerialize(info, destInfoPath);
-
+            await WriteInfo(info, destDir);
             return new WallpaperModel()
             {
                 Path = Path.Combine(destDir, info.File),
                 Info = info
             };
         }
-
+        private static async Task WriteInfo(WallpaperInfo wallpaperInfo, string destDir)
+        {
+            string destInfoPath = Path.Combine(destDir, "project.json");
+            await JsonHelper.JsonSerializeAsync(wallpaperInfo, destInfoPath);
+        }
         public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             if (wallpaper.Type == WallpaperType.NotSupport)
@@ -190,6 +243,7 @@ namespace LiveWallpaperEngineAPI
 
             return Task.CompletedTask;
         }
+
 
         private void ApplyAudioSource()
         {

@@ -6,7 +6,10 @@ namespace LiveWallpaperEngineAPI.Models
     {
         public bool AutoRestartWhenExplorerCrash { get; set; }
         public List<ScreenOption> ScreenOptions { get; set; }
-        public uint AudioScreenIndex { get; set; }
+        /// <summary>
+        /// -1 表示禁用
+        /// </summary>
+        public int AudioScreenIndex { get; set; }
         public bool AppMaximizedEffectAllScreen { get; set; }
     }
 }

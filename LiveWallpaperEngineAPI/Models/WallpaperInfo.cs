@@ -2,12 +2,12 @@
 {
     public class WallpaperInfo
     {
-        public string Description { get; internal set; }
-        public string File { get; internal set; }
-        public string Preview { get; internal set; }
-        public string Tags { get; internal set; }
-        public string Title { get; internal set; }
-        public string Type { get; internal set; }
-        public string Visibility { get; internal set; }
+        public string Description { get; set; }
+        public string File { get; set; }
+        public string Preview { get; set; }
+        public string Tags { get; set; }
+        public string Title { get; set; }
+        public string Type { get; set; }
+        public string Visibility { get; set; }
     }
 }
