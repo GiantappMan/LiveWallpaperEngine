@@ -275,8 +275,12 @@ namespace LiveWallpaperEngineAPI
             }
             else
             {
-                _timer.Elapsed -= Timer_Elapsed;
-                _timer.Stop();
+                if (_timer != null)
+                {
+                    _timer.Elapsed -= Timer_Elapsed;
+                    _timer.Stop();
+                    _timer = null;
+                }
             }
         }
 
