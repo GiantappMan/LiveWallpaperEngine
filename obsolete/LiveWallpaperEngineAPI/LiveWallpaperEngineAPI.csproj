@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <Version>2.0.2</Version>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_obsolete\**" />
+    <EmbeddedResource Remove="_obsolete\**" />
+    <None Remove="_obsolete\**" />
+    <Page Remove="_obsolete\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="LiveWallpaper - 复制.cs" />
+    <Compile Remove="RemoteRender.cs" />
+    <Compile Remove="StatusManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.23.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
+  </ItemGroup>
+</Project>

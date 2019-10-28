@@ -1,0 +1,67 @@
+{
+  "name": "livewallpaperwebrender",
+  "productName": "livewallpaperwebrender",
+  "version": "1.0.2",
+  "description": "My Electron application description",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "electron-forge start",
+    "package": "tsc && electron-forge package --platform=win32 --arch=ia32",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "keywords": [],
+  "author": {
+    "name": "DaZiYuan",
+    "email": "mscoder@hotmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "assets/app-icon/win/app.ico",
+        "extraResource": "../Protos"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "livewallpaperwebrender"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^0.6.8",
+    "@grpc/proto-loader": "^0.5.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.17.1",
+    "typescript": "^3.6.4"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "6.0.0-beta.34",
+    "@electron-forge/maker-deb": "6.0.0-beta.34",
+    "@electron-forge/maker-rpm": "6.0.0-beta.34",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.34",
+    "@electron-forge/maker-zip": "6.0.0-beta.34",
+    "@types/express": "^4.17.1",
+    "electron": "6.0.12"
+  }
+}

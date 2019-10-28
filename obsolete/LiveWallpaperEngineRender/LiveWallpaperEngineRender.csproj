@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <StartupObject>LiveWallpaperEngineRender.Program</StartupObject>
+    <ApplicationIcon />
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|x86'">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.0|x86'">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="defaultHtml\**" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="defaultHtml\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="defaultHtml\**" />
+    <None Remove="Models\**" />
+    <Page Remove="defaultHtml\**" />
+    <Page Remove="Models\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Forms\Browser.cs" />
+    <Compile Remove="Forms\Browser.Designer.cs" />
+    <Compile Remove="Forms\Video.cs" />
+    <Compile Remove="Forms\Video.Designer.cs" />
+    <Compile Remove="Forms\WebControl.cs" />
+    <Compile Remove="Forms\WebControl.Designer.cs" />
+    <Compile Remove="IRender.cs" />
+    <Compile Remove="VideoRender.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Forms\Browser.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="lib\mpv-1-x64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mpv.NET" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lib\mpv-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- TODO: These updates are currently required because CefSharp.WinForms specifies
+         <Private>false</Private>, which means these libraries will not be specified in
+         the .deps.json file, and so the CoreCLR wouldn't load these. -->
+    <Reference Update="CefSharp">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.Core">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.WinForms">
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>  <ItemGroup>
+    <!-- TODO: These updates are currently required because CefSharp.WinForms specifies
+         <Private>false</Private>, which means these libraries will not be specified in
+         the .deps.json file, and so the CoreCLR wouldn't load these. -->
+    <Reference Update="CefSharp">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.Core">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.WinForms">
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
