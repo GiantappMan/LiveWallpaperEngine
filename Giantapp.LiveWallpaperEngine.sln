@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E3554D4E-7
 		Docs\Build.md = Docs\Build.md
 		Docs\Changelog.md = Docs\Changelog.md
 		Docs\Develop.md = Docs\Develop.md
-		Docs\LiveWallpaperEngine.md = Docs\LiveWallpaperEngine.md
 		Docs\LiveWallpaperEngineAPI.md = Docs\LiveWallpaperEngineAPI.md
 		README.md = README.md
 	EndProjectSection
