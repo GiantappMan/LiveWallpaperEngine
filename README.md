@@ -5,7 +5,7 @@
 保持单一只做壁纸，不搞其他附加需求。
 
 ## 项目结构：
-.net core3 + winform + gRPC + electron
+.net core3 + winform + electron
 
 ## 功能目标：
 - [x] 嵌入桌面
@@ -37,7 +37,6 @@ vs2019
 
 ## 其他注意事项：
 * 开启360、腾讯管家等全家桶软件，有可能无法嵌入桌面
-* 如果本地开启全局代理，需要过滤Inernal地址
 
 ## 感谢这些作者的开源精神：
 https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows  
