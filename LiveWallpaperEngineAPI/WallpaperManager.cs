@@ -15,29 +15,27 @@ namespace LiveWallpaperEngineAPI
     public class WallpaperManager
     {
         private static System.Timers.Timer _timer;
-        private static readonly Dictionary<uint, WallpaperModel> _currentWalpapers = new Dictionary<uint, WallpaperModel>();
 
         private WallpaperManager()
         {
-
-        }
-        static WallpaperManager()
-        {
+            ScreenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
             //注册render
             RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
             //RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
             RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
         }
-        public static LiveWallpaperOptions Options { get; private set; }
+        public uint[] ScreenIndexs { get; private set; }
+        public Dictionary<uint, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<uint, WallpaperModel>();
+        public LiveWallpaperOptions Options { get; private set; }
         public static WallpaperManager Instance { get; private set; } = new WallpaperManager();
 
         public void Pause(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
-                if (_currentWalpapers.ContainsKey(index))
+                if (CurrentWalpapers.ContainsKey(index))
                 {
-                    var wallpaper = _currentWalpapers[index];
+                    var wallpaper = CurrentWalpapers[index];
                     var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
                     currentRender.Pause(screenIndexs);
                 }
@@ -48,9 +46,9 @@ namespace LiveWallpaperEngineAPI
         {
             foreach (var index in screenIndexs)
             {
-                if (_currentWalpapers.ContainsKey(index))
+                if (CurrentWalpapers.ContainsKey(index))
                 {
-                    var wallpaper = _currentWalpapers[index];
+                    var wallpaper = CurrentWalpapers[index];
                     var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
                     currentRender.Resum(screenIndexs);
                 }
@@ -59,8 +57,7 @@ namespace LiveWallpaperEngineAPI
 
         public void Dispose()
         {
-            var screenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
-            CloseWallpaper(screenIndexs);
+            CloseWallpaper(ScreenIndexs);
         }
         public static IEnumerable<WallpaperModel> GetWallpapers(string dir)
         {
@@ -76,21 +73,26 @@ namespace LiveWallpaperEngineAPI
                 };
             }
         }
-        public static async Task<bool> Delete(string absolutePath)
+        public static async Task<bool> DeleteLocalPack(string absolutePath)
         {
             string dir = Path.GetDirectoryName(absolutePath);
+            if (!Directory.Exists(dir))
+                return false;
             for (int i = 0; i < 3; i++)
             {
-                await Task.Delay(1000);
                 try
                 {
                     //尝试删除3次 
-                    Directory.Delete(dir, true);
+                    await Task.Run(() =>
+                    {
+                        Directory.Delete(dir, true);
+                    });
                     return true;
                 }
                 catch (Exception)
                 {
                 }
+                await Task.Delay(1000);
             }
             return false;
         }
@@ -118,9 +120,9 @@ namespace LiveWallpaperEngineAPI
 
             if (NormalizePath(sourceFile) != NormalizePath(oldFile))
             {
-                await Delete(oldFile);
                 await Task.Run(() =>
                 {
+                    File.Delete(oldFile);
                     IOHelper.CopyFileToDir(sourceFile, destDir);
                 });
             }
@@ -129,6 +131,7 @@ namespace LiveWallpaperEngineAPI
             {
                 await Task.Run(() =>
                 {
+                    File.Delete(oldPreview);
                     IOHelper.CopyFileToDir(previewPath, destDir);
                 });
             }
@@ -191,7 +194,7 @@ namespace LiveWallpaperEngineAPI
             foreach (var index in screenIndexs)
             {
                 //类型不一致关闭上次显示的壁纸
-                if (_currentWalpapers.ContainsKey(index) && wallpaper.Type != _currentWalpapers[index].Type)
+                if (CurrentWalpapers.ContainsKey(index) && wallpaper.Type != CurrentWalpapers[index].Type)
                     CloseWallpaper(screenIndexs);
             }
 
@@ -200,10 +203,10 @@ namespace LiveWallpaperEngineAPI
 
             foreach (var index in screenIndexs)
             {
-                if (!_currentWalpapers.ContainsKey(index))
-                    _currentWalpapers.Add(index, wallpaper);
+                if (!CurrentWalpapers.ContainsKey(index))
+                    CurrentWalpapers.Add(index, wallpaper);
                 else
-                    _currentWalpapers[index] = wallpaper;
+                    CurrentWalpapers[index] = wallpaper;
             }
 
             ApplyAudioSource();
@@ -213,8 +216,8 @@ namespace LiveWallpaperEngineAPI
         {
             foreach (var index in screenIndexs)
             {
-                if (_currentWalpapers.ContainsKey(index))
-                    _currentWalpapers.Remove(index);
+                if (CurrentWalpapers.ContainsKey(index))
+                    CurrentWalpapers.Remove(index);
             }
             InnerCloseWallpaper(screenIndexs);
         }
@@ -250,9 +253,9 @@ namespace LiveWallpaperEngineAPI
             //设置音源
             for (uint screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
             {
-                if (_currentWalpapers.ContainsKey(screenIndex))
+                if (CurrentWalpapers.ContainsKey(screenIndex))
                 {
-                    var wallpaper = _currentWalpapers[screenIndex];
+                    var wallpaper = CurrentWalpapers[screenIndex];
                     var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
                     currentRender.SetVolume(screenIndex == Options.AudioScreenIndex ? 100 : 0, screenIndex);
                 }
@@ -314,8 +317,8 @@ namespace LiveWallpaperEngineAPI
                         if (currentScreenMaximized)
                             InnerCloseWallpaper(currentScreenIndex);
                         else
-                            if (_currentWalpapers.ContainsKey(currentScreenIndex))
-                            _ = ShowWallpaper(_currentWalpapers[currentScreenIndex], currentScreenIndex);
+                            if (CurrentWalpapers.ContainsKey(currentScreenIndex))
+                            _ = ShowWallpaper(CurrentWalpapers[currentScreenIndex], currentScreenIndex);
                         break;
                     case ActionWhenMaximized.Play:
                         break;
