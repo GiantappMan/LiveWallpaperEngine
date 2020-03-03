@@ -3,7 +3,7 @@
 本次实现了将鼠标消息发送给任意进程，不管这个进程是否有窗口，只要这个进程使用了MouseEventReciver类。
 
 实现鼠标事件转发是由三个部分组成：
-+ LiveWallpaperEngineAPI.Model下的MouseEventReciver类，这个类通过读取共享内存来获得HOOK程序截取到的鼠标事件
++ LiveWallpaperEngineAPI.Model下的MouseEventReciver类，这个类通过读取共享内存来获得HOOK程序截取到的鼠标事件，并把截取到的事件转发给指定窗口；
 
 + 项目Injector（虽然算不上注入，但是想不到啥顺眼名字了，涉及HOOK一般就想到了Injector，感觉这个比较顺眼而已），通过”自己注入自己（手动狗头）“的方式启动HOOK；
 
@@ -15,7 +15,7 @@
 
 2. Injector加载MouseHook.dll，启动Hook；
 
-3. 通过MouseEventReciver类中的OnMouseEvent事件来处理接收到的鼠标消息；
+3. MouseEventReciver类通过读取共享内存获得鼠标消息并转发给指定窗口。
 
 # 注意
 

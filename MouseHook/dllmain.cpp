@@ -112,25 +112,10 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam)
             ++(eventQueue->count);
         }
 
-        // 写入鼠标坐标
+        // 写入信息
+        mouseEvent->messageId = wParam;
         mouseEvent->x = pMouseHookStruct->pt.x;
         mouseEvent->y = pMouseHookStruct->pt.y;
-
-        // 写入事件ID
-        switch (wParam)
-        {
-        case WM_MOUSEMOVE:
-            mouseEvent->messageId = WM_MOUSEMOVE;
-            break;
-        case WM_LBUTTONDOWN:
-            mouseEvent->messageId = WM_LBUTTONDOWN;
-            break;
-        case WM_LBUTTONDBLCLK:
-            mouseEvent->messageId = WM_LBUTTONDBLCLK;
-            break;
-        default:
-            break;
-        }
         //开锁
         ReleaseSemaphore(hMutex, 1, NULL);
     }

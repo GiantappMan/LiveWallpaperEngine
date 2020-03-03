@@ -14,27 +14,16 @@ namespace LiveWallpaperEngineAPI.Models
     /// </summary>
     internal struct MouseEvent
     {
-        public UInt32 messageId;
+        public Int32 messageId;
         public UInt32 x, y;
-
-        public MouseEvent(uint messageId, uint x, uint y)
-        {
-            this.messageId = messageId;
-            this.x = x;
-            this.y = y;
-        }
     }
-
-    /// <summary>
-    /// 鼠标事件处理程序
-    /// </summary>
-    /// <param name="messageId">鼠标消息ID，详见MSDN</param>
-    /// <param name="x">鼠标坐标</param>
-    /// <param name="y">鼠标坐标</param>
-    public delegate void MouseEventHandler(UInt32 messageId, UInt32 x, UInt32 y);
 
     unsafe public class MouseEventReciver
     {
+        /// <summary>
+        /// 要接受消息的窗口的句柄
+        /// </summary>
+        public IntPtr HTargetWindow = IntPtr.Zero;
         public enum WindowMessage
         {
             /// <summary>
@@ -67,11 +56,6 @@ namespace LiveWallpaperEngineAPI.Models
         private static string InjectorPath { get => "Injector.exe"; }
 
         /// <summary>
-        /// 当桌面发生鼠标事件的时候会被调用
-        /// </summary>
-        public MouseEventHandler OnMouseEvent;
-
-        /// <summary>
         /// 共享内存句柄
         /// </summary>
         private IntPtr HShareMemory { get; set; }
@@ -99,8 +83,11 @@ namespace LiveWallpaperEngineAPI.Models
 
         public MouseEventReciver() 
         {
+            // 创建/获取共享内存句柄
             HShareMemory = CreateFileMapping(SharMemoryName);
+            // 创建/获取互斥锁句柄
             HSharMemoryMutex = CreateOrOpenMutex(SharMemoryMutexName);
+            // 得到共享内存首地址
             StartAddress = MapViewOfFile(HShareMemory);
         }
 
@@ -146,7 +133,9 @@ namespace LiveWallpaperEngineAPI.Models
             while (true)
             {
                 MouseEvent mouseEvent = GetNextMouseEvent();
-                OnMouseEvent(mouseEvent.messageId, mouseEvent.x, mouseEvent.y);
+                IntPtr lParam = (IntPtr)(mouseEvent.x & 0x0000ffff + mouseEvent.y & 0xffff0000);
+                // 发送消息给目标窗口
+                PostMessageW(HTargetWindow, mouseEvent.messageId, (IntPtr)0x0020, lParam);
             }
         }
 
@@ -234,6 +223,15 @@ namespace LiveWallpaperEngineAPI.Models
         #endregion
 
         #region WIN32 API
+
+        [DllImport("User32.dll", EntryPoint = "SendMessageW", CallingConvention = CallingConvention.Winapi
+           , CharSet = CharSet.Unicode)]
+        private extern static IntPtr SendMessageW(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("User32.dll", EntryPoint = "PostMessageW", CallingConvention = CallingConvention.Winapi
+           , CharSet = CharSet.Unicode)]
+        private extern static IntPtr PostMessageW(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+
         [DllImport("Kernel32.dll", EntryPoint = "OpenFileMappingW", CallingConvention = CallingConvention.Winapi
            , CharSet = CharSet.Unicode)]
         private extern static IntPtr OpenFileMappingW(UInt32 dwDesiredAccess, UInt32 bInheritHandle, byte[] lpName);

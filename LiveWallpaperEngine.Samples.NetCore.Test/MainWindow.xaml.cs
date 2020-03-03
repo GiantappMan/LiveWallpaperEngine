@@ -24,7 +24,6 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
     public partial class MainWindow : Window
     {
         List<Monitor> monitorsVM = new List<Monitor>();
-        MouseEventReciver mouseEventReciver = new MouseEventReciver();
         public MainWindow()
         {
             InitializeComponent();
@@ -106,14 +105,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             };
             var vm = ConfigerService.GetVM(setting, descInfo);
             configer.DataContext = vm;
-
-            mouseEventReciver.OnMouseEvent += OnMouseEvent;
-            mouseEventReciver.StartRecive();
         }
 
         ~MainWindow()
         {
-            mouseEventReciver.StopRecive();
         }
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)
@@ -150,20 +145,6 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
             _ = WallpaperManager.Instance.SetOptions(setting);
-        }
-
-        private void OnMouseEvent(UInt32 messageId, UInt32 x, UInt32 y)
-        {
-            switch (messageId)
-            {
-                case (UInt32)MouseEventReciver.WindowMessage.WM_LBUTTONDBLCLK:
-                    string text = string.Format("在桌面双击了鼠标左键\n" +
-                        "坐标X：{0}\n" +
-                        "坐标Y：{1}", x.ToString(), y.ToString());
-                    System.Windows.MessageBox.Show(text);
-                    break;
-            }
-
         }
     }
 }
