@@ -1,6 +1,8 @@
-﻿using LiveWallpaperEngineAPI.Models;
+﻿using LiveWallpaperEngineAPI.Common;
+using LiveWallpaperEngineAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace LiveWallpaperEngineAPI.Renders
@@ -25,27 +27,29 @@ namespace LiveWallpaperEngineAPI.Renders
 
         public void Pause(params uint[] screenIndexs)
         {
-            throw new NotImplementedException();
         }
 
         public void Resum(params uint[] screenIndexs)
         {
-            throw new NotImplementedException();
         }
 
         public void SetVolume(int v, params uint[] screenIndexs)
         {
-            throw new NotImplementedException();
+          
         }
 
-        public Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndex)
+        public Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
-            throw new NotImplementedException();
+            foreach (var index in screenIndexs)
+            {
+                var process = Process.Start(wallpaper.Path);
+                WallpaperHelper.GetInstance(index).SendToBackground(process.MainWindowHandle);
+            }
+            return Task.CompletedTask;
         }
 
         public void CloseWallpaper(params uint[] screenIndexs)
         {
-            throw new NotImplementedException();
         }
     }
 }

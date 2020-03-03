@@ -59,7 +59,6 @@ namespace LiveWallpaperEngineAPI.Renders
         }
 
 
-
         public virtual Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
