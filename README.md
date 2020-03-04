@@ -9,7 +9,7 @@
 
 ## 功能目标：
 - [x] 嵌入桌面
-- [x] 鼠标事件转发 (现已支持，感谢[ADD-SP]的PR(https://github.com/ADD-SP))  
+- [x] exe壁纸鼠标事件转发 (现已支持，感谢[ADD-SP]的PR(https://github.com/ADD-SP))  
 具体描述:窗口在桌面下面，不能响应鼠标事件。 如何在桌面移动鼠标时，让桌面下的窗口能收到同样的windows消息。
 
 - [x] 支持多屏幕
