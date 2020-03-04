@@ -60,7 +60,9 @@ namespace LiveWallpaperEngineAPI.Forms
                 return;
 
             _lastPath = path;
-
+            // 设置解码模式为自动，如果条件允许，MPV会启动硬件解码
+            _player?.API.SetPropertyString("hwdec", "auto");
+            //_player.API.SetProperty("hwdec",Encoding.Default.GetBytes("auto"));
             _player?.Pause();
             _player?.Load(path);
             _player?.Resume();
