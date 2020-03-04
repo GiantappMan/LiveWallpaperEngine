@@ -9,12 +9,6 @@ HHOOK hhook;
 // 桌面句柄
 HWND hWndDesktop = NULL;
 
-// 需要接收转发消息的窗口句柄
-HWND targetWindow = NULL;
-
-// 获取需要接收转发消息的句柄
-HWND GetTargetWindow();
-
 // 获取桌面句柄
 HWND GetDesktop();
 
@@ -24,13 +18,28 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam);
 // 安装HOOK
 extern "C" _declspec(dllexport) HHOOK __cdecl InstallHook();
 
+// 鼠标事件结构体
+struct MouseEvent
+{
+    UINT32 messageId;
+    UINT32 x, y;
+};
+
+// 粗糙的鼠标事件队列
+struct MouseEventQueue
+{
+    UINT32 count;
+    UINT32 currentIndex;
+    MouseEvent* queue;
+};
+
+
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
     LPVOID lpReserved
 )
 {
     dllIns = hModule;
-    targetWindow = GetTargetWindow();
     return TRUE;
 }
 
@@ -70,24 +79,45 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam)
     if (code >= 0)
     {
         // 解析消息
-        MOUSEHOOKSTRUCT* pMouseHookStuct = (MOUSEHOOKSTRUCT*)lParam;
-
-        // 发送鼠标消息类型和坐标给目标窗口
-        switch (wParam)
+        MOUSEHOOKSTRUCT* pMouseHookStruct = (MOUSEHOOKSTRUCT*)lParam;
+        // 获取全局互斥锁
+        HANDLE hMutex = CreateSemaphore(NULL, 1, 1, MUTEX_NAME);
+        // 上锁
+        WaitForSingleObject(hMutex, INFINITE);
+        
+        // 获取共享内存句柄
+        HANDLE hShareMem = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE | SEC_COMMIT, 0, 4096, SHARE_MEM_NAME);
+        if (!hShareMem)
         {
-        case WM_MOUSEMOVE:
-            PostMessage(targetWindow, WM_CUSTOM_MOUSE_MOVE, pMouseHookStuct->pt.x, pMouseHookStuct->pt.y);
-            break;
-        case WM_LBUTTONDOWN:
-            PostMessage(targetWindow, WM_CUSTOM_MOUSE_LBTN_CLICK, pMouseHookStuct->pt.x, pMouseHookStuct->pt.y);
-            break;
-        case WM_LBUTTONDBLCLK:
-            PostMessage(targetWindow, WM_CUSTOM_MOUSE_LBTN_DOUBLE_CLICK, pMouseHookStuct->pt.x, pMouseHookStuct->pt.y);
-            break;
-        default:
-            break;
+            return CallNextHookEx(NULL, code, wParam, lParam);
         }
 
+        // 获取共享内存首地址并赋值给队列
+        MouseEventQueue* eventQueue = (MouseEventQueue*)MapViewOfFile(hShareMem, FILE_MAP_ALL_ACCESS, NULL, NULL, NULL);
+        if (!eventQueue)
+        {
+            return CallNextHookEx(NULL, code, wParam, lParam);
+        }
+
+        // 计算下一个鼠标事件存放的位置
+        MouseEvent* mouseEvent = NULL;
+        // 队列中最终50个事件，满了之后覆盖最后一个事件
+        if (eventQueue->count >= 50)
+        {
+            mouseEvent = (MouseEvent*)((int*)eventQueue + 2 + 50);
+        }
+        else
+        {
+            mouseEvent = (MouseEvent*)((int*)eventQueue + 2) + eventQueue->count;
+            ++(eventQueue->count);
+        }
+
+        // 写入信息
+        mouseEvent->messageId = wParam;
+        mouseEvent->x = pMouseHookStruct->pt.x;
+        mouseEvent->y = pMouseHookStruct->pt.y;
+        //开锁
+        ReleaseSemaphore(hMutex, 1, NULL);
     }
     return CallNextHookEx(NULL, code, wParam, lParam);
 }
@@ -132,25 +162,5 @@ HWND GetDesktop()
     } while (!hWndDesktop && hWndWorkerW);
 
     return hWndDesktop;
-}
-
-BOOL CALLBACK CallBackFindTargetWindowEnum(HWND hwnd, LPARAM lParam)
-{
-    WCHAR szName[MAX_PATH] = { 0 };
-    GetWindowText(hwnd, szName, ARRAYSIZE(szName) - 1);
-    if (wcsstr(szName, TARGET_NAME) != NULL)
-    {
-        *((HWND*)lParam) = hwnd;
-        return FALSE;
-    }
-    return TRUE;
-}
-
-HWND GetTargetWindow()
-{
-    HWND hTarget = NULL;
-    // 暴力查找窗口
-    EnumWindows(CallBackFindTargetWindowEnum, (LPARAM)&hTarget);
-    return hTarget;
 }
 

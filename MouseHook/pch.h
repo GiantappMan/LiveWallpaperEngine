@@ -10,27 +10,13 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <Windows.h>
+#include <fstream>
+using namespace std;
 
-// 接收转发消息的窗口标题
-#define TARGET_NAME L"Form1"
-
-/*
-	WM：Windows Message
-	CUSTOM：自定义
-	MOUSE：鼠标
-	L：Left
-	BTN：Button
-	CLICK：点击
-*/
-
-// 传递HOOK句柄的消息
-#define WM_CUSTOM_HHOOK	WM_USER
-// 鼠标移动消息
-#define WM_CUSTOM_MOUSE_MOVE WM_USER + 1
-// 鼠标左键单击消息
-#define WM_CUSTOM_MOUSE_LBTN_CLICK WM_CUSTOM_MOUSE_MOVE + 1
-// 鼠标左键双击消息
-#define WM_CUSTOM_MOUSE_LBTN_DOUBLE_CLICK WM_CUSTOM_MOUSE_LBTN_CLICK + 1
+// 共享内存名称
+#define SHARE_MEM_NAME L"LiveWallpaperEngineShareMemory"
+// 互斥锁名称
+#define MUTEX_NAME L"LiveWallpaperEngineShareMemoryMutex"
 
 
 #endif //PCH_H

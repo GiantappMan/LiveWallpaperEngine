@@ -8,6 +8,12 @@
     <StartupObject>LiveWallpaperEngine.Samples.NetCore.Test.App</StartupObject>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+
   <ItemGroup>
     <!--编译不过限制性bulid.ps1-->
     <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**" TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

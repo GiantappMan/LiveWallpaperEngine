@@ -7,6 +7,8 @@
 
 #define MAX_LOADSTRING 100
 
+#define BUF_SIZE 256
+
 
 // dll中安装hook过程的入口
 FARPROC pInstallHook = NULL;
@@ -18,47 +20,40 @@ HWND GetDesktop();
 HWND GetTargetWindow();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
-    //GetDesktop();
-    HWND targetWindow = GetTargetWindow();
-
-    // 加载DLL
-    HMODULE hmod = LoadLibrary(DLL_PATH);
-    if (hmod)
-    {
-        pInstallHook = GetProcAddress(hmod, "InstallHook");
-        if (pInstallHook)
+        // 加载DLL
+        HMODULE hmod = LoadLibrary(DLL_PATH);
+        if (hmod)
         {
-            HHOOK hhook = (HHOOK)pInstallHook();
-            if (hhook)
+            pInstallHook = GetProcAddress(hmod, "InstallHook");
+            if (pInstallHook)
             {
-                // 将HOOK句柄传出，便于后期摘掉HOOK
-                PostMessage(targetWindow, WM_USER, (WPARAM)hhook, NULL);
+                HHOOK hhook = (HHOOK)pInstallHook();
+                if (hhook)
+                {
+                }
+                else
+                {
+                    MessageBox(NULL, L"可尝试在DLL中调用GetLastError()获取详细信息", L"安装HOOK失败", MB_OK);
+                }
             }
             else
             {
-                MessageBox(NULL, L"可尝试在DLL中调用GetLastError()获取详细信息", L"安装HOOK失败", MB_OK);
+                MessageBox(NULL, L"InstallHook", L"获取DLL函数入口失败", MB_OK);
             }
         }
         else
         {
-            MessageBox(NULL, L"InstallHook", L"获取DLL函数入口失败", MB_OK);
+            MessageBox(NULL, DLL_PATH, L"加载下列DLL失败", MB_OK);
         }
-    }
-    else
-    {
-        MessageBox(NULL, DLL_PATH, L"加载下列DLL失败", MB_OK);
-    }
+    
+        MSG msg;
+        // 瞎等就对了，反正注入自己
+        while (GetMessage(&msg, nullptr, 0, 0));
 
-    MSG msg;
-    // 瞎等就对了，反正注入自己
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        
-    }
     return TRUE;
 }
 

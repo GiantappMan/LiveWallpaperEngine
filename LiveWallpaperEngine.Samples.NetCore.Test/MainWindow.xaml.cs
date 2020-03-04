@@ -4,6 +4,7 @@ using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Models;
 using LiveWallpaperEngineAPI.Renders;
 using LiveWallpaperEngineRemoteWebRender;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -104,6 +105,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             };
             var vm = ConfigerService.GetVM(setting, descInfo);
             configer.DataContext = vm;
+        }
+
+        ~MainWindow()
+        {
         }
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)
