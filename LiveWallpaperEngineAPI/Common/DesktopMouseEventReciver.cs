@@ -1,6 +1,7 @@
 ﻿// 参考ADD-SP的PR https://github.com/giant-app/LiveWallpaperEngine/pull/13 ，修改为c#版本
 // 感谢https://github.com/ADD-SP 的提交
 using DZY.WinAPI;
+using EventHook;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,39 +15,47 @@ namespace LiveWallpaperEngineAPI.Common
     /// </summary>
     public static class DesktopMouseEventReciver
     {
-        const int WH_MOUSE = 7;
-        public static bool InstallHook()
+        private static EventHookFactory eventHookFactory = new EventHookFactory();
+        private static MouseWatcher mouseWatcher;
+        static DesktopMouseEventReciver()
         {
-            var desktop = GetDesktop();
-            if (desktop == IntPtr.Zero)
-                return false;
+        }
+        static bool started = false;
 
-            var dwThreadId = User32Wrapper.GetWindowThreadProcessId(desktop, out int _);
+        public static List<IntPtr> HTargetWindows { get; internal set; } = new List<IntPtr>();
 
-            IntPtr dllIns = Kernel32Wrapper.GetModuleHandle("user32");
-            var hhookR = User32Wrapper.SetWindowsHookEx(WH_MOUSE, MouseProc, dllIns, 0);
-            return hhookR > 0;
+        internal static void Stop()
+        {
+            mouseWatcher.Stop();
+            started = false;
         }
 
-        private static int MouseProc(int code, int wParam, IntPtr lParam)
+        internal static void Start()
         {
-            return User32Wrapper.CallNextHookEx(0, code, wParam, lParam);
-        }
+            if (started)
+                return;
 
-        public static IntPtr GetDesktop()
-        {
-            var hWndProgMan = User32Wrapper.FindWindow("ProgMan", null);
-            if (hWndProgMan != IntPtr.Zero)
+            mouseWatcher = eventHookFactory.GetMouseWatcher();
+            mouseWatcher.Start();
+            mouseWatcher.OnMouseInput += (s, e) =>
             {
-                var hWndShellDefView = User32Wrapper.FindWindowEx(hWndProgMan, IntPtr.Zero, "SHELLDLL_DefView", IntPtr.Zero);
-                if (hWndShellDefView != IntPtr.Zero)
-                {
-                    var hWndDesktop = User32Wrapper.FindWindowEx(hWndShellDefView, IntPtr.Zero, "SysListView32", IntPtr.Zero);
-                    return hWndDesktop;
-                }
-            }
+                // 根据官网文档中定义，lParam低16位存储鼠标的x坐标，高16位存储y坐标
+                int lParam = e.Point.y;
+                lParam <<= 16;
+                lParam |= e.Point.x;
+                // 发送消息给目标窗口
+                foreach (var window in HTargetWindows)
+                    PostMessageW(window, (uint)e.Message, (IntPtr)0x0020, (IntPtr)lParam);
 
-            return IntPtr.Zero;
+                Console.WriteLine("Mouse event {0} at point {1},{2}", e.Message.ToString(), e.Point.x, e.Point.y);
+            };
+
+            started = true;
         }
+
+
+        [DllImport("User32.dll", EntryPoint = "PostMessageW", CallingConvention = CallingConvention.Winapi
+           , CharSet = CharSet.Unicode)]
+        private extern static IntPtr PostMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     }
 }

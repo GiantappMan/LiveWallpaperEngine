@@ -1,4 +1,5 @@
-﻿using GiantappConfiger;
+﻿using EventHook;
+using GiantappConfiger;
 using GiantappConfiger.Models;
 using LiveWallpaperEngineAPI;
 using LiveWallpaperEngineAPI.Models;

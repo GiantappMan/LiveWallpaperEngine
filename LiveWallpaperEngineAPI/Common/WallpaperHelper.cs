@@ -6,6 +6,7 @@ using DZY.WinAPI.Desktop.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace LiveWallpaperEngineAPI.Common
@@ -213,6 +214,13 @@ namespace LiveWallpaperEngineAPI.Common
 
             User32Wrapper.MapWindowPoints(IntPtr.Zero, workerw, ref rect, 2);
             _ = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
+
+            var style = User32Wrapper.GetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE);
+
+            //https://stackoverflow.com/questions/2398746/removing-window-border
+            //消除游戏边框
+            style &= ~(int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_CAPTION | WindowStyles.WS_THICKFRAME | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX | WindowStyles.WS_SYSMENU);
+            User32Wrapper.SetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE, style);
         }
 
         //刷新壁纸

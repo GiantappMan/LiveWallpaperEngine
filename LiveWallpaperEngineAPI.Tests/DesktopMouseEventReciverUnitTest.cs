@@ -7,18 +7,18 @@ namespace LiveWallpaperEngineAPI.Tests
     [TestClass]
     public class DesktopMouseEventReciverUnitTest
     {
-        [TestMethod]
-        public void TestGetDesktop()
-        {
-            var r = DesktopMouseEventReciver.GetDesktop();
-            Assert.IsTrue(r != IntPtr.Zero);
-        }
+        //[TestMethod]
+        //public void TestGetDesktop()
+        //{
+        //    var r = DesktopMouseEventReciver.GetDesktop();
+        //    Assert.IsTrue(r != IntPtr.Zero);
+        //}
 
-        [TestMethod]
-        public void TestInstallHook()
-        {
-            var r = DesktopMouseEventReciver.InstallHook();
-            Assert.IsTrue(r);
-        }
+        //[TestMethod]
+        //public void TestInstallHook()
+        //{
+        //    var r = DesktopMouseEventReciver.InstallHook();
+        //    Assert.IsTrue(r);
+        //}
     }
 }
