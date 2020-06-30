@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineRemoteWe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineAPI.Tests", "LiveWallpaperEngineAPI.Tests\LiveWallpaperEngineAPI.Tests.csproj", "{D1E4E670-42EC-41CF-8CCD-E27EB98E70CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEmbedWindow", "TestEmbedWindow\TestEmbedWindow.csproj", "{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,18 @@ Global
 		{D1E4E670-42EC-41CF-8CCD-E27EB98E70CD}.Release|x64.Build.0 = Release|Any CPU
 		{D1E4E670-42EC-41CF-8CCD-E27EB98E70CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{D1E4E670-42EC-41CF-8CCD-E27EB98E70CD}.Release|x86.Build.0 = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|x64.Build.0 = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|x64.ActiveCfg = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|x64.Build.0 = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +105,7 @@ Global
 		{A9CF49BA-B094-41C6-9393-A1D5CF241F52} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 		{EAF94427-ED84-4CA6-8338-C61D7951A667} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
 		{D1E4E670-42EC-41CF-8CCD-E27EB98E70CD} = {02F4F61B-91AC-4F16-939D-EB9B9980A60C}
+		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0CCDD11-AAC6-45FC-883B-0DBE493DA7E9}
