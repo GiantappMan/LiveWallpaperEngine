@@ -120,7 +120,7 @@ namespace LiveWallpaperEngineAPI.Common
             //{
             //    //parent没变时不重复调用，有时候会导致不可见
             User32Wrapper.SetParent(_currentHandler, workerw);
-            FullScreen(_currentHandler, _targetBounds, workerw);
+            FullScreen(_currentHandler, new RECT(_targetBounds), workerw);
             //_parentHandler = newParentHandler;
             //}
 
@@ -229,10 +229,14 @@ namespace LiveWallpaperEngineAPI.Common
             return workerw;
         }
 
-        public static void FullScreen(IntPtr targeHandler, Rectangle bounds, IntPtr parent)
+        internal static void FullScreen(IntPtr mainWindowHandle, IntPtr containerHandle)
         {
-            RECT rect = new RECT(bounds);
+            User32Wrapper.GetWindowRect(containerHandle, out RECT rect);
+            FullScreen(mainWindowHandle, rect, containerHandle);
+        }
 
+        public static void FullScreen(IntPtr targeHandler, RECT rect, IntPtr parent)
+        {
             User32Wrapper.MapWindowPoints(IntPtr.Zero, parent, ref rect, 2);
             _ = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
 

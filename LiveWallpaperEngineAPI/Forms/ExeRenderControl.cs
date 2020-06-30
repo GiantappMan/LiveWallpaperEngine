@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Media;
 using LiveWallpaperEngineAPI.Common;
+using DZY.WinAPI;
 
 namespace LiveWallpaperEngineAPI.Forms
 {
@@ -102,11 +103,7 @@ namespace LiveWallpaperEngineAPI.Forms
                 _currentPid = p.Id;
                 // 用当前窗口显示exe
                 SetParent(p.MainWindowHandle, containerHandle);
-
-                // Place the window in the top left of the parent window without resizing it
-                //SetWindowPos(p.MainWindowHandle, 0, 0, 0, 0, 0, 0x0001 | 0x0040);     
-
-                WallpaperHelper.FullScreen(p.MainWindowHandle, Bounds, containerHandle);
+                WallpaperHelper.FullScreen(p.MainWindowHandle, containerHandle);
             }
             catch (Exception ex)
             {
