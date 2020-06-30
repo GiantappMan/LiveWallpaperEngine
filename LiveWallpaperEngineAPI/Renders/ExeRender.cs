@@ -56,7 +56,7 @@ namespace LiveWallpaperEngineAPI.Renders
                 {
                     var process = await Task.Run(() =>
                     {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(wallpaper.Path);                        
+                        ProcessStartInfo startInfo = new ProcessStartInfo(wallpaper.Path);
                         //startInfo.WindowStyle = ProcessWindowStyle.Maximized;
                         //startInfo.Arguments = "-window-mode Windowed";
                         var p = Process.Start(startInfo);
@@ -87,8 +87,7 @@ namespace LiveWallpaperEngineAPI.Renders
 
             }
         }
-        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
         public void CloseWallpaper(params uint[] screenIndexs)
         {
             var tmpList = _currentProcress.ToList();
@@ -100,12 +99,15 @@ namespace LiveWallpaperEngineAPI.Renders
                     p.Kill();
 
                     _currentProcress.Remove(item);
+
                 }
             }
 
             var haveExeWallpaper = WallpaperManager.Instance.CurrentWalpapers.Values.FirstOrDefault(m => m.Type == WallpaperType.Exe) != null;
             if (!haveExeWallpaper)
                 DesktopMouseEventReciver.Stop();
+
+            WallpaperHelper.RestoreDefaultWallpaper();
         }
     }
 }

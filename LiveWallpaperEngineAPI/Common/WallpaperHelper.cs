@@ -6,6 +6,7 @@ using DZY.WinAPI.Desktop.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -38,7 +39,7 @@ namespace LiveWallpaperEngineAPI.Common
         }
 
         //禁止外部程序集直接构造
-        public WallpaperHelper(Rectangle bounds)
+        private WallpaperHelper(Rectangle bounds)
         {
             _targetBounds = bounds;
             //_workerw = GetWorkerW();
@@ -46,7 +47,27 @@ namespace LiveWallpaperEngineAPI.Common
 
         #endregion
 
-        #region  public methods
+        #region  public methods        
+
+        public static void RestoreDefaultWallpaper()
+        {
+            SetDesktopWallpaper(GetDesktopWallpaper());
+        }
+
+        private static readonly int MAX_PATH = 260;
+
+        static string GetDesktopWallpaper()
+        {
+            string wallpaper = new string('\0', MAX_PATH);
+            User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_GETDESKWALLPAPER, (uint)wallpaper.Length, wallpaper, 0);
+            return wallpaper.Substring(0, wallpaper.IndexOf('\0'));
+        }
+
+        static void SetDesktopWallpaper(string filename)
+        {
+            User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETDESKWALLPAPER, 0, filename,
+                User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
+        }
 
         public void RestoreParent()
         {
