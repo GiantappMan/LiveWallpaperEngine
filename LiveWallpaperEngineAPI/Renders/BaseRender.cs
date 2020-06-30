@@ -39,7 +39,6 @@ namespace LiveWallpaperEngineAPI.Renders
             throw new NotImplementedException();
         }
 
-
         public virtual void Pause(params uint[] screenIndexs)
         {
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
