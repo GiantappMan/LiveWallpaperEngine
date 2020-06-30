@@ -1,5 +1,6 @@
 ﻿using DZY.Util.Winform.Extensions;
 using Giantapp.LiveWallpaper.Engine.Common;
+using Giantapp.LiveWallpaper.Engine.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -36,21 +37,33 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 if (Controls.Contains(control))
                     Controls.Remove(control);
+
+                if (control is IRenderControl r)
+                    r.DisposeRender();
+                control.Dispose();
+
                 Refresh();
             });
         }
 
-        internal void ShowWallpaper(Control control)
+        internal void ShowWallpaper(Control renderControl)
         {
             IntPtr windowHandle = IntPtr.Zero;
-            this.InvokeIfRequired(() =>
+            MainUIInvoke(() =>
             {
-                Controls.Clear();
-                control.Dock = DockStyle.Fill;
-                Controls.Add(control);
-                Opacity = 1;
-                Refresh();
-                windowHandle = Handle;
+                try
+                {
+                    Controls.Clear();
+                    renderControl.Dock = DockStyle.Fill;
+                    Controls.Add(renderControl);
+                    Opacity = 1;
+                    Refresh();
+                    windowHandle = Handle;
+                }
+                catch (Exception ex)
+                {
+
+                }
             });
             WallpaperHelper.GetInstance(_screenIndex).SendToBackground(windowHandle);
         }

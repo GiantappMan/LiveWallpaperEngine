@@ -302,7 +302,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         private void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var maximizedScreenIndexs = e.MaximizedScreens.Select((m, i) => (uint)i).ToList();
+            var maximizedScreenIndexs = e.MaximizedScreens.Select((m, i) => (uint)Screen.AllScreens.ToList().IndexOf(m)).ToList();
             bool anyScreenMaximized = maximizedScreenIndexs.Count > 0;
             foreach (var item in Options.ScreenOptions)
             {

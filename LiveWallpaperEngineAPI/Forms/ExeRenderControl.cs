@@ -70,7 +70,12 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
 
         void IRenderControl.Load(string path)
         {
-            LoadApplication(path, Handle);
+            IntPtr handle = IntPtr.Zero;
+            RenderHost.MainUIInvoke(() =>
+            {
+                handle = Handle;
+            });
+            LoadApplication(path, handle);
         }
 
         [DllImport("user32.dll", SetLastError = true)]

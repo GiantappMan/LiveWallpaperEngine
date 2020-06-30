@@ -19,9 +19,11 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
             {
                 control.Stop();
-                var screen = RenderHost.GetHost(screenIndex, false);
-                if (screen != null)
-                    screen.RemoveWallpaper(control);
+                var host = RenderHost.GetHost(screenIndex, false);
+                if (host != null)
+                {
+                    host.RemoveWallpaper(control);
+                }
                 _controls.Remove(screenIndex);
             }
         }
@@ -63,14 +65,24 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         {
             foreach (var index in screenIndexs)
             {
+                RenderControl renderControl = null;
                 if (!_controls.ContainsKey(index))
                 {
-                    _controls[index] = new RenderControl();
-                    _controls[index].InitRender();
+                    RenderHost.MainUIInvoke(() =>
+                      {
+                          renderControl = _controls[index] = new RenderControl();
+                          renderControl.InitRender();
+                      });
                 }
-                var screen = RenderHost.GetHost(index);
-                screen!.ShowWallpaper(_controls[index]);
-                _controls[index].Load(wallpaper.Path);
+                else
+                    renderControl = _controls[index];
+                var host = RenderHost.GetHost(index);
+                //var test = renderControl.Handle;
+                RenderHost.MainUIInvoke(() =>
+                {
+                    host!.ShowWallpaper(renderControl);
+                });
+                renderControl.Load(wallpaper.Path);
             }
             return Task.CompletedTask;
         }
