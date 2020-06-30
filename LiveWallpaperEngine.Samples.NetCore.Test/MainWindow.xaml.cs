@@ -1,9 +1,9 @@
 ﻿using EventHook;
 using GiantappConfiger;
 using GiantappConfiger.Models;
-using LiveWallpaperEngineAPI;
-using LiveWallpaperEngineAPI.Models;
-using LiveWallpaperEngineAPI.Renders;
+using Giantapp.LiveWallpaper.Engine;
+using Giantapp.LiveWallpaper.Engine.Models;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using LiveWallpaperEngineRemoteWebRender;
 using System;
 using System.Collections.Generic;

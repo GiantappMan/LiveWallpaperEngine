@@ -1,4 +1,4 @@
-﻿namespace LiveWallpaperEngineAPI
+﻿namespace Giantapp.LiveWallpaper.Engine
 {
     partial class RenderHost
     {

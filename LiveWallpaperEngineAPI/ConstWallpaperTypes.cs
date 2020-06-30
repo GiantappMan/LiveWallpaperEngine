@@ -1,7 +1,7 @@
-﻿using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Models;
 using System.Collections.Generic;
 
-namespace LiveWallpaperEngineAPI
+namespace Giantapp.LiveWallpaper.Engine
 {
     public static class ConstWallpaperTypes
     {

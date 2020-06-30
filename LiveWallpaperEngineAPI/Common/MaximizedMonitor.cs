@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI.Common
+namespace Giantapp.LiveWallpaper.Engine.Common
 {
     public class AppMaximizedEvent : EventArgs
     {

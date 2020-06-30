@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LiveWallpaperEngineAPI.Models
+namespace Giantapp.LiveWallpaper.Engine.Models
 {
     public class LiveWallpaperOptions
     {

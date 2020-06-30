@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace LiveWallpaperEngineAPI.Common
+namespace Giantapp.LiveWallpaper.Engine.Common
 {
     /// <summary>
     /// 监控 explorer是否崩溃

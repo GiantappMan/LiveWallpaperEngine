@@ -1,10 +1,10 @@
-﻿using LiveWallpaperEngineAPI.Forms;
-using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Forms;
+using Giantapp.LiveWallpaper.Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     class ExeRender : BaseRender<ExeRenderControl>
     {

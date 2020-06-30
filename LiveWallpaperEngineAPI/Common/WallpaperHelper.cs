@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI.Common
+namespace Giantapp.LiveWallpaper.Engine.Common
 {
     public class WallpaperHelper
     {

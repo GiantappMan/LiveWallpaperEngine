@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace LiveWallpaperEngineAPI.Common
+namespace Giantapp.LiveWallpaper.Engine.Common
 {
     /// <summary>
     /// 监听桌面鼠标消息

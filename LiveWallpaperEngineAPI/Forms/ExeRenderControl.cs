@@ -5,14 +5,14 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using LiveWallpaperEngineAPI.Renders;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Media;
-using LiveWallpaperEngineAPI.Common;
+using Giantapp.LiveWallpaper.Engine.Common;
 using DZY.WinAPI;
 
-namespace LiveWallpaperEngineAPI.Forms
+namespace Giantapp.LiveWallpaper.Engine.Forms
 {
     //显示exe的容器
     public partial class ExeRenderControl : UserControl, IRenderControl

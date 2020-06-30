@@ -1,11 +1,11 @@
 ﻿using DZY.Util.Winform.Extensions;
-using LiveWallpaperEngineAPI.Renders;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI.Forms
+namespace Giantapp.LiveWallpaper.Engine.Forms
 {
     //显示视频的控件
     public partial class VideoRenderControl : UserControl, IRenderControl

@@ -1,8 +1,8 @@
-﻿using LiveWallpaperEngineAPI.Forms;
-using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Forms;
+using Giantapp.LiveWallpaper.Engine.Models;
 using System.Collections.Generic;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     class VideoRender : BaseRender<VideoRenderControl>
     {

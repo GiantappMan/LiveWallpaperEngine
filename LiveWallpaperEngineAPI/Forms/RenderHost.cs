@@ -1,11 +1,11 @@
 ﻿using DZY.Util.Winform.Extensions;
-using LiveWallpaperEngineAPI.Common;
+using Giantapp.LiveWallpaper.Engine.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI
+namespace Giantapp.LiveWallpaper.Engine
 {
     /// <summary>
     /// 显示壁纸根窗体

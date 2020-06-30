@@ -1,7 +1,7 @@
 ﻿using DZY.Util.Common.Helpers;
-using LiveWallpaperEngineAPI.Common;
-using LiveWallpaperEngineAPI.Models;
-using LiveWallpaperEngineAPI.Renders;
+using Giantapp.LiveWallpaper.Engine.Common;
+using Giantapp.LiveWallpaper.Engine.Models;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI
+namespace Giantapp.LiveWallpaper.Engine
 {
     public class WallpaperManager
     {

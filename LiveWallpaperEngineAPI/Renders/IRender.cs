@@ -1,8 +1,8 @@
-﻿using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     /// <summary>
     /// 壁纸渲染器

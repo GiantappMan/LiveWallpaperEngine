@@ -1,4 +1,4 @@
-﻿namespace LiveWallpaperEngineAPI.Models
+﻿namespace Giantapp.LiveWallpaper.Engine.Models
 {
     public class WallpaperModel
     {

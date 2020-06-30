@@ -1,4 +1,4 @@
-﻿namespace LiveWallpaperEngineAPI.Forms
+﻿namespace Giantapp.LiveWallpaper.Engine.Forms
 {
     partial class VideoRenderControl
     {

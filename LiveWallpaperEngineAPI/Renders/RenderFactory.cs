@@ -1,10 +1,10 @@
-﻿using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     /// <summary>
     /// 定义render类型的实现

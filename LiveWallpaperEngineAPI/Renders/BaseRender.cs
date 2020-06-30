@@ -1,10 +1,10 @@
-﻿using LiveWallpaperEngineAPI.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LiveWallpaperEngineAPI.Renders
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     abstract class BaseRender<RenderControl> : IRender where RenderControl : Control, IRenderControl, new()
     {

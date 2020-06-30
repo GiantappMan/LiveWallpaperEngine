@@ -1,8 +1,8 @@
-using LiveWallpaperEngineAPI.Common;
+using Giantapp.LiveWallpaper.Engine.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace LiveWallpaperEngineAPI.Tests
+namespace Giantapp.LiveWallpaper.Engine.Tests
 {
     [TestClass]
     public class DesktopMouseEventReciverUnitTest
