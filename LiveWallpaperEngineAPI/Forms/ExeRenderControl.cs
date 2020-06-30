@@ -19,6 +19,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
     {
 
         private int _currentPid;
+        private IntPtr _currentTargetHandle;
 
         public ExeRenderControl()
         {
@@ -53,8 +54,12 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                 if (p == null)
                     return;
 
-                //p.Close();
-                //p.WaitForExit();
+
+                if (_currentTargetHandle != IntPtr.Zero)
+                {
+                    DesktopMouseEventReciver.HTargetWindows.Remove(_currentTargetHandle);
+                }
+
                 p.Kill();
             }
             catch (Exception ex)
@@ -84,14 +89,14 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                 ProcessStartInfo info = new ProcessStartInfo(path);
                 info.WindowStyle = ProcessWindowStyle.Maximized;
                 info.CreateNoWindow = true;
-                Process p = Process.Start(info);
-                while (p.MainWindowHandle == IntPtr.Zero)
+                Process targetProcess = Process.Start(info);
+                while (targetProcess.MainWindowHandle == IntPtr.Zero)
                 {
                     System.Threading.Thread.Sleep(10);
-                    int pid = p.Id;
-                    p.Dispose();
+                    int pid = targetProcess.Id;
+                    targetProcess.Dispose();
                     //mainWindowHandle不会变，重新获取
-                    p = Process.GetProcessById(pid);
+                    targetProcess = Process.GetProcessById(pid);
 
                     if (sw.ElapsedMilliseconds > timeout)
                     {
@@ -100,10 +105,14 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                     }
                 }
 
-                _currentPid = p.Id;
+                _currentTargetHandle = targetProcess.MainWindowHandle;
+                _currentPid = targetProcess.Id;
+
+                DesktopMouseEventReciver.HTargetWindows.Add(_currentTargetHandle);
+
                 // 用当前窗口显示exe
-                SetParent(p.MainWindowHandle, containerHandle);
-                WallpaperHelper.FullScreen(p.MainWindowHandle, containerHandle);
+                SetParent(_currentTargetHandle, containerHandle);
+                WallpaperHelper.FullScreen(_currentTargetHandle, containerHandle);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using Giantapp.LiveWallpaper.Engine.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Forms;
+using Giantapp.LiveWallpaper.Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -57,7 +58,6 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             foreach (var (screenIndex, control) in GetControls(screenIndexs))
                 control.SetVolume(v);
         }
-
 
         public virtual Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {

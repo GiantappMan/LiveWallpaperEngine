@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     /// <summary>
-    /// 壁纸渲染器
+    /// 某种类型的壁纸渲染器
     /// </summary>
     public interface IRender
     {

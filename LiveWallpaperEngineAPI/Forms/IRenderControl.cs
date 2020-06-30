@@ -1,4 +1,4 @@
-﻿namespace Giantapp.LiveWallpaper.Engine.Renders
+﻿namespace Giantapp.LiveWallpaper.Engine.Forms
 {
     public interface IRenderControl
     {
