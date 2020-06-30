@@ -64,7 +64,7 @@ namespace LiveWallpaperEngineAPI.Forms
 
         void IRenderControl.Load(string path)
         {
-            LoadApplication(@"D:\github-categorized\dotnet\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\game\sheep.exe", this.Handle);
+            LoadApplication(path, Handle);
         }
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -74,37 +74,43 @@ namespace LiveWallpaperEngineAPI.Forms
 
         private void LoadApplication(string path, IntPtr containerHandle)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            int timeout = 10 * 1000;     // Timeout value (10s) in case we want to cancel the task if it's taking too long.
-
-            ProcessStartInfo info = new ProcessStartInfo(path);
-            info.WindowStyle = ProcessWindowStyle.Maximized;
-            info.CreateNoWindow = true;
-            Process p = Process.Start(info);
-            while (p.MainWindowHandle == IntPtr.Zero)
+            try
             {
-                System.Threading.Thread.Sleep(10);
-                int pid = p.Id;
-                p.Dispose();
-                //mainWindowHandle不会变，重新获取
-                p = Process.GetProcessById(pid);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                int timeout = 10 * 1000;     // Timeout value (10s) in case we want to cancel the task if it's taking too long.
 
-                if (sw.ElapsedMilliseconds > timeout)
+                ProcessStartInfo info = new ProcessStartInfo(path);
+                info.WindowStyle = ProcessWindowStyle.Maximized;
+                info.CreateNoWindow = true;
+                Process p = Process.Start(info);
+                while (p.MainWindowHandle == IntPtr.Zero)
                 {
-                    sw.Stop();
-                    return;
+                    System.Threading.Thread.Sleep(10);
+                    int pid = p.Id;
+                    p.Dispose();
+                    //mainWindowHandle不会变，重新获取
+                    p = Process.GetProcessById(pid);
+
+                    if (sw.ElapsedMilliseconds > timeout)
+                    {
+                        sw.Stop();
+                        return;
+                    }
                 }
+
+                _currentPid = p.Id;
+                // 用当前窗口显示exe
+                SetParent(p.MainWindowHandle, containerHandle);
+
+                // Place the window in the top left of the parent window without resizing it
+                //SetWindowPos(p.MainWindowHandle, 0, 0, 0, 0, 0, 0x0001 | 0x0040);     
+
+                WallpaperHelper.FullScreen(p.MainWindowHandle, Bounds, containerHandle);
             }
-
-            _currentPid = p.Id;
-            // 用当前窗口显示exe
-            SetParent(p.MainWindowHandle, containerHandle);
-
-            // Place the window in the top left of the parent window without resizing it
-            //SetWindowPos(p.MainWindowHandle, 0, 0, 0, 0, 0, 0x0001 | 0x0040);     
-
-            WallpaperHelper.FullScreen(p.MainWindowHandle, Bounds, containerHandle);
+            catch (Exception ex)
+            {
+            }
         }
     }
 }
