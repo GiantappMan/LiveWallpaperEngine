@@ -7,6 +7,9 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineAPI
 {
+    /// <summary>
+    /// 显示壁纸根窗体
+    /// </summary>
     public partial class RenderHost : Form
     {
         static Dictionary<uint, RenderHost> _hosts = new Dictionary<uint, RenderHost>();
@@ -77,7 +80,6 @@ namespace LiveWallpaperEngineAPI
             else
                 WinformInvoke(a);
         }
-
 
         #region private
 

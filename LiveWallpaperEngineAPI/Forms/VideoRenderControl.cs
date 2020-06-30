@@ -7,12 +7,13 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineAPI.Forms
 {
-    public partial class VideoControl : UserControl, IRenderControl
+    //显示视频的控件
+    public partial class VideoRenderControl : UserControl, IRenderControl
     {
         private Mpv.NET.Player.MpvPlayer _player;
         private string _lastPath;
         private int _volume;
-        public VideoControl()
+        public VideoRenderControl()
         {
             InitializeComponent();
             //UI

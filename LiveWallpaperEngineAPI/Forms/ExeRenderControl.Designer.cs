@@ -1,6 +1,6 @@
 ﻿namespace LiveWallpaperEngineAPI.Forms
 {
-    partial class VideoControl
+    partial class ExeRenderControl
     {
         /// <summary> 
         /// 必需的设计器变量。

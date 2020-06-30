@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace LiveWallpaperEngineAPI.Renders
 {
-    class VideoRender : BaseRender<VideoControl>
+    class VideoRender : BaseRender<VideoRenderControl>
     {
         public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
         {

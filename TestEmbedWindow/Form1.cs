@@ -23,7 +23,7 @@ namespace TestEmbedWindow
             //BackColor = Color.Magenta;
             //TransparencyKey = Color.Magenta;
             //ShowInTaskbar = false;
-            FormBorderStyle = FormBorderStyle.None;
+            //FormBorderStyle = FormBorderStyle.None;
             //WindowState = FormWindowState.Maximized;
             //Opacity = 0;
         }

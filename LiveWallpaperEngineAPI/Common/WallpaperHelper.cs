@@ -229,11 +229,11 @@ namespace LiveWallpaperEngineAPI.Common
             return workerw;
         }
 
-        private static void FullScreen(IntPtr targeHandler, Rectangle bounds, IntPtr workerw)
+        public static void FullScreen(IntPtr targeHandler, Rectangle bounds, IntPtr parent)
         {
             RECT rect = new RECT(bounds);
 
-            User32Wrapper.MapWindowPoints(IntPtr.Zero, workerw, ref rect, 2);
+            User32Wrapper.MapWindowPoints(IntPtr.Zero, parent, ref rect, 2);
             _ = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
 
             var style = User32Wrapper.GetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE);
