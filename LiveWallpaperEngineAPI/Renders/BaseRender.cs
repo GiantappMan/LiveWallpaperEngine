@@ -21,6 +21,7 @@ namespace LiveWallpaperEngineAPI.Renders
                 var screen = RenderHost.GetHost(screenIndex, false);
                 if (screen != null)
                     screen.RemoveWallpaper(control);
+                _controls.Remove(screenIndex);
             }
         }
 
