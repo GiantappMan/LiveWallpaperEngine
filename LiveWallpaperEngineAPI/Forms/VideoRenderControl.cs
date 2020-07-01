@@ -11,7 +11,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
     public partial class VideoRenderControl : UserControl, IRenderControl
     {
         private Mpv.NET.Player.MpvPlayer _player;
-        private string _lastPath;
+        //private string _lastPath;
         private int _volume;
         public VideoRenderControl()
         {
@@ -53,20 +53,27 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                     _player.API.SetPropertyString("panscan", "1.0");
                     _player.AutoPlay = true;
                     _player.Volume = _volume;
-                    Load(_lastPath);
+                    //Load(_lastPath);
                 });
             }
 
             if (string.IsNullOrEmpty(path))
                 return;
+            try
+            {
 
-            _lastPath = path;
-            // 设置解码模式为自动，如果条件允许，MPV会启动硬件解码
-            _player?.API.SetPropertyString("hwdec", "auto");
-            //_player.API.SetProperty("hwdec",Encoding.Default.GetBytes("auto"));
-            _player?.Pause();
-            _player?.Load(path);
-            _player?.Resume();
+                //_lastPath = path;
+                // 设置解码模式为自动，如果条件允许，MPV会启动硬件解码
+                _player?.API.SetPropertyString("hwdec", "auto");
+                //_player.API.SetProperty("hwdec",Encoding.Default.GetBytes("auto"));
+                _player?.Pause();
+                _player?.Load(path);
+                _player?.Resume();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void Stop()
@@ -76,7 +83,8 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
 
         public void DisposeRender()
         {
-            _player?.Dispose();
+            // 不能释放，否则重新开启视频会崩溃
+            //_player?.Dispose();
             _player = null;
         }
 
