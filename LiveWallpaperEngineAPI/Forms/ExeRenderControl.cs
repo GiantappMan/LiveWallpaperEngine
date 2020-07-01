@@ -65,7 +65,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
     public partial class ExeRenderControl : UserControl, IRenderControl
     {
 
-        private int _currentPid;
+        private int _currentPid = -1;
         private IntPtr _currentTargetHandle;
 
         public ExeRenderControl()
@@ -117,10 +117,17 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             {
 
             }
+            finally
+            {
+                _currentPid = -1;
+            }
         }
 
         void IRenderControl.Load(string path)
         {
+            // 当前已有壁纸 过滤
+            if (_currentPid >= 0)
+                return;
             IntPtr handle = IntPtr.Zero;
             RenderHost.MainUIInvoke(() =>
             {
