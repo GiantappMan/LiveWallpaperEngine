@@ -101,6 +101,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("stop exe 0");
                 var p = Process.GetProcessById(_currentPid);
                 if (p == null)
                     return;
@@ -119,6 +120,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             }
             finally
             {
+                System.Diagnostics.Debug.WriteLine("stop exe 1");
                 _currentPid = -1;
             }
         }
@@ -128,12 +130,14 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             // 当前已有壁纸 过滤
             if (_currentPid >= 0)
                 return;
+            System.Diagnostics.Debug.WriteLine("load exe0");
             IntPtr handle = IntPtr.Zero;
-            RenderHost.MainUIInvoke(() =>
+            WallpaperManager.UIInvoke(() =>
             {
                 handle = Handle;
             });
             LoadApplication(path, handle);
+            System.Diagnostics.Debug.WriteLine("load exe1");
         }
 
         [DllImport("user32.dll", SetLastError = true)]

@@ -62,6 +62,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             try
             {
 
+                System.Diagnostics.Debug.WriteLine("load video 0");
                 //_lastPath = path;
                 // 设置解码模式为自动，如果条件允许，MPV会启动硬件解码
                 _player?.API.SetPropertyString("hwdec", "auto");
@@ -72,13 +73,27 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             }
             catch (Exception ex)
             {
-
+            }
+            finally
+            {
+                System.Diagnostics.Debug.WriteLine("load video 1");
             }
         }
 
         public void Stop()
         {
-            _player?.Stop();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("stop video 0");
+                _player?.Stop();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                System.Diagnostics.Debug.WriteLine("stop video 1");
+            }
         }
 
         public void DisposeRender()

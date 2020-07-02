@@ -33,7 +33,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         internal void RemoveWallpaper(Control control)
         {
-            MainUIInvoke(() =>
+            WallpaperManager.UIInvoke(() =>
             {
                 if (Controls.Contains(control))
                     Controls.Remove(control);
@@ -49,7 +49,7 @@ namespace Giantapp.LiveWallpaper.Engine
         internal void ShowWallpaper(Control renderControl)
         {
             IntPtr windowHandle = IntPtr.Zero;
-            MainUIInvoke(() =>
+            WallpaperManager.UIInvoke(() =>
             {
                 try
                 {
@@ -73,7 +73,7 @@ namespace Giantapp.LiveWallpaper.Engine
             if (!_hosts.ContainsKey(screenIndex))
             {
                 if (autoCreate)
-                    MainUIInvoke(() =>
+                    WallpaperManager.UIInvoke(() =>
                     {
                         var host = _hosts[screenIndex] = new RenderHost(screenIndex);
                         host.Show();
@@ -86,43 +86,11 @@ namespace Giantapp.LiveWallpaper.Engine
                 return null;
         }
 
-        public static void MainUIInvoke(Action a)
-        {
-            if (Application.OpenForms.Count == 0)
-                WPFInvoke(a);
-            else
-                WinformInvoke(a);
-        }
-
         #region private
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-        }
-
-        private static void WinformInvoke(Action a)
-        {
-            if (Application.OpenForms.Count == 0)
-                return;
-
-            var mainForm = Application.OpenForms[0];
-            mainForm.InvokeIfRequired(a);
-        }
-
-        private static void WPFInvoke(Action a)
-        {
-            var mainWindow = System.Windows.Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                a();
-                return;
-            }
-
-            if (mainWindow.Dispatcher.CheckAccess()) // CheckAccess returns true if you're on the dispatcher thread
-                mainWindow.Dispatcher.Invoke(a);
-            else
-                a();
         }
 
         #endregion

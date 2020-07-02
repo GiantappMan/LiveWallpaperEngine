@@ -63,28 +63,29 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public virtual Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
-            foreach (var index in screenIndexs)
+            return Task.Run(() =>
             {
-                RenderControl renderControl = null;
-                if (!_controls.ContainsKey(index))
+                foreach (var index in screenIndexs)
                 {
-                    RenderHost.MainUIInvoke(() =>
-                      {
-                          renderControl = _controls[index] = new RenderControl();
-                          renderControl.InitRender();
-                      });
+                    RenderControl renderControl = null;
+                    if (!_controls.ContainsKey(index))
+                    {
+                        WallpaperManager.UIInvoke(() =>
+                          {
+                              renderControl = _controls[index] = new RenderControl();
+                              renderControl.InitRender();
+                          });
+                    }
+                    else
+                        renderControl = _controls[index];
+                    var host = RenderHost.GetHost(index);
+                    WallpaperManager.UIInvoke(() =>
+                    {
+                        host!.ShowWallpaper(renderControl);
+                    });
+                    renderControl.Load(wallpaper.Path);
                 }
-                else
-                    renderControl = _controls[index];
-                var host = RenderHost.GetHost(index);
-                //var test = renderControl.Handle;
-                RenderHost.MainUIInvoke(() =>
-                {
-                    host!.ShowWallpaper(renderControl);
-                });
-                renderControl.Load(wallpaper.Path);
-            }
-            return Task.CompletedTask;
+            });
         }
 
         protected IEnumerable<(uint screenIndex, RenderControl control)> GetControls(params uint[] screenIndexs)

@@ -1,11 +1,9 @@
-﻿using EventHook;
-using GiantappConfiger;
+﻿using GiantappConfiger;
 using GiantappConfiger.Models;
 using Giantapp.LiveWallpaper.Engine;
 using Giantapp.LiveWallpaper.Engine.Models;
 using Giantapp.LiveWallpaper.Engine.Renders;
 using LiveWallpaperEngineRemoteWebRender;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,6 +25,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
+            WallpaperManager.InitUIDispatcher(Dispatcher);
             InitializeComponent();
             //用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
             RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
@@ -123,7 +122,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
                     btnApply_Click(null, null);
-                    _ = WallpaperManager.Instance.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
+                    _ = WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -138,14 +137,14 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
-            WallpaperManager.Instance.CloseWallpaper(displayIds);
+            WallpaperManager.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
-            _ = WallpaperManager.Instance.SetOptions(setting);
+            _ = WallpaperManager.SetOptions(setting);
         }
     }
 }

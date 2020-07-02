@@ -29,7 +29,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         {
             base.CloseWallpaper(screenIndexs);
 
-            var haveExeWallpaper = WallpaperManager.Instance.CurrentWalpapers.Values.FirstOrDefault(m => m.Type == WallpaperType.Exe) != null;
+            var haveExeWallpaper = WallpaperManager.CurrentWalpapers.Values.FirstOrDefault(m => m.Type == WallpaperType.Exe) != null;
             if (!haveExeWallpaper)
                 DesktopMouseEventReciver.Stop();
         }

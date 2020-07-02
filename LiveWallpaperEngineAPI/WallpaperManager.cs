@@ -9,14 +9,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
-    public class WallpaperManager
+    public static class WallpaperManager
     {
         private static System.Timers.Timer _timer;
+        private static Dispatcher _uiDispatcher;
 
-        private WallpaperManager()
+        static WallpaperManager()
         {
             ScreenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
             //注册render
@@ -24,12 +26,21 @@ namespace Giantapp.LiveWallpaper.Engine
             //RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
             RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
         }
-        public uint[] ScreenIndexs { get; private set; }
-        public Dictionary<uint, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<uint, WallpaperModel>();
-        public LiveWallpaperOptions Options { get; private set; }
-        public static WallpaperManager Instance { get; private set; } = new WallpaperManager();
+        public static uint[] ScreenIndexs { get; private set; }
+        public static Dictionary<uint, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<uint, WallpaperModel>();
+        public static LiveWallpaperOptions Options { get; private set; }
 
-        public void Pause(params uint[] screenIndexs)
+        public static void InitUIDispatcher(Dispatcher dispatcher)
+        {
+            _uiDispatcher = dispatcher;
+        }
+
+        public static void UIInvoke(Action a)
+        {
+            _uiDispatcher.Invoke(a);
+        }
+
+        public static void Pause(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -42,7 +53,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        public void Resum(params uint[] screenIndexs)
+        public static void Resum(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -55,10 +66,11 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        public void Dispose()
+        public static void Dispose()
         {
             CloseWallpaper(ScreenIndexs);
         }
+
         public static IEnumerable<WallpaperModel> GetWallpapers(string dir)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dir);
@@ -73,6 +85,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 };
             }
         }
+
         public static async Task<bool> DeleteLocalPack(string absolutePath)
         {
             string dir = Path.GetDirectoryName(absolutePath);
@@ -96,6 +109,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
             return false;
         }
+
         public static string NormalizePath(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -105,6 +119,7 @@ namespace Giantapp.LiveWallpaper.Engine
                        .ToUpperInvariant();
             return result;
         }
+
         public static async Task<WallpaperModel> EditLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
         {
             string oldInfoPath = Path.Combine(destDir, "project.json");
@@ -143,6 +158,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 Info = info
             };
         }
+
         public static async Task<WallpaperModel> CreateLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
         {
             string oldInfoPath = Path.Combine(sourceFile, "project.json");
@@ -178,12 +194,14 @@ namespace Giantapp.LiveWallpaper.Engine
                 Info = info
             };
         }
+
         private static async Task WriteInfo(WallpaperInfo wallpaperInfo, string destDir)
         {
             string destInfoPath = Path.Combine(destDir, "project.json");
             await JsonHelper.JsonSerializeAsync(wallpaperInfo, destInfoPath);
         }
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
+
+        public static async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
         {
             if (wallpaper.Type == WallpaperType.NotSupport)
                 wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
@@ -212,7 +230,7 @@ namespace Giantapp.LiveWallpaper.Engine
             ApplyAudioSource();
         }
 
-        public void CloseWallpaper(params uint[] screenIndexs)
+        public static void CloseWallpaper(params uint[] screenIndexs)
         {
             foreach (var index in screenIndexs)
             {
@@ -222,12 +240,12 @@ namespace Giantapp.LiveWallpaper.Engine
             InnerCloseWallpaper(screenIndexs);
         }
 
-        public void InnerCloseWallpaper(params uint[] screenIndexs)
+        public static void InnerCloseWallpaper(params uint[] screenIndexs)
         {
             RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(screenIndexs));
         }
 
-        public Task SetOptions(LiveWallpaperOptions options)
+        public static Task SetOptions(LiveWallpaperOptions options)
         {
             Options = options;
 
@@ -247,8 +265,7 @@ namespace Giantapp.LiveWallpaper.Engine
             return Task.CompletedTask;
         }
 
-
-        private void ApplyAudioSource()
+        private static void ApplyAudioSource()
         {
             //设置音源
             for (uint screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
@@ -262,7 +279,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        private void StartTimer(bool enable)
+        private static void StartTimer(bool enable)
         {
             if (enable)
             {
@@ -284,7 +301,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _timer?.Stop();
             ExplorerMonitor.Check();
@@ -292,7 +309,7 @@ namespace Giantapp.LiveWallpaper.Engine
             _timer?.Start();
         }
 
-        private void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
+        private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
         {
             //重启
             //Process.Start(Application.ResourceAssembly.Location);
@@ -300,7 +317,7 @@ namespace Giantapp.LiveWallpaper.Engine
             Application.Restart();
         }
 
-        private void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
+        private static void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
             var maximizedScreenIndexs = e.MaximizedScreens.Select((m, i) => (uint)Screen.AllScreens.ToList().IndexOf(m)).ToList();
             bool anyScreenMaximized = maximizedScreenIndexs.Count > 0;
