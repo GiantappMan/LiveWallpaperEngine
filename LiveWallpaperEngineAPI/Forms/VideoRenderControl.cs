@@ -42,13 +42,13 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                     dllPath = $@"{appDir}\lib\mpv-1-x64.dll";
                 }
                 this.InvokeIfRequired(() =>
-                {
+                {                    
                     //单元测试
                     _player = new Mpv.NET.Player.MpvPlayer(Handle, dllPath)
                     {
                         Loop = true,
                         Volume = 0
-                    };
+                    };                    
                     //防止视频黑边
                     _player.API.SetPropertyString("panscan", "1.0");
                     _player.AutoPlay = true;
