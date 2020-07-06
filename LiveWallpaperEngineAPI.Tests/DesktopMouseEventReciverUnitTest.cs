@@ -1,4 +1,3 @@
-using Giantapp.LiveWallpaper.Engine.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
