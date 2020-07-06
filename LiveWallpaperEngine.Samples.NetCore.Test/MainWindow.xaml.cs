@@ -1,14 +1,12 @@
 ﻿using GiantappConfiger;
 using GiantappConfiger.Models;
 using Giantapp.LiveWallpaper.Engine;
-using Giantapp.LiveWallpaper.Engine.Models;
-using Giantapp.LiveWallpaper.Engine.Renders;
-using LiveWallpaperEngineRemoteWebRender;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using static Giantapp.LiveWallpaper.Engine.ScreenOption;
 
 namespace LiveWallpaperEngine.Samples.NetCore.Test
 {
@@ -25,10 +23,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
-            WallpaperManager.InitUIDispatcher(Dispatcher);
+            WallpaperManager.Initlize(Dispatcher);
             InitializeComponent();
-            //用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
-            RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
+            ////用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
+            //RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
 
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
@@ -45,7 +43,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
-                ScreenIndex = (uint)Screen.AllScreens.ToList().IndexOf(m),
+                Screen = m.DeviceName,
                 WhenAppMaximized = ActionWhenMaximized.Pause,
             }).ToList();
 
@@ -63,7 +61,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                         Text="壁纸设置",
                         PropertyDescriptors=new DescriptorInfoDict(){
                             {
-                                nameof(LiveWallpaperOptions.AudioScreenIndex),
+                                nameof(LiveWallpaperOptions.AudioScreen),
                                 new DescriptorInfo(){
                                     Text="音源",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
@@ -92,7 +90,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     DefaultValue=screenSetting,
                                     PropertyDescriptors=new DescriptorInfoDict()
                                     {
-                                        {nameof(ScreenOption.ScreenIndex),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
+                                        {nameof(ScreenOption.Screen),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
                                         {nameof(ScreenOption.WhenAppMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
                                     }
                                 }
@@ -120,9 +118,9 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
+                    var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
-                    _ = WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayIds);
+                    _ = WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
                     //var form = new MpvPlayer.MpvForm();
                     //form.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -136,7 +134,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => (uint)monitorsVM.IndexOf(m)).ToArray();
+            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
             WallpaperManager.CloseWallpaper(displayIds);
         }
 

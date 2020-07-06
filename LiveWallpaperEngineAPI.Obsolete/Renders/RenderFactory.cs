@@ -18,7 +18,6 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         public static Dictionary<Type, List<WallpaperType>> Renders = new Dictionary<Type, List<WallpaperType>>();
         public static List<IRender> CacheInstance = new List<IRender>();
 
-
         public static IRender CreateRender(WallpaperType dType)
         {
             foreach (var render in Renders)
