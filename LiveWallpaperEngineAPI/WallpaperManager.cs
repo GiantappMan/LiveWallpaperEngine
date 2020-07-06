@@ -10,6 +10,7 @@ namespace Giantapp.LiveWallpaper.Engine
 {
     public static class WallpaperManager
     {
+        private static Dispatcher _uiDispatcher;
         public static string[] Screens { get; private set; }
         public static LiveWallpaperOptions Options { get; private set; }
 
@@ -20,8 +21,13 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             RenderFactory.Renders.Add(new ExeRender());
             RenderFactory.Renders.Add(new VideoRender());
+            _uiDispatcher = dispatcher;
         }
 
+        internal static void UIInvoke(Action a)
+        {
+            _uiDispatcher.Invoke(a);
+        }
         public static Task<object> GetWallpapers(string dir)
         {
             throw new NotImplementedException();
@@ -70,10 +76,6 @@ namespace Giantapp.LiveWallpaper.Engine
             //ApplyAudioSource();
         }
 
-        internal static void UIInvoke(Action p)
-        {
-            throw new NotImplementedException();
-        }
 
         public static void CloseWallpaper(params string[] screens)
         {

@@ -5,22 +5,22 @@ using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     //目前所有壁纸都是这个类实现，通过启用外部exe来渲染，以防止崩溃。
-    public class ExternalRender : IRender
+    public class ExternalProcessRender : IRender
     {
-        private int _currentPid = -1;
-        private Dictionary<string, WallpaperModel> _currentWallpapers = new Dictionary<string, WallpaperModel>();
+        private Dictionary<string, (WallpaperModel Wallpaper, int PId)> _currentWallpapers = new Dictionary<string, (WallpaperModel Wallpaper, int PId)>();
 
         public WallpaperType SupportedType { get; private set; }
 
         public List<string> SupportedExtension { get; private set; }
 
-        protected ExternalRender(WallpaperType type, List<string> extension)
+        protected ExternalProcessRender(WallpaperType type, List<string> extension)
         {
             SupportedType = type;
             SupportedExtension = extension;
@@ -28,7 +28,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public void CloseWallpaper(params string[] screens)
         {
-          
+            var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Key)).ToList();
+
+            foreach (var wallpapaer in playingWallpaper)
+            {
+                var p = Process.GetProcessById(wallpapaer.Value.PId);
+                p.Kill();
+
+                _currentWallpapers.Remove(wallpapaer.Key);
+            }
         }
 
         public void Dispose()
@@ -60,22 +68,22 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         {
             foreach (var screenItem in screens)
             {
-                if (_currentWallpapers.ContainsKey(screenItem) && _currentWallpapers[screenItem].Path == wallpaper.Path)
+                if (_currentWallpapers.ContainsKey(screenItem) && _currentWallpapers[screenItem].Wallpaper.Path == wallpaper.Path)
                 {
                     //壁纸未变
                     continue;
                 }
 
-                IntPtr windowHanlde = await GetWindowHandle(wallpaper.Path);
+                var result = await StartProcess(wallpaper.Path);
 
                 //壁纸启动失败
-                if (windowHanlde == IntPtr.Zero)
+                if (result.Handle == IntPtr.Zero)
                     continue;
 
                 var host = LiveWallpaperRenderForm.GetHost(screenItem);
-                host!.ShowWallpaper(windowHanlde);
+                host!.ShowWallpaper(result.Handle);
 
-                _currentWallpapers[screenItem] = wallpaper;
+                _currentWallpapers[screenItem] = (wallpaper, result.PId);
             }
 
             //Stopwatch sw = new Stopwatch();
@@ -112,9 +120,38 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             //WallpaperHelper.FullScreen(_currentTargetHandle, containerHandle);
         }
 
-        private Task<IntPtr> GetWindowHandle(string path)
+        private Task<(IntPtr Handle, int PId)> StartProcess(string path)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                int timeout = 10 * 1000;
+
+                ProcessStartInfo info = new ProcessStartInfo(path);
+                info.WindowStyle = ProcessWindowStyle.Maximized;
+                info.CreateNoWindow = true;
+                Process targetProcess = Process.Start(info);
+
+                while (targetProcess.MainWindowHandle == IntPtr.Zero)
+                {
+                    System.Threading.Thread.Sleep(10);
+                    int pid = targetProcess.Id;
+                    targetProcess.Dispose();
+                    //mainWindowHandle不会变，重新获取
+                    targetProcess = Process.GetProcessById(pid);
+
+                    if (sw.ElapsedMilliseconds > timeout)
+                    {
+                        sw.Stop();
+                        break;
+                    }
+                }
+
+                (IntPtr Handle, int PId) result = (targetProcess.MainWindowHandle, targetProcess.Id);
+                targetProcess.Dispose();
+                return result;
+            });
         }
     }
 }

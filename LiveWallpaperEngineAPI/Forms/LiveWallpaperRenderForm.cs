@@ -35,22 +35,27 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
 
         internal void ShowWallpaper(IntPtr wallpaperHandle)
         {
-            IntPtr windowHandle = IntPtr.Zero;
+            IntPtr hostForm = IntPtr.Zero;
             WallpaperManager.UIInvoke(() =>
             {
                 try
                 {
                     Controls.Clear();
                     Opacity = 1;
-                    windowHandle = Handle;
+                    hostForm = Handle;
                 }
                 catch (Exception ex)
                 {
 
                 }
             });
-            WallpaperHelper.GetInstance(_screenName).SendToBackground(windowHandle);
-            User32Wrapper.SetParent(wallpaperHandle, windowHandle);
+
+            //hostfrom下潜桌面
+            WallpaperHelper.GetInstance(_screenName).SendToBackground(hostForm);
+            //壁纸parent改为hostform
+            User32Wrapper.SetParent(wallpaperHandle, hostForm);
+            //把壁纸全屏铺满 hostform
+            WallpaperHelper.FullScreen(wallpaperHandle, hostForm);
         }
 
         public static LiveWallpaperRenderForm GetHost(string screen, bool autoCreate = true)
