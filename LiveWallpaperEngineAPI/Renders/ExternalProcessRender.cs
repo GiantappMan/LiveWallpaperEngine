@@ -4,6 +4,7 @@ using Giantapp.LiveWallpaper.Engine.Forms;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -85,73 +86,47 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
                 _currentWallpapers[screenItem] = (wallpaper, result.PId);
             }
-
-            //Stopwatch sw = new Stopwatch();
-            //sw.Start();
-            //int timeout = 10 * 1000;
-
-            //ProcessStartInfo info = new ProcessStartInfo(wallpaper.Path);
-            //info.WindowStyle = ProcessWindowStyle.Maximized;
-            //info.CreateNoWindow = true;
-            //Process targetProcess = Process.Start(info);
-
-            //while (targetProcess.MainWindowHandle == IntPtr.Zero)
-            //{
-            //    System.Threading.Thread.Sleep(10);
-            //    int pid = targetProcess.Id;
-            //    targetProcess.Dispose();
-            //    //mainWindowHandle不会变，重新获取
-            //    targetProcess = Process.GetProcessById(pid);
-
-            //    if (sw.ElapsedMilliseconds > timeout)
-            //    {
-            //        sw.Stop();
-            //        return;
-            //    }
-            //}
-
-            //_currentTargetHandle = targetProcess.MainWindowHandle;
-            //_currentPid = targetProcess.Id;
-
-            //DesktopMouseEventReciver.HTargetWindows.Add(_currentTargetHandle);
-
-            //// 用当前窗口显示exe
-            //User32Wrapper.SetParent(_currentTargetHandle, containerHandle);
-            //WallpaperHelper.FullScreen(_currentTargetHandle, containerHandle);
         }
 
         private Task<(IntPtr Handle, int PId)> StartProcess(string path)
         {
             return Task.Run(() =>
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                int timeout = 10 * 1000;
+           {
+               Stopwatch sw = new Stopwatch();
+               sw.Start();
+               int timeout = 10 * 1000;
 
-                ProcessStartInfo info = new ProcessStartInfo(path);
-                info.WindowStyle = ProcessWindowStyle.Maximized;
-                info.CreateNoWindow = true;
-                Process targetProcess = Process.Start(info);
+               ProcessStartInfo info = GenerateProcessInfo(path);
+               if (info == null)
+                   return (IntPtr.Zero, -1);
+               info.WindowStyle = ProcessWindowStyle.Maximized;
+               info.CreateNoWindow = true;
+               Process targetProcess = Process.Start(info);
 
-                while (targetProcess.MainWindowHandle == IntPtr.Zero)
-                {
-                    System.Threading.Thread.Sleep(10);
-                    int pid = targetProcess.Id;
-                    targetProcess.Dispose();
-                    //mainWindowHandle不会变，重新获取
-                    targetProcess = Process.GetProcessById(pid);
+               while (targetProcess.MainWindowHandle == IntPtr.Zero)
+               {
+                   System.Threading.Thread.Sleep(10);
+                   int pid = targetProcess.Id;
+                   targetProcess.Dispose();
+                   //mainWindowHandle不会变，重新获取
+                   targetProcess = Process.GetProcessById(pid);
 
-                    if (sw.ElapsedMilliseconds > timeout)
-                    {
-                        sw.Stop();
-                        break;
-                    }
-                }
+                   if (sw.ElapsedMilliseconds > timeout)
+                   {
+                       sw.Stop();
+                       break;
+                   }
+               }
 
-                (IntPtr Handle, int PId) result = (targetProcess.MainWindowHandle, targetProcess.Id);
-                targetProcess.Dispose();
-                return result;
-            });
+               (IntPtr Handle, int PId) result = (targetProcess.MainWindowHandle, targetProcess.Id);
+               targetProcess.Dispose();
+               return result;
+           });
+        }
+
+        protected virtual ProcessStartInfo GenerateProcessInfo(string path)
+        {
+            return new ProcessStartInfo(path);
         }
     }
 }
