@@ -64,7 +64,6 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
     //显示exe的容器
     public partial class ExeRenderControl : UserControl, IRenderControl
     {
-
         private int _currentPid = -1;
         private IntPtr _currentTargetHandle;
 
@@ -140,11 +139,6 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             System.Diagnostics.Debug.WriteLine("load exe1");
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
-
         private void LoadApplication(string path, IntPtr containerHandle)
         {
             try
@@ -178,7 +172,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                 DesktopMouseEventReciver.HTargetWindows.Add(_currentTargetHandle);
 
                 // 用当前窗口显示exe
-                SetParent(_currentTargetHandle, containerHandle);
+                User32Wrapper.SetParent(_currentTargetHandle, containerHandle);
                 WallpaperHelper.FullScreen(_currentTargetHandle, containerHandle);
             }
             catch (Exception ex)
