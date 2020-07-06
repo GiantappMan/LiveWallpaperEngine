@@ -54,10 +54,9 @@ namespace Giantapp.LiveWallpaper.Engine.Common
             SetDesktopWallpaper(GetDesktopWallpaper());
         }
 
-        private static readonly int MAX_PATH = 260;
-
         static string GetDesktopWallpaper()
         {
+            int MAX_PATH = 260;
             string wallpaper = new string('\0', MAX_PATH);
             User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_GETDESKWALLPAPER, (uint)wallpaper.Length, wallpaper, 0);
             return wallpaper.Substring(0, wallpaper.IndexOf('\0'));
