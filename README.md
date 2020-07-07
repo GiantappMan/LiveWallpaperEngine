@@ -15,12 +15,11 @@ WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},Wallpap
 ```
 
 ## 功能目标：
-- [x] 动态壁纸API
+- [x] 无UI壁纸引擎
 - [x] 多屏幕
 - [x] EXE壁纸 (感谢[ADD-SP](https://github.com/ADD-SP)提供的思路)  
 - [x] 视频壁纸
 - [ ] Web壁纸
-- [x] 无UI壁纸引擎
 - [ ] 系统图片壁纸
 - [ ] 音量设置
 
@@ -33,7 +32,7 @@ WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},Wallpap
 
 ## 其他注意事项：
 * 开启360、腾讯管家等全家桶软件，有可能无法嵌入桌面
-* 和桌面软件冲突，我不用桌面软件暂时也没有想去解决
+* 和桌面整理软件冲突，我不用整理软件，所以暂时也没有想去解决
 
 ---
 
