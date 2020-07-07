@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
@@ -17,6 +19,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     public class ExternalProcessRender : IRender
     {
         private Dictionary<string, (WallpaperModel Wallpaper, int PId)> _currentWallpapers = new Dictionary<string, (WallpaperModel Wallpaper, int PId)>();
+
+        List<CancellationTokenSource> _ctsList = new List<CancellationTokenSource>();
+
 
         public WallpaperType SupportedType { get; private set; }
 
@@ -30,6 +35,12 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public void CloseWallpaper(params string[] screens)
         {
+            //取消等待未启动的进程
+            foreach (var item in _ctsList)
+                item.Cancel();
+
+            _ctsList = new List<CancellationTokenSource>();
+
             var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Key)).ToList();
 
             foreach (var wallpapaer in playingWallpaper)
@@ -68,8 +79,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             foreach (var wallpaper in playingWallpaper)
             {
-                var p = Process.GetProcessById(wallpaper.Value.PId);
-                p.Resume();
+                try
+                {
+                    var p = Process.GetProcessById(wallpaper.Value.PId);
+                    p.Resume();
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
             }
         }
 
@@ -80,6 +98,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
+            List<Task> tmpTasks = new List<Task>();
             foreach (var screenItem in screens)
             {
                 if (_currentWallpapers.ContainsKey(screenItem) && _currentWallpapers[screenItem].Wallpaper.Path == wallpaper.Path)
@@ -88,26 +107,50 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     continue;
                 }
 
-                var result = await StartProcess(wallpaper.Path);
+                var cts = new CancellationTokenSource();
+                _ctsList.Add(cts);
+                var task = Task.Run(async () =>
+                   {
+                       try
+                       {
+                           var result = await StartProcess(wallpaper.Path, cts.Token);
 
-                //壁纸启动失败
-                if (result.Handle == IntPtr.Zero)
-                    continue;
+                           //壁纸启动失败
+                           if (result.Handle == IntPtr.Zero)
+                               return;
 
-                var host = LiveWallpaperRenderForm.GetHost(screenItem);
-                host!.ShowWallpaper(result.Handle);
+                           var host = LiveWallpaperRenderForm.GetHost(screenItem);
+                           host!.ShowWallpaper(result.Handle);
 
-                _currentWallpapers[screenItem] = (wallpaper, result.PId);
+                           _currentWallpapers[screenItem] = (wallpaper, result.PId);
+                       }
+                       catch (OperationCanceledException)
+                       {
+
+                       }
+                       catch (Exception ex)
+                       {
+                           Debug.WriteLine(ex);
+                       }
+                       finally
+                       {
+                           _ctsList.Remove(cts);
+                       }
+                   }, cts.Token);
+
+                tmpTasks.Add(task);
+
+                await Task.WhenAll(tmpTasks);
             }
         }
 
-        private Task<(IntPtr Handle, int PId)> StartProcess(string path)
+        private Task<(IntPtr Handle, int PId)> StartProcess(string path, CancellationToken ct)
         {
             return Task.Run(() =>
            {
                Stopwatch sw = new Stopwatch();
                sw.Start();
-               int timeout = 10 * 1000;
+               int timeout = 30 * 1000;
 
                ProcessStartInfo info = GenerateProcessInfo(path);
                if (info == null)
@@ -118,7 +161,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
                while (targetProcess.MainWindowHandle == IntPtr.Zero)
                {
-                   System.Threading.Thread.Sleep(10);
+                   if (ct.IsCancellationRequested)
+                       targetProcess.Kill();
+                   ct.ThrowIfCancellationRequested();
+                   Thread.Sleep(1);
                    int pid = targetProcess.Id;
                    targetProcess.Dispose();
                    //mainWindowHandle不会变，重新获取
