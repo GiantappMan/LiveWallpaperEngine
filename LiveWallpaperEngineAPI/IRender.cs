@@ -20,7 +20,7 @@ namespace Giantapp.LiveWallpaper.Engine
         /// <param name="path"></param>
         Task ShowWallpaper(WallpaperModel wallpaper, params string[] screen);
         void Pause(params string[] screens);
-        void Resum(params string[] screens);
+        void Resume(params string[] screens);
         void SetVolume(int v, params string[] screens);
         int GetVolume(params string[] screens);
         void CloseWallpaper(params string[] screens);

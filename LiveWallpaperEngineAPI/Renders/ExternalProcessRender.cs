@@ -1,5 +1,6 @@
 ﻿using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
+using DZY.WinAPI.Extension;
 using Giantapp.LiveWallpaper.Engine.Forms;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
@@ -52,12 +53,24 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public void Pause(params string[] screens)
         {
-            throw new NotImplementedException();
+            var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Key)).ToList();
+
+            foreach (var wallpaper in playingWallpaper)
+            {
+                var p = Process.GetProcessById(wallpaper.Value.PId);
+                p.Suspend();
+            }
         }
 
-        public void Resum(params string[] screens)
+        public void Resume(params string[] screens)
         {
-            throw new NotImplementedException();
+            var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Key)).ToList();
+
+            foreach (var wallpaper in playingWallpaper)
+            {
+                var p = Process.GetProcessById(wallpaper.Value.PId);
+                p.Resume();
+            }
         }
 
         public void SetVolume(int v, params string[] screens)
