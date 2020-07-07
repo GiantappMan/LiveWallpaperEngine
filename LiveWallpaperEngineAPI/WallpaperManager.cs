@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Threading;
@@ -44,7 +43,8 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             _uiDispatcher.Invoke(a);
         }
-        public static Task<object> GetWallpapers(string dir)
+
+        public static Task<List<WallpaperModel>> GetWallpapers(string dir)
         {
             throw new NotImplementedException();
         }
@@ -54,12 +54,12 @@ namespace Giantapp.LiveWallpaper.Engine
             throw new NotImplementedException();
         }
 
-        public static async Task<bool> UpdateWallpaper(object source, object newWP)
+        public static async Task<WallpaperModel> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
         {
             throw new NotImplementedException();
         }
 
-        public static async Task<bool> CreateWallpaper(object newWP)
+        public static async Task<WallpaperModel> CreateWallpaper(string path)
         {
             throw new NotImplementedException();
         }
@@ -121,6 +121,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
             return Task.CompletedTask;
         }
+
         public static void Pause(params string[] screens)
         {
             foreach (var screenItem in screens)
@@ -150,6 +151,7 @@ namespace Giantapp.LiveWallpaper.Engine
         #endregion
 
         #region private
+
         private static void InnerCloseWallpaper(params string[] screens)
         {
             RenderFactory.Renders.ForEach(m => m.CloseWallpaper(screens));
