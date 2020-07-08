@@ -57,9 +57,11 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             throw new NotImplementedException();
         }
 
-        public int GetVolume(params string[] screens)
+        public int GetVolume(string screen)
         {
-            throw new NotImplementedException();
+            var playingWallpaper = _currentWallpapers.Where(m => screen == m.Key).FirstOrDefault();
+            int result = AudioHelper.GetVolume(playingWallpaper.Value.PId);
+            return result;
         }
 
         public void Pause(params string[] screens)
@@ -91,9 +93,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        public void SetVolume(int v, params string[] screens)
+        public void SetVolume(int v, string screen)
         {
-            throw new NotImplementedException();
+            var playingWallpaper = _currentWallpapers.Where(m => screen == m.Key).FirstOrDefault();
+            AudioHelper.SetVolume(playingWallpaper.Value.PId, v);
         }
 
         public async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)

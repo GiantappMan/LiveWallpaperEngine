@@ -92,7 +92,6 @@ namespace Giantapp.LiveWallpaper.Engine
             //ApplyAudioSource();
         }
 
-
         public static void CloseWallpaper(params string[] screens)
         {
             foreach (var screenItem in screens)

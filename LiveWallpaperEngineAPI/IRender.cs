@@ -21,8 +21,8 @@ namespace Giantapp.LiveWallpaper.Engine
         Task ShowWallpaper(WallpaperModel wallpaper, params string[] screen);
         void Pause(params string[] screens);
         void Resume(params string[] screens);
-        void SetVolume(int v, params string[] screens);
-        int GetVolume(params string[] screens);
+        void SetVolume(int v, string screen);
+        int GetVolume(string screen);
         void CloseWallpaper(params string[] screens);
     }
 }
