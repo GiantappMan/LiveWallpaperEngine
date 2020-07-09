@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using static Giantapp.LiveWallpaper.Engine.ScreenOption;
 
@@ -15,7 +15,7 @@ namespace Giantapp.LiveWallpaper.Engine
     {
         #region field
 
-        private static Timer _timer;
+        private static System.Timers.Timer _timer;
         private static Dispatcher _uiDispatcher;
 
         #endregion
@@ -37,6 +37,7 @@ namespace Giantapp.LiveWallpaper.Engine
             RenderFactory.Renders.Add(new ExeRender());
             RenderFactory.Renders.Add(new VideoRender());
             _uiDispatcher = dispatcher;
+            Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
         }
 
         internal static void UIInvoke(Action a)
@@ -68,7 +69,7 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             IRender currentRender;
             if (wallpaper.Type == null)
-                currentRender = RenderFactory.GetRender(Path.GetExtension(wallpaper.Path));
+                currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
             else
                 currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
 
@@ -89,7 +90,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     CurrentWalpapers[index] = wallpaper;
             }
 
-            //ApplyAudioSource();
+            ApplyAudioSource();
         }
 
         public static void CloseWallpaper(params string[] screens)
@@ -118,6 +119,8 @@ namespace Giantapp.LiveWallpaper.Engine
 
             StartTimer(options.AutoRestartWhenExplorerCrash || enableMaximized);
 
+            ApplyAudioSource();
+
             return Task.CompletedTask;
         }
 
@@ -128,7 +131,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    var currentRender = RenderFactory.GetRender(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Pause(screens);
                 }
             }
@@ -141,7 +144,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    var currentRender = RenderFactory.GetRender(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Resume(screens);
                 }
             }
@@ -150,6 +153,20 @@ namespace Giantapp.LiveWallpaper.Engine
         #endregion
 
         #region private
+
+        private static void ApplyAudioSource()
+        {
+            //设置音源
+            foreach (var screen in Screens)
+            {
+                if (CurrentWalpapers.ContainsKey(screen))
+                {
+                    var wallpaper = CurrentWalpapers[screen];
+                    var currentRender = RenderFactory.GetRender(wallpaper);
+                    currentRender.SetVolume(screen == Options.AudioScreen ? 100 : 0, screen);
+                }
+            }
+        }
 
         private static void InnerCloseWallpaper(params string[] screens)
         {
@@ -161,7 +178,7 @@ namespace Giantapp.LiveWallpaper.Engine
             if (enable)
             {
                 if (_timer == null)
-                    _timer = new Timer(1000);
+                    _timer = new System.Timers.Timer(1000);
 
                 _timer.Elapsed -= Timer_Elapsed;
                 _timer.Elapsed += Timer_Elapsed;
@@ -182,7 +199,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         #region callback
 
-        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             _timer?.Stop();
             ExplorerMonitor.Check();

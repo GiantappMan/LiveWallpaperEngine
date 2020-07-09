@@ -25,7 +25,7 @@ namespace Giantapp.LiveWallpaper.Engine
             return null;
         }
 
-        public static IRender GetRender(string extension)
+        public static IRender GetRenderByExtension(string extension)
         {
             foreach (var instance in Renders)
             {
@@ -37,6 +37,14 @@ namespace Giantapp.LiveWallpaper.Engine
             return null;
         }
 
+        internal static IRender GetRender(WallpaperModel wallpaper)
+        {
+            if (wallpaper.Type != null)
+                return GetRender(wallpaper.Type.Value);
+            else if (!string.IsNullOrEmpty(wallpaper.Path))
+                return GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+            return null;
+        }
 
         //public static WallpaperType? ResoveType(string filePath)
         //{

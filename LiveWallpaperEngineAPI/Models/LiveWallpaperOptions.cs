@@ -25,7 +25,7 @@ namespace Giantapp.LiveWallpaper.Engine
     /// api 提供的选项
     /// </summary>
     public class LiveWallpaperOptions
-    {   
+    {
         /// <summary>
         /// explorer挂了是否重启
         /// </summary>

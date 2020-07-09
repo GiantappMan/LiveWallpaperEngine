@@ -37,9 +37,9 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var audioOption = Screen.AllScreens.Select(m => new DescriptorInfo()
             {
                 Text = m.DeviceName,
-                DefaultValue = Screen.AllScreens.ToList().IndexOf(m)
+                DefaultValue = m.DeviceName
             }).ToList();
-            audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = -1 });
+            audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = null });
 
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
@@ -65,7 +65,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 new DescriptorInfo(){
                                     Text="音源",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
-                                    DefaultValue=-1,
+                                    DefaultValue=null,
                                 }
                             },
                             {
