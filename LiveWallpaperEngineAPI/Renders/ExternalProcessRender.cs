@@ -20,7 +20,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     {
         protected Dictionary<string, (WallpaperModel Wallpaper, (IntPtr Handle, int PId) ProcessInfo)> _currentWallpapers = new Dictionary<string, (WallpaperModel Wallpaper, (IntPtr Handle, int PId) ProcessInfo)>();
 
-        List<CancellationTokenSource> _ctsList = new List<CancellationTokenSource>();
+        List<(CancellationTokenSource cts, string screen)> _ctsList = new List<(CancellationTokenSource cts, string screen)>();
 
 
         public WallpaperType SupportedType { get; private set; }
@@ -35,11 +35,13 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public virtual void CloseWallpaper(params string[] screens)
         {
-            //取消等待未启动的进程
-            foreach (var item in _ctsList)
-                item.Cancel();
+            foreach (var item in screens)
+                System.Diagnostics.Debug.WriteLine($"close {this.GetType().Name} {item}");
+            //取消对应屏幕等待未启动的进程
+            foreach (var item in _ctsList.Where(m => screens.Contains(m.screen)))
+                item.cts.Cancel();
 
-            _ctsList = new List<CancellationTokenSource>();
+            _ctsList = new List<(CancellationTokenSource cts, string screen)>();
 
             var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Key)).ToList();
 
@@ -101,6 +103,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         public virtual async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
+            foreach (var item in screens)
+                System.Diagnostics.Debug.WriteLine($"show {this.GetType().Name} {item}");
+
             List<Task> tmpTasks = new List<Task>();
             foreach (var screenItem in screens)
             {
@@ -111,7 +116,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 }
 
                 var cts = new CancellationTokenSource();
-                _ctsList.Add(cts);
+                var ctsData = (cts, screenItem);
+                _ctsList.Add(ctsData);
                 var task = Task.Run(async () =>
                    {
                        try
@@ -137,14 +143,13 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                        }
                        finally
                        {
-                           _ctsList.Remove(cts);
+                           _ctsList.Remove(ctsData);
                        }
                    }, cts.Token);
 
                 tmpTasks.Add(task);
-
-                await Task.WhenAll(tmpTasks);
             }
+            await Task.WhenAll(tmpTasks);
         }
 
         private Task<(IntPtr Handle, int PId)> StartProcess(string path, CancellationToken ct)
