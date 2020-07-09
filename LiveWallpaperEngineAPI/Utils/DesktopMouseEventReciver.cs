@@ -24,7 +24,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
 
         internal static void Stop()
         {
-            mouseWatcher.Stop();
+            mouseWatcher?.Stop();
             started = false;
         }
 

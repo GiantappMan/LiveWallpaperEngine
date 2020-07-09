@@ -18,7 +18,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     //目前所有壁纸都是这个类实现，通过启用外部exe来渲染，以防止崩溃。
     public class ExternalProcessRender : IRender
     {
-        private Dictionary<string, (WallpaperModel Wallpaper, int PId)> _currentWallpapers = new Dictionary<string, (WallpaperModel Wallpaper, int PId)>();
+        protected Dictionary<string, (WallpaperModel Wallpaper, (IntPtr Handle, int PId) ProcessInfo)> _currentWallpapers = new Dictionary<string, (WallpaperModel Wallpaper, (IntPtr Handle, int PId) ProcessInfo)>();
 
         List<CancellationTokenSource> _ctsList = new List<CancellationTokenSource>();
 
@@ -33,7 +33,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             SupportedExtension = extension;
         }
 
-        public void CloseWallpaper(params string[] screens)
+        public virtual void CloseWallpaper(params string[] screens)
         {
             //取消等待未启动的进程
             foreach (var item in _ctsList)
@@ -45,7 +45,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             foreach (var wallpapaer in playingWallpaper)
             {
-                var p = Process.GetProcessById(wallpapaer.Value.PId);
+                var p = Process.GetProcessById(wallpapaer.Value.ProcessInfo.PId);
                 p.Kill();
 
                 _currentWallpapers.Remove(wallpapaer.Key);
@@ -60,7 +60,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         public int GetVolume(string screen)
         {
             var playingWallpaper = _currentWallpapers.Where(m => screen == m.Key).FirstOrDefault();
-            int result = AudioHelper.GetVolume(playingWallpaper.Value.PId);
+            int result = AudioHelper.GetVolume(playingWallpaper.Value.ProcessInfo.PId);
             return result;
         }
 
@@ -70,7 +70,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             foreach (var wallpaper in playingWallpaper)
             {
-                var p = Process.GetProcessById(wallpaper.Value.PId);
+                var p = Process.GetProcessById(wallpaper.Value.ProcessInfo.PId);
                 p.Suspend();
             }
         }
@@ -83,7 +83,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             {
                 try
                 {
-                    var p = Process.GetProcessById(wallpaper.Value.PId);
+                    var p = Process.GetProcessById(wallpaper.Value.ProcessInfo.PId);
                     p.Resume();
                 }
                 catch (Exception)
@@ -96,10 +96,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         public void SetVolume(int v, string screen)
         {
             var playingWallpaper = _currentWallpapers.Where(m => screen == m.Key).FirstOrDefault();
-            AudioHelper.SetVolume(playingWallpaper.Value.PId, v);
+            AudioHelper.SetVolume(playingWallpaper.Value.ProcessInfo.PId, v);
         }
 
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public virtual async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             List<Task> tmpTasks = new List<Task>();
             foreach (var screenItem in screens)
@@ -125,7 +125,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                            var host = LiveWallpaperRenderForm.GetHost(screenItem);
                            host!.ShowWallpaper(result.Handle);
 
-                           _currentWallpapers[screenItem] = (wallpaper, result.PId);
+                           _currentWallpapers[screenItem] = (wallpaper, result);
                        }
                        catch (OperationCanceledException)
                        {

@@ -17,11 +17,12 @@ WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},Wallpap
 ## 功能目标：
 - [x] 无UI壁纸引擎
 - [x] 多屏幕
-- [x] EXE壁纸 (感谢[ADD-SP](https://github.com/ADD-SP)提供的思路)  
+- [x] EXE壁纸 
+	- [x] 鼠标事件转发 (感谢[ADD-SP](https://github.com/ADD-SP)提供的思路)  
 - [x] 视频壁纸
 - [ ] Web壁纸
 - [ ] 系统图片壁纸
-- [ ] 音量设置
+- [x] 音量设置
 
 ## 当前一些没有解决方案的问题:
 - [ ] 启动壁纸会出现短暂闪屏，因为在修改parent之前有一小短时间窗口已经渲染，没有找到解决方案。
