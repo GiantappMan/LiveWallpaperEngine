@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj" />
-    <ProjectReference Include="..\LiveWallpaperEngineRemoteWebRender\LiveWallpaperEngineRemoteWebRender.csproj" />
   </ItemGroup>
 
   <ItemGroup>

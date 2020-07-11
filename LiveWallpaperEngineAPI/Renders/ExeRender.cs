@@ -1,6 +1,4 @@
-﻿using Giantapp.LiveWallpaper.Engine.Common;
-using Giantapp.LiveWallpaper.Engine.Forms;
-using Giantapp.LiveWallpaper.Engine.Models;
+﻿using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,28 +7,29 @@ using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {
-    class ExeRender : BaseRender<ExeRenderControl>
+    public class ExeRender : ExternalProcessRender
     {
-        public static List<WallpaperType> StaticSupportTypes => new List<WallpaperType>()
+        public ExeRender() : base(WallpaperType.Exe, new List<string>() { ".exe" })
         {
-           WallpaperType.Exe,
-        };
 
-        public override List<WallpaperType> SupportTypes => StaticSupportTypes;
+        }
 
-        public override async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
+        public override async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
-            await base.ShowWallpaper(wallpaper, screenIndexs);
+            await base.ShowWallpaper(wallpaper, screens);
 
+            foreach (var item in _currentWallpapers)
+            {
+                DesktopMouseEventReciver.HTargetWindows.Add(item.Value.ProcessInfo.Handle);
+            }
             await Task.Run(DesktopMouseEventReciver.Start);
         }
 
-        public override void CloseWallpaper(params uint[] screenIndexs)
+        public override void CloseWallpaper(params string[] screens)
         {
-            base.CloseWallpaper(screenIndexs);
+            base.CloseWallpaper(screens);
 
-            var haveExeWallpaper = WallpaperManager.CurrentWalpapers.Values.FirstOrDefault(m => m.Type == WallpaperType.Exe) != null;
-            if (!haveExeWallpaper)
+            if (_currentWallpapers.Count == 0)
                 DesktopMouseEventReciver.Stop();
         }
     }

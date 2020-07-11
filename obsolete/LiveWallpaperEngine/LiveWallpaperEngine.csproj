@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ContentWithTargetPath Include="..\LiveWallpaperWebRender\out\livewallpaperwebrender-win32-ia32\**" TargetPath="WebRender\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Remove="Common\**" />
+    <Compile Remove="lib\**" />
+    <Compile Remove="Render\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="lib\**" />
+    <EmbeddedResource Remove="Render\**" />
+    <None Remove="Common\**" />
+    <None Remove="lib\**" />
+    <None Remove="Render\**" />
+    <Page Remove="Common\**" />
+    <Page Remove="lib\**" />
+    <Page Remove="Render\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Protos\api.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DZY.Util.Winform" Version="1.0.1" />
+    <PackageReference Include="DZY.WinAPI" Version="2.0.9" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LiveWallpaperEngine.Common\LiveWallpaperEngine.Common.csproj" />
+    <ProjectReference Include="..\LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj" />
+    <ProjectReference Include="..\LiveWallpaperEngineRemoteWebRender\LiveWallpaperEngineRemoteWebRender.csproj" />
+  </ItemGroup>
+
+</Project>

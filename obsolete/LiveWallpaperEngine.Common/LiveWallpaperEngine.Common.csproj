@@ -1,30 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
-
   <ItemGroup>
-    <Compile Remove="ILiveWallpaperAPI.cs" />
-    <Compile Remove="Models\ConstWallpaperTypes.cs" />
-    <Compile Remove="Models\Options.cs" />
-    <Compile Remove="Models\WallpaperModel.cs" />
-    <Compile Remove="Models\WallpaperType.cs" />
-    <Compile Remove="Renders\IRender.cs" />
-    <Compile Remove="Renders\IRenderControl.cs" />
-    <Compile Remove="Renders\RenderFactory.cs" />
+    <Protobuf Include="..\Protos\api.proto" Link="Protos\api.proto" GrpcServices="Both" />
+    <Protobuf Include="..\Protos\wallpaperModel.proto" Link="Protos\wallpaperModel.proto" GrpcServices="Both" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="DZY.WinAPI" Version="2.0.8" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="TinyIpc" Version="2.0.0" />
+    <PackageReference Include="DZY.Util.Common" Version="2.0.6" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Renders\" />
-  </ItemGroup>
-
 </Project>

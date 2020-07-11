@@ -1,248 +1,118 @@
-﻿using DZY.Util.Common.Helpers;
-using Giantapp.LiveWallpaper.Engine.Common;
-using Giantapp.LiveWallpaper.Engine.Models;
-using Giantapp.LiveWallpaper.Engine.Renders;
+﻿using Giantapp.LiveWallpaper.Engine.Renders;
+using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using static Giantapp.LiveWallpaper.Engine.ScreenOption;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
     public static class WallpaperManager
     {
+        #region field
+
         private static System.Timers.Timer _timer;
         private static Dispatcher _uiDispatcher;
 
-        static WallpaperManager()
-        {
-            ScreenIndexs = Screen.AllScreens.Select((m, i) => (uint)i).ToArray();
-            //注册render
-            RenderFactory.Renders.Add(typeof(VideoRender), VideoRender.StaticSupportTypes);
-            //RenderFactory.Renders.Add(typeof(WebRender), WebRender.StaticSupportTypes);
-            RenderFactory.Renders.Add(typeof(ExeRender), ExeRender.StaticSupportTypes);
-        }
-        public static uint[] ScreenIndexs { get; private set; }
-        public static Dictionary<uint, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<uint, WallpaperModel>();
+        #endregion
+
+        #region property
+
+        public static string[] Screens { get; private set; }
         public static LiveWallpaperOptions Options { get; private set; }
 
-        public static void InitUIDispatcher(Dispatcher dispatcher)
+        //Dictionary<DeviceName，WallpaperModel>
+        public static Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)> CurrentWalpapers { get; private set; } = new Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)>();
+
+        #endregion
+
+        #region public
+
+        public static void Initlize(Dispatcher dispatcher)
         {
+            RenderFactory.Renders.Add(new ExeRender());
+            RenderFactory.Renders.Add(new VideoRender());
             _uiDispatcher = dispatcher;
+            Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
         }
 
-        public static void UIInvoke(Action a)
+        internal static void UIInvoke(Action a)
         {
             _uiDispatcher.Invoke(a);
         }
 
-        public static void Pause(params uint[] screenIndexs)
+        public static Task<List<WallpaperModel>> GetWallpapers(string dir)
         {
-            foreach (var index in screenIndexs)
-            {
-                if (CurrentWalpapers.ContainsKey(index))
-                {
-                    var wallpaper = CurrentWalpapers[index];
-                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
-                    currentRender.Pause(screenIndexs);
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        public static void Resum(params uint[] screenIndexs)
+        public static async Task<bool> DeleteWallpaperPack(string absolutePath)
         {
-            foreach (var index in screenIndexs)
-            {
-                if (CurrentWalpapers.ContainsKey(index))
-                {
-                    var wallpaper = CurrentWalpapers[index];
-                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
-                    currentRender.Resum(screenIndexs);
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        public static void Dispose()
+        public static async Task<WallpaperModel> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
         {
-            CloseWallpaper(ScreenIndexs);
+            throw new NotImplementedException();
         }
 
-        public static IEnumerable<WallpaperModel> GetWallpapers(string dir)
+        public static async Task<WallpaperModel> CreateWallpaper(string path)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(dir);
-            foreach (var item in dirInfo.EnumerateFiles("project.json", SearchOption.AllDirectories).OrderByDescending(m => m.CreationTime))
-            {
-                var info = JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(item.FullName).Result;
-                var wallpaparDir = Path.GetDirectoryName(item.FullName);
-                yield return new WallpaperModel()
-                {
-                    Path = Path.Combine(wallpaparDir, info.File),
-                    Info = info
-                };
-            }
+            throw new NotImplementedException();
         }
 
-        public static async Task<bool> DeleteLocalPack(string absolutePath)
+        public static async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
-            string dir = Path.GetDirectoryName(absolutePath);
-            if (!Directory.Exists(dir))
-                return false;
-            for (int i = 0; i < 3; i++)
-            {
-                try
-                {
-                    //尝试删除3次 
-                    await Task.Run(() =>
-                    {
-                        Directory.Delete(dir, true);
-                    });
-                    return true;
-                }
-                catch (Exception)
-                {
-                }
-                await Task.Delay(1000);
-            }
-            return false;
-        }
-
-        public static string NormalizePath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return null;
-            var result = Path.GetFullPath(new Uri(path).LocalPath)
-                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                       .ToUpperInvariant();
-            return result;
-        }
-
-        public static async Task<WallpaperModel> EditLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
-        {
-            string oldInfoPath = Path.Combine(destDir, "project.json");
-            var oldInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(oldInfoPath);
-
-            string oldFile = null, oldPreview = null;
-            if (oldInfo != null)
-            {
-                oldFile = Path.Combine(destDir, oldInfo.File);
-                if (oldInfo.Preview != null)
-                    oldPreview = Path.Combine(destDir, oldInfo.Preview ?? "");
-            }
-
-            if (NormalizePath(sourceFile) != NormalizePath(oldFile))
-            {
-                await Task.Run(() =>
-                {
-                    File.Delete(oldFile);
-                    IOHelper.CopyFileToDir(sourceFile, destDir);
-                });
-            }
-            info.Preview = Path.GetFileName(previewPath);
-            if (NormalizePath(oldPreview) != NormalizePath(previewPath))
-            {
-                await Task.Run(() =>
-                {
-                    File.Delete(oldPreview);
-                    IOHelper.CopyFileToDir(previewPath, destDir);
-                });
-            }
-
-            await WriteInfo(info, destDir);
-            return new WallpaperModel()
-            {
-                Path = Path.Combine(destDir, info.File),
-                Info = info
-            };
-        }
-
-        public static async Task<WallpaperModel> CreateLocalPack(string sourceFile, string previewPath, WallpaperInfo info, string destDir)
-        {
-            string oldInfoPath = Path.Combine(sourceFile, "project.json");
-            if (File.Exists(oldInfoPath))
-            {
-                var existInfo = await JsonHelper.JsonDeserializeFromFileAsync<WallpaperInfo>(oldInfoPath);
-                info.Description ??= existInfo.Description;
-                info.File ??= existInfo.File;
-                info.Preview ??= existInfo.Preview;
-                info.Tags ??= existInfo.Tags;
-                info.Title ??= existInfo.Title;
-                info.Type ??= existInfo.Type;
-                info.Visibility ??= existInfo.Visibility;
-                await Task.Run(() =>
-                {
-                    IOHelper.CopyFolder(sourceFile, destDir);
-                });
-            }
+            IRender currentRender;
+            if (wallpaper.Type == null)
+                currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
             else
+                currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
+
+            if (currentRender == null)
+                if (wallpaper.Type == null)
+                    throw new ArgumentException("Unsupported wallpaper type");
+
+
+            foreach (var screenItem in screens)
             {
-                await Task.Run(() =>
+                //壁纸为空
+                if (!CurrentWalpapers.ContainsKey(screenItem))
                 {
-                    IOHelper.CopyFileToDir(sourceFile, destDir);
-                    info.Preview = Path.GetFileName(previewPath);
-                    IOHelper.CopyFileToDir(previewPath, destDir);
-                });
-            }
+                    await currentRender.ShowWallpaper(wallpaper, screenItem);
 
-            await WriteInfo(info, destDir);
-            return new WallpaperModel()
-            {
-                Path = Path.Combine(destDir, info.File),
-                Info = info
-            };
-        }
-
-        private static async Task WriteInfo(WallpaperInfo wallpaperInfo, string destDir)
-        {
-            string destInfoPath = Path.Combine(destDir, "project.json");
-            await JsonHelper.JsonSerializeAsync(wallpaperInfo, destInfoPath);
-        }
-
-        public static async Task ShowWallpaper(WallpaperModel wallpaper, params uint[] screenIndexs)
-        {
-            if (wallpaper.Type == WallpaperType.NotSupport)
-                wallpaper.Type = RenderFactory.ResoveType(wallpaper.Path);
-
-            if (wallpaper.Type == WallpaperType.NotSupport)
-                return;
-
-            foreach (var index in screenIndexs)
-            {
-                //类型不一致关闭上次显示的壁纸
-                if (CurrentWalpapers.ContainsKey(index) && wallpaper.Type != CurrentWalpapers[index].Type)
-                    CloseWallpaper(screenIndexs);
-            }
-
-            var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
-            await currentRender.ShowWallpaper(wallpaper, screenIndexs);
-
-            foreach (var index in screenIndexs)
-            {
-                if (!CurrentWalpapers.ContainsKey(index))
-                    CurrentWalpapers.Add(index, wallpaper);
+                    CurrentWalpapers.Add(screenItem, (wallpaper, false));
+                }
+                //有壁纸，但是路径不一样或者壁纸已经临时关闭
                 else
-                    CurrentWalpapers[index] = wallpaper;
+                {
+                    var tmpWallpaper = CurrentWalpapers[screenItem];
+                    if (tmpWallpaper.WPModel.Path != wallpaper.Path || tmpWallpaper.IsStopedTemporary)
+                    {
+                        //关闭之前的壁纸
+                        CloseWallpaper(screenItem);
+                        await currentRender.ShowWallpaper(wallpaper, screenItem);
+
+                        CurrentWalpapers[screenItem] = (wallpaper, false);
+                    }
+                }
             }
 
             ApplyAudioSource();
         }
 
-        public static void CloseWallpaper(params uint[] screenIndexs)
+        public static void CloseWallpaper(params string[] screens)
         {
-            foreach (var index in screenIndexs)
+            foreach (var screenItem in screens)
             {
-                if (CurrentWalpapers.ContainsKey(index))
-                    CurrentWalpapers.Remove(index);
+                if (CurrentWalpapers.ContainsKey(screenItem))
+                    CurrentWalpapers.Remove(screenItem);
             }
-            InnerCloseWallpaper(screenIndexs);
-        }
-
-        public static void InnerCloseWallpaper(params uint[] screenIndexs)
-        {
-            RenderFactory.CacheInstance.ForEach(m => m.CloseWallpaper(screenIndexs));
+            InnerCloseWallpaper(screens);
         }
 
         public static Task SetOptions(LiveWallpaperOptions options)
@@ -260,23 +130,59 @@ namespace Giantapp.LiveWallpaper.Engine
                 MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
 
             StartTimer(options.AutoRestartWhenExplorerCrash || enableMaximized);
+
             ApplyAudioSource();
 
             return Task.CompletedTask;
         }
 
+        public static void Pause(params string[] screens)
+        {
+            foreach (var screenItem in screens)
+            {
+                if (CurrentWalpapers.ContainsKey(screenItem))
+                {
+                    var wallpaper = CurrentWalpapers[screenItem];
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.WPModel.Path));
+                    currentRender.Pause(screens);
+                }
+            }
+        }
+
+        public static void Resume(params string[] screens)
+        {
+            foreach (var screenItem in screens)
+            {
+                if (CurrentWalpapers.ContainsKey(screenItem))
+                {
+                    var wallpaper = CurrentWalpapers[screenItem];
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.WPModel.Path));
+                    currentRender.Resume(screens);
+                }
+            }
+        }
+
+        #endregion
+
+        #region private
+
         private static void ApplyAudioSource()
         {
             //设置音源
-            for (uint screenIndex = 0; screenIndex < Screen.AllScreens.Length; screenIndex++)
+            foreach (var screen in Screens)
             {
-                if (CurrentWalpapers.ContainsKey(screenIndex))
+                if (CurrentWalpapers.ContainsKey(screen))
                 {
-                    var wallpaper = CurrentWalpapers[screenIndex];
-                    var currentRender = RenderFactory.GetOrCreateRender(wallpaper.Type);
-                    currentRender.SetVolume(screenIndex == Options.AudioScreenIndex ? 100 : 0, screenIndex);
+                    var wallpaper = CurrentWalpapers[screen];
+                    var currentRender = RenderFactory.GetRender(wallpaper.WPModel);
+                    currentRender.SetVolume(screen == Options.AudioScreen ? 100 : 0, screen);
                 }
             }
+        }
+
+        private static void InnerCloseWallpaper(params string[] screens)
+        {
+            RenderFactory.Renders.ForEach(m => m.CloseWallpaper(screens));
         }
 
         private static void StartTimer(bool enable)
@@ -301,7 +207,11 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        #endregion
+
+        #region callback
+
+        private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             _timer?.Stop();
             ExplorerMonitor.Check();
@@ -314,37 +224,43 @@ namespace Giantapp.LiveWallpaper.Engine
             //重启
             //Process.Start(Application.ResourceAssembly.Location);
             //Application.Current.Shutdown();
-            Application.Restart();
+            //Application.Restart();
         }
-
         private static void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var maximizedScreenIndexs = e.MaximizedScreens.Select((m, i) => (uint)Screen.AllScreens.ToList().IndexOf(m)).ToList();
-            bool anyScreenMaximized = maximizedScreenIndexs.Count > 0;
+            var maximizedScreens = e.MaximizedScreens.Select((m, i) => m.DeviceName).ToList();
+            bool anyScreenMaximized = maximizedScreens.Count > 0;
             foreach (var item in Options.ScreenOptions)
             {
-                uint currentScreenIndex = (uint)item.ScreenIndex;
-                bool currentScreenMaximized = maximizedScreenIndexs.Contains(currentScreenIndex) || Options.AppMaximizedEffectAllScreen && anyScreenMaximized;
+                string currentScreen = item.Screen;
+                bool currentScreenMaximized = maximizedScreens.Contains(currentScreen) || Options.AppMaximizedEffectAllScreen && anyScreenMaximized;
 
                 switch (item.WhenAppMaximized)
                 {
                     case ActionWhenMaximized.Pause:
                         if (currentScreenMaximized)
-                            Pause(currentScreenIndex);
+                            Pause(currentScreen);
                         else
-                            Resum(currentScreenIndex);
+                            Resume(currentScreen);
                         break;
                     case ActionWhenMaximized.Stop:
                         if (currentScreenMaximized)
-                            InnerCloseWallpaper(currentScreenIndex);
-                        else
-                            if (CurrentWalpapers.ContainsKey(currentScreenIndex))
-                            _ = ShowWallpaper(CurrentWalpapers[currentScreenIndex], currentScreenIndex);
+                        {
+                            InnerCloseWallpaper(currentScreen);
+                            CurrentWalpapers[currentScreen] = (CurrentWalpapers[currentScreen].WPModel, true);
+
+                        }
+                        else if (CurrentWalpapers.ContainsKey(currentScreen))
+                        {
+                            _ = ShowWallpaper(CurrentWalpapers[currentScreen].WPModel, currentScreen);
+                        }
                         break;
                     case ActionWhenMaximized.Play:
                         break;
                 }
             }
         }
+
+        #endregion
     }
 }
