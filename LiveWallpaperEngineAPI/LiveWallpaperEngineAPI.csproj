@@ -6,6 +6,8 @@
     <UseWPF>true</UseWPF>
     <Version>2.0.4</Version>
     <RootNamespace>Giantapp.LiveWallpaper.Engine</RootNamespace>
+    <Description>LiveWallpaperEngineAPI</Description>
+    <PackageProjectUrl>https://github.com/giant-app/LiveWallpaperEngine</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
