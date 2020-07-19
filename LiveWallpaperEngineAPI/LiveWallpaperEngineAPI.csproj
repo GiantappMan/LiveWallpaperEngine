@@ -4,8 +4,10 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <Version>2.0.0</Version>
+    <Version>2.0.4</Version>
     <RootNamespace>Giantapp.LiveWallpaper.Engine</RootNamespace>
+    <Description>LiveWallpaperEngineAPI</Description>
+    <PackageProjectUrl>https://github.com/giant-app/LiveWallpaperEngine</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
