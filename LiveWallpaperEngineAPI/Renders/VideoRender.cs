@@ -26,7 +26,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             if (!File.Exists(playerPath) && File.Exists(zipPath))
             {
                 using ArchiveFile archiveFile = new ArchiveFile(zipPath);
-                archiveFile.Extract(@"players\mpv");
+                archiveFile.Extract($@"{appDir}\players\mpv");
             }
 
             if (!File.Exists(playerPath))

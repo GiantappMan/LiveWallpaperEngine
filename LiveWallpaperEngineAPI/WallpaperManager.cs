@@ -67,6 +67,9 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
+            if (screens.Length == 0)
+                screens = Screens;
+
             IRender currentRender;
             if (wallpaper.Type == null)
                 currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
