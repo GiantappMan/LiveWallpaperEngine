@@ -165,7 +165,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                    return (IntPtr.Zero, -1);
                info.WindowStyle = ProcessWindowStyle.Maximized;
                info.CreateNoWindow = true;
-               Process targetProcess = Process.Start(info);
+               Process targetProcess = Process.Start(info);         
 
                while (targetProcess.MainWindowHandle == IntPtr.Zero)
                {
