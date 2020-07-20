@@ -4,6 +4,11 @@
 Windows10 动态壁纸极简API
 
 ## 示例：
+如不适用web壁纸可忽略这一步
+```
+Install-Package Selenium.WebDriver.ChromeDriver
+```
+
 ```csharp
 //初始化
 WallpaperManager.Initlize(Dispatcher);

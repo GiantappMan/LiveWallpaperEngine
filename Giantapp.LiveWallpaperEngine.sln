@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E3554D4E-7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngine.Samples.NetCore.Test", "LiveWallpaperEngine.Samples.NetCore.Test\LiveWallpaperEngine.Samples.NetCore.Test.csproj", "{C959B22A-239C-4264-8E54-51AFD5A5B7C4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Obsolete", "Obsolete", "{02F4F61B-91AC-4F16-939D-EB9B9980A60C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestEmbedWindow", "TestEmbedWindow\TestEmbedWindow.csproj", "{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7CA7FDEC-C032-4B4E-8289-AD0B19064A89}"
