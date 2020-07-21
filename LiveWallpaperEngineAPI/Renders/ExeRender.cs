@@ -20,7 +20,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             foreach (var item in _currentWallpapers)
             {
-                DesktopMouseEventReciver.HTargetWindows.Add(item.Value.ProcessInfo.Handle);
+                DesktopMouseEventReciver.HTargetWindows.Add(item.Value.Handle);
             }
             await Task.Run(DesktopMouseEventReciver.Start);
         }
