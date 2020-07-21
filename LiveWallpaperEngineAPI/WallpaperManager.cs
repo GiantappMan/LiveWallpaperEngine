@@ -23,7 +23,7 @@ namespace Giantapp.LiveWallpaper.Engine
         #region property
 
         public static string[] Screens { get; private set; }
-        public static LiveWallpaperOptions Options { get; private set; }
+        public static LiveWallpaperOptions Options { get; private set; } = new LiveWallpaperOptions();
 
         //Dictionary<DeviceName，WallpaperModel>
         public static Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)> CurrentWalpapers { get; private set; } = new Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)>();
