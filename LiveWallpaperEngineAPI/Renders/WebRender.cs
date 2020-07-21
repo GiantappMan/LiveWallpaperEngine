@@ -33,7 +33,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             //    archiveFile.Extract($@"{appDir}\players\mpv");
             //}
 
-            playerPath = @"D:\gitee\LiveWallpaperEngine\LiveWallpaperEngineWebRender\bin\x86\Debug\netcoreapp3.1\LiveWallpaperEngineWebRender.exe";
+            playerPath = @"E:\work\gitee\LiveWallpaperEngine\LiveWallpaperEngineWebRender\bin\x86\Debug\netcoreapp3.1\LiveWallpaperEngineWebRender.exe";
             if (!File.Exists(playerPath))
                 return null;
 

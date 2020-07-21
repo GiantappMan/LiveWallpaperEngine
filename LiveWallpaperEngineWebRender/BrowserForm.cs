@@ -20,6 +20,12 @@ namespace LiveWallpaperEngineWebRender
         {
             InitializeComponent();
 
+            Location = new Point(-10000, -10000);
+            Width = Screen.PrimaryScreen.Bounds.Width;
+            Height = Screen.PrimaryScreen.Bounds.Height;
+            FormBorderStyle = FormBorderStyle.None;
+            StartPosition = FormStartPosition.Manual;
+
             browser = new ChromiumWebBrowser(url);
             Text = $"WebRender {url}";
             Controls.Add(browser);
