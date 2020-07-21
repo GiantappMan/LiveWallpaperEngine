@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7CA7FDEC-C03
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineAPI", "LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj", "{AAFB595F-C9DA-4F56-84B7-6874608E89CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngineWebRender", "LiveWallpaperEngineWebRender\LiveWallpaperEngineWebRender.csproj", "{ABC18B70-4250-4281-AE39-F9AC644C6735}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,17 @@ Global
 		{AAFB595F-C9DA-4F56-84B7-6874608E89CA}.Release|x64.Build.0 = Release|Any CPU
 		{AAFB595F-C9DA-4F56-84B7-6874608E89CA}.Release|x86.ActiveCfg = Release|Any CPU
 		{AAFB595F-C9DA-4F56-84B7-6874608E89CA}.Release|x86.Build.0 = Release|Any CPU
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|Any CPU.Build.0 = Debug|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|x64.ActiveCfg = Debug|x64
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|x64.Build.0 = Debug|x64
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|x86.ActiveCfg = Debug|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Debug|x86.Build.0 = Debug|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Release|Any CPU.ActiveCfg = Release|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Release|x64.ActiveCfg = Release|x64
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Release|x64.Build.0 = Release|x64
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Release|x86.ActiveCfg = Release|x86
+		{ABC18B70-4250-4281-AE39-F9AC644C6735}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +89,7 @@ Global
 		{C959B22A-239C-4264-8E54-51AFD5A5B7C4} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
 		{123B6CA4-82FF-4AD5-B4B6-8536C9EDF1D8} = {B5707277-42B0-4BDA-8EAF-33612CA2ABF0}
 		{AAFB595F-C9DA-4F56-84B7-6874608E89CA} = {7CA7FDEC-C032-4B4E-8289-AD0B19064A89}
+		{ABC18B70-4250-4281-AE39-F9AC644C6735} = {7CA7FDEC-C032-4B4E-8289-AD0B19064A89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0CCDD11-AAC6-45FC-883B-0DBE493DA7E9}

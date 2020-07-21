@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <PackageReference Include="GiantappConfiger" Version="1.0.5" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="84.0.4147.3001" />
   </ItemGroup>
 
   <ItemGroup>
