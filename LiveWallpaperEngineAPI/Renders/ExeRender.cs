@@ -13,24 +13,5 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         {
 
         }
-
-        public override async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
-        {
-            await base.ShowWallpaper(wallpaper, screens);
-
-            foreach (var item in _currentWallpapers)
-            {
-                DesktopMouseEventReciver.HTargetWindows.Add(item.Value.Handle);
-            }
-            await Task.Run(DesktopMouseEventReciver.Start);
-        }
-
-        public override void CloseWallpaper(params string[] screens)
-        {
-            base.CloseWallpaper(screens);
-
-            if (_currentWallpapers.Count == 0)
-                DesktopMouseEventReciver.Stop();
-        }
     }
 }

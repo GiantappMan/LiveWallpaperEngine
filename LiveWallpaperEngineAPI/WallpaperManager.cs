@@ -73,7 +73,10 @@ namespace Giantapp.LiveWallpaper.Engine
 
             IRender currentRender;
             if (wallpaper.Type == null)
+            {
                 currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                wallpaper.Type = currentRender.SupportedType;
+            }
             else
                 currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
 
@@ -186,7 +189,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         private static void InnerCloseWallpaper(params string[] screens)
         {
-            RenderFactory.Renders.ForEach(m => m.CloseWallpaper(screens));
+            RenderFactory.Renders.ForEach(m => m.CloseWallpaperAsync(screens));
         }
 
         private static void StartTimer(bool enable)

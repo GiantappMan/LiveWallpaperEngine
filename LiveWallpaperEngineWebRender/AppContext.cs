@@ -9,7 +9,6 @@ namespace LiveWallpaperEngineWebRender
 {
     public class AppContext : ApplicationContext
     {
-        private string[] args;
 
         public AppContext()
         {
@@ -17,12 +16,27 @@ namespace LiveWallpaperEngineWebRender
 
         public AppContext(string[] args)
         {
-            this.args = args;
-            foreach (var item in args)
+            var position = Resolve(args, "--position=")?.Split(",");
+            if (position == null)
+                position = new string[] { "0", "0" };
+            var urls = args.Where(m => !m.StartsWith("--")).ToArray();
+   
+            foreach (var item in urls)
             {
-                BrowserForm f = new BrowserForm(item);
+                BrowserForm f = new BrowserForm(item, int.Parse(position[0]), int.Parse(position[1]));
                 f.Show();
             }
+        }
+
+        private static string Resolve(string[] args, string v)
+        {
+            foreach (var item in args)
+            {
+                if (item.StartsWith(v))
+                    return item.Replace(v, "");
+            }
+
+            return null;
         }
     }
 }

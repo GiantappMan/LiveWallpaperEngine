@@ -23,6 +23,6 @@ namespace Giantapp.LiveWallpaper.Engine
         void Resume(params string[] screens);
         void SetVolume(int v, string screen);
         int GetVolume(string screen);
-        void CloseWallpaper(params string[] screens);
+        Task CloseWallpaperAsync(params string[] screens);
     }
 }

@@ -34,6 +34,15 @@ namespace Giantapp.LiveWallpaper.Engine
     public class WallpaperModel
     {
         public WallpaperType? Type { get; set; }
+        public bool IsEventWallpaper
+        {
+            get
+            {
+                var r = Type.Value == WallpaperType.Exe ||
+                        Type.Value == WallpaperType.Web;
+                return r;
+            }
+        }
         public string Path { get; set; }
     }
     public class WallpaperModelInfo : WallpaperModel
