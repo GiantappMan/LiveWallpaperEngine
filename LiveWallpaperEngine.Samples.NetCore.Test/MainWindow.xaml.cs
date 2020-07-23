@@ -7,6 +7,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using static Giantapp.LiveWallpaper.Engine.ScreenOption;
+using DZY.WinAPI;
+using System;
+using System.Text;
+using System.Windows.Forms.Design;
 
 namespace LiveWallpaperEngine.Samples.NetCore.Test
 {
@@ -23,11 +27,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
+            Activated += MainWindow_Activated;
+            Deactivated += MainWindow_Deactivated;
             WallpaperManager.Initlize(Dispatcher);
             InitializeComponent();
-            ////用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
-            //RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
-
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
                 DeviceName = m.DeviceName,
@@ -105,12 +108,19 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             configer.DataContext = vm;
         }
 
-        ~MainWindow()
+        private void MainWindow_Deactivated(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("MainWindow_Deactivated " + GetActiveWindowTitle());
         }
 
-        private void btnSelect_Click(object sender, RoutedEventArgs e)
+        private void MainWindow_Activated(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("MainWindow_Activated " + GetActiveWindowTitle());
+        }
+
+        private async void btnSelect_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("before ShowWallpaper " + GetActiveWindowTitle());
             using (var openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "WallpaperSamples";
@@ -120,21 +130,31 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
-                    _ = WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
-                    //var form = new MpvPlayer.MpvForm();
-                    //form.FormBorderStyle = FormBorderStyle.FixedSingle;
-
-                    //form.Show();
-                    //form.InitPlayer();
-                    //form.Player.AutoPlay = true;
-                    //form.Player.Load(openFileDialog.FileName);
+                    await WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
                 }
             }
+            System.Diagnostics.Debug.WriteLine("after ShowWallpaper" + GetActiveWindowTitle());
+            //IntPtr progman = User32Wrapper.FindWindow("Progman", null);
+            //User32Wrapper.SetForegroundWindow(window); //change focus from the started window//application.
+            //User32Wrapper.SetFocus(window);
+            Activate();
         }
+        private string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = User32Wrapper.GetForegroundWindow();
 
+            if (User32Wrapper.GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
+            var activeWindowTitle = GetActiveWindowTitle();
+            System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
             WallpaperManager.CloseWallpaper(displayIds);
         }
 

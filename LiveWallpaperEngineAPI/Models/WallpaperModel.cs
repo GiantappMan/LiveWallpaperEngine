@@ -43,6 +43,8 @@ namespace Giantapp.LiveWallpaper.Engine
                 return r;
             }
         }
+        public bool IsPaused { get; set; }
+        public bool IsStopedTemporary { get; set; }
         public string Path { get; set; }
     }
     public class WallpaperModelInfo : WallpaperModel

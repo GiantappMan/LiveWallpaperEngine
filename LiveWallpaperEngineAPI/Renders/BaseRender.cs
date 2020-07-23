@@ -54,15 +54,20 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         {
             foreach (var item in screens)
                 Debug.WriteLine($"close {GetType().Name} {item}");
-            //取消对应屏幕等待未启动的进程
+            //取消对应屏幕等待未启动的进程            
             _showWallpaperCts?.Cancel();
-            _showWallpaperCts.Dispose();
+            _showWallpaperCts?.Dispose();
+            _showWallpaperCts = null;
 
             var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Screen)).ToList();
 
             await InnerCloseWallpaper(playingWallpaper);
 
-            playingWallpaper.ForEach(m => _currentWallpapers.Remove(m));
+            playingWallpaper.ForEach(m =>
+            {
+                DesktopMouseEventReciver.RemoveHandle(m.ReceiveMouseEventHandle);
+                _currentWallpapers.Remove(m);
+            });
 
             var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).Count();
             if (eventWallpapers == 0)
@@ -148,7 +153,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).ToList();
             foreach (var item in eventWallpapers)
-                DesktopMouseEventReciver.HTargetWindows.Add(item.ReceiveMouseEventHandle);
+                DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle);
             if (eventWallpapers.Count > 0)
                 await Task.Run(DesktopMouseEventReciver.Start);
         }

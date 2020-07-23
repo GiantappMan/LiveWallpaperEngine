@@ -1,10 +1,12 @@
-﻿using Giantapp.LiveWallpaper.Engine.Renders;
+﻿using DZY.WinAPI;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using static Giantapp.LiveWallpaper.Engine.ScreenOption;
@@ -26,7 +28,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public static LiveWallpaperOptions Options { get; private set; } = new LiveWallpaperOptions();
 
         //Dictionary<DeviceName，WallpaperModel>
-        public static Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)> CurrentWalpapers { get; private set; } = new Dictionary<string, (WallpaperModel WPModel, bool IsStopedTemporary)>();
+        public static Dictionary<string, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<string, WallpaperModel>();
 
         #endregion
 
@@ -92,19 +94,19 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     await currentRender.ShowWallpaper(wallpaper, screenItem);
 
-                    CurrentWalpapers.Add(screenItem, (wallpaper, false));
+                    CurrentWalpapers.Add(screenItem, wallpaper);
                 }
                 //有壁纸，但是路径不一样或者壁纸已经临时关闭
                 else
                 {
                     var tmpWallpaper = CurrentWalpapers[screenItem];
-                    if (tmpWallpaper.WPModel.Path != wallpaper.Path || tmpWallpaper.IsStopedTemporary)
+                    if (tmpWallpaper.Path != wallpaper.Path || tmpWallpaper.IsStopedTemporary)
                     {
                         //关闭之前的壁纸
                         CloseWallpaper(screenItem);
                         await currentRender.ShowWallpaper(wallpaper, screenItem);
 
-                        CurrentWalpapers[screenItem] = (wallpaper, false);
+                        CurrentWalpapers[screenItem] = wallpaper;
                     }
                 }
             }
@@ -150,7 +152,8 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.WPModel.Path));
+                    wallpaper.IsPaused = true;
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Pause(screens);
                 }
             }
@@ -163,7 +166,8 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.WPModel.Path));
+                    wallpaper.IsPaused = false;
+                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Resume(screens);
                 }
             }
@@ -181,7 +185,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screen))
                 {
                     var wallpaper = CurrentWalpapers[screen];
-                    var currentRender = RenderFactory.GetRender(wallpaper.WPModel);
+                    var currentRender = RenderFactory.GetRender(wallpaper);
                     currentRender.SetVolume(screen == Options.AudioScreen ? 100 : 0, screen);
                 }
             }
@@ -254,15 +258,16 @@ namespace Giantapp.LiveWallpaper.Engine
                         if (currentScreenMaximized)
                         {
                             InnerCloseWallpaper(currentScreen);
-                            CurrentWalpapers[currentScreen] = (CurrentWalpapers[currentScreen].WPModel, true);
+                            CurrentWalpapers[currentScreen].IsStopedTemporary = true;
 
                         }
                         else if (CurrentWalpapers.ContainsKey(currentScreen))
                         {
-                            _ = ShowWallpaper(CurrentWalpapers[currentScreen].WPModel, currentScreen);
+                            _ = ShowWallpaper(CurrentWalpapers[currentScreen], currentScreen);
                         }
                         break;
                     case ActionWhenMaximized.Play:
+                        CurrentWalpapers[currentScreen].IsStopedTemporary = false;
                         break;
                 }
             }
