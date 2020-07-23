@@ -58,17 +58,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                         var processResult = await StartProcess(wallpaper.Path, ct);
 
                         //壁纸启动失败
-                        if (processResult.Handle == IntPtr.Zero)
+                        if (processResult.HostHandle == IntPtr.Zero)
                             return;
 
                         var host = LiveWallpaperRenderForm.GetHost(screenItem);
-                        host!.ShowWallpaper(processResult.Handle);
+                        host!.ShowWallpaper(processResult.HostHandle);
 
-                        result.Add(new RenderInfo()
+                        result.Add(new RenderInfo(processResult)
                         {
                             Wallpaper = wallpaper,
-                            ReceiveMouseEventHandle = processResult.Handle,
-                            PId = processResult.PId,
                             Screen = screenItem
                         });
                     }
@@ -90,7 +88,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             return result;
         }
 
-        protected virtual Task<(IntPtr Handle, int PId)> StartProcess(string path, CancellationToken ct)
+        protected virtual Task<RenderProcess> StartProcess(string path, CancellationToken ct)
         {
             return Task.Run(() =>
             {
@@ -100,7 +98,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
                 ProcessStartInfo info = GenerateProcessInfo(path);
                 if (info == null)
-                    return (IntPtr.Zero, -1);
+                    return new RenderProcess();
                 info.WindowStyle = ProcessWindowStyle.Maximized;
                 info.CreateNoWindow = true;
                 Process targetProcess = Process.Start(info);
@@ -123,7 +121,12 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     }
                 }
 
-                (IntPtr Handle, int PId) result = (targetProcess.MainWindowHandle, targetProcess.Id);
+                RenderProcess result = new RenderProcess()
+                {
+                    PId = targetProcess.Id,
+                    HostHandle = targetProcess.MainWindowHandle,
+                    ReceiveMouseEventHandle = targetProcess.MainWindowHandle
+                };
                 targetProcess.Dispose();
                 return result;
             });

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 namespace LiveWallpaperEngineWebRender
 {
+
     public partial class BrowserForm : Form
     {
         private static List<BrowserForm> _allForms = new List<BrowserForm>();
@@ -27,6 +28,7 @@ namespace LiveWallpaperEngineWebRender
             StartPosition = FormStartPosition.Manual;
 
             browser = new ChromiumWebBrowser(url);
+            browser.MenuHandler = new MenuHanlder();
 
             Text = $"WebRender {url}";
 

@@ -11,11 +11,25 @@ using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {
-    public class RenderInfo
+    public class RenderProcess
     {
-        public WallpaperModel Wallpaper { get; set; }
+        public IntPtr HostHandle { get; set; }
         public IntPtr ReceiveMouseEventHandle { get; set; }
         public int PId { get; set; }
+    }
+    public class RenderInfo : RenderProcess
+    {
+        public RenderInfo()
+        {
+
+        }
+        public RenderInfo(RenderProcess p)
+        {
+            HostHandle = p.HostHandle;
+            ReceiveMouseEventHandle = p.ReceiveMouseEventHandle;
+            PId = p.PId;
+        }
+        public WallpaperModel Wallpaper { get; set; }
         public string Screen { get; set; }
     }
 

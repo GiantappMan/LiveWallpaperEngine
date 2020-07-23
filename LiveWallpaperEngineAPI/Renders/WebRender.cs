@@ -1,4 +1,5 @@
-﻿using SevenZipExtractor;
+﻿using DZY.WinAPI;
+using SevenZipExtractor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +32,6 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 archiveFile.Extract($@"{appDir}\players\web");
             }
 
-            playerPath = @"D:\gitee\LiveWallpaperEngine\LiveWallpaperEngineWebRender\bin\x86\Debug\netcoreapp3.1\LiveWallpaperEngineWebRender.exe";
             if (!File.Exists(playerPath))
                 return null;
 
@@ -43,7 +43,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             return r;
         }
 
-        protected override async Task<(IntPtr Handle, int PId)> StartProcess(string path, CancellationToken ct)
+        protected override async Task<RenderProcess> StartProcess(string path, CancellationToken ct)
         {
             var result = await base.StartProcess(path, ct);
             return await Task.Run(() =>
@@ -63,8 +63,12 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                      Thread.Sleep(10);
                  }
                  p?.Dispose();
-                 var handle = title.Substring(index + 4);
-                 result.Handle = new IntPtr(int.Parse(handle));
+                 var handleStr = title.Substring(index + 4);
+
+                 var cefHandle = new IntPtr(int.Parse(handleStr));
+                 var handle = User32Wrapper.FindWindowEx(cefHandle, IntPtr.Zero, "Chrome_WidgetWin_0", IntPtr.Zero);
+
+                 result.ReceiveMouseEventHandle = handle;
                  return result;
              });
         }
