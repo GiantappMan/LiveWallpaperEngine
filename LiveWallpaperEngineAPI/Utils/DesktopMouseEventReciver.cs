@@ -3,8 +3,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DZY.WinAPI;
 using EventHook;
+using EventHook.Hooks;
 
 namespace Giantapp.LiveWallpaper.Engine.Utils
 {
@@ -55,6 +57,17 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                     _nextSendTime = DateTime.Now + TimeSpan.FromMilliseconds(SendInterval);
                 }
 
+                //cef收到鼠标事件后会自动active，看有办法规避不
+                //点击等事件只在桌面触发，否则可能导致窗口胡乱激活
+                if (!WallpaperHelper.IsDesktop() && e.Message != MouseMessages.WM_MOUSEMOVE)
+                    return;
+
+                //MouseMessages[] supportMessage = new MouseMessages[] { MouseMessages.WM_MOUSEMOVE, MouseMessages.WM_LBUTTONDOWN, MouseMessages.WM_LBUTTONUP };
+                //MouseMessages[] supportMessage = new MouseMessages[] { MouseMessages.WM_MOUSEMOVE };
+
+                //if (!supportMessage.Contains(e.Message))
+                //    return;
+
                 // 根据官网文档中定义，lParam低16位存储鼠标的x坐标，高16位存储y坐标
                 int lParam = e.Point.y;
                 lParam <<= 16;
@@ -79,7 +92,6 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                 //if (wParam == IntPtr.Zero)
                 //    return;
 
-                //todo cef收到鼠标事件后会自动active，看有办法规避不
                 foreach (IntPtr window in _targetWindows)
                     User32Wrapper.PostMessageW(window, (uint)e.Message, wParam, (IntPtr)lParam);
 

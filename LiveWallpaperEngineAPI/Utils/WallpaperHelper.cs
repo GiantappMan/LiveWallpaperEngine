@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -28,6 +29,9 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         static readonly Dictionary<string, WallpaperHelper> _cacheInstances = new Dictionary<string, WallpaperHelper>();
         static IDesktopWallpaper _desktopWallpaperAPI;
         static uint _slideshowTick;
+        static IntPtr _progman;
+        static IntPtr _workerw;
+        static IntPtr _desktopWorkerw;
 
         #endregion
 
@@ -63,6 +67,35 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETDESKWALLPAPER, 0, filename,
                 User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
         }
+        private static string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = User32Wrapper.GetForegroundWindow();
+
+            if (User32Wrapper.GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return $"handle:{handle} buff:{Buff}";
+            }
+            return $"handle:{handle}";
+        }
+
+        internal static bool IsDesktop()
+        {
+            IntPtr hWnd = User32Wrapper.GetForegroundWindow();
+            if (hWnd == _desktopWorkerw)
+            {
+                return true;
+            }
+            else if (hWnd == _progman)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public void RestoreParent()
         {
@@ -91,21 +124,21 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
 
             _currentHandler = handler;
 
-            var workerw = GetWorkerW();
-            if (workerw == IntPtr.Zero)
+            _workerw = GetWorkerW();
+            if (_workerw == IntPtr.Zero)
             {
                 //有时候突然又不行了，在来一次
                 User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
-                workerw = GetWorkerW();
+                _workerw = GetWorkerW();
             }
 
-            if (workerw == IntPtr.Zero)
+            if (_workerw == IntPtr.Zero)
                 return false;
 
             _parentHandler = User32Wrapper.GetParent(_currentHandler);
 
-            User32Wrapper.SetParent(_currentHandler, workerw);
-            FullScreen(_currentHandler, new RECT(_targetBounds), workerw);
+            User32Wrapper.SetParent(_currentHandler, _workerw);
+            FullScreen(_currentHandler, new RECT(_targetBounds), _workerw);
             return true;
         }
 
@@ -179,33 +212,34 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         #region private
         internal static IntPtr GetWorkerW()
         {
-            IntPtr progman = User32Wrapper.FindWindow("Progman", null);
-            User32Wrapper.SendMessageTimeout(progman,
+            _progman = User32Wrapper.FindWindow("Progman", null);
+            User32Wrapper.SendMessageTimeout(_progman,
                                    0x052C,
                                    new IntPtr(0),
                                    IntPtr.Zero,
                                    SendMessageTimeoutFlags.SMTO_NORMAL,
                                    1000,
                                    out IntPtr unusefulResult);
-            IntPtr workerw = IntPtr.Zero;
             var enumWindowResult = User32Wrapper.EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
             {
-                IntPtr p = User32Wrapper.FindWindowEx(tophandle,
+                IntPtr shelldll_defview = User32Wrapper.FindWindowEx(tophandle,
                                             IntPtr.Zero,
                                             "SHELLDLL_DefView",
                                             IntPtr.Zero);
-                if (p != IntPtr.Zero)
+                if (shelldll_defview != IntPtr.Zero)
                 {
-                    workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
+                    _workerw = User32Wrapper.FindWindowEx(IntPtr.Zero,
                                              tophandle,
                                              "WorkerW",
                                              IntPtr.Zero);
+
+                    _desktopWorkerw = tophandle;
                     return false;
                 }
 
                 return true;
             }), IntPtr.Zero);
-            return workerw;
+            return _workerw;
         }
 
         internal static void FullScreen(IntPtr mainWindowHandle, IntPtr containerHandle)
