@@ -1,4 +1,4 @@
-﻿License notice for DZY.WinAPI (v2.0.16)
+﻿License notice for DZY.WinAPI (v2.0.18)
 ------------------------------------
 
 
