@@ -1,6 +1,7 @@
 ﻿using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
 using DZY.WinAPI.Extension;
+using DZY.WinAPI.Helpers;
 using Giantapp.LiveWallpaper.Engine.Forms;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
@@ -20,6 +21,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     //目前所有壁纸都是这个类实现，通过启用外部exe来渲染，以防止崩溃。
     public class ExternalProcessRender : BaseRender
     {
+        private static ProcessJobTracker _pj = new ProcessJobTracker();
         protected ExternalProcessRender(WallpaperType type, List<string> extension) : base(type, extension)
         {
         }
@@ -127,6 +129,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     HostHandle = targetProcess.MainWindowHandle,
                     ReceiveMouseEventHandle = targetProcess.MainWindowHandle
                 };
+                //壁纸引擎关闭后，关闭渲染进程
+                _pj.AddProcess(targetProcess);
                 targetProcess.Dispose();
                 return result;
             });
