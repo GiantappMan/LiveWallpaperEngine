@@ -42,5 +42,9 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 屏幕最大化是否影响所有屏幕
         /// </summary>
         public bool AppMaximizedEffectAllScreen { get; set; }
+        /// <summary>
+        /// 转发鼠标事件
+        /// </summary>
+        public bool ForwardMouseEvent { get; set; } = true;
     }
 }

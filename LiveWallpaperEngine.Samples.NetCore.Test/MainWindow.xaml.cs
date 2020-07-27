@@ -151,11 +151,11 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             }
             return null;
         }
-        private void btnStop_Click(object sender, RoutedEventArgs e)
+        private async void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var activeWindowTitle = GetActiveWindowTitle();
             System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
-            WallpaperManager.CloseWallpaper(displayIds);
+            await WallpaperManager.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)

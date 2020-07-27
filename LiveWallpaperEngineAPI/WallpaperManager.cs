@@ -3,6 +3,7 @@ using Giantapp.LiveWallpaper.Engine.Renders;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace Giantapp.LiveWallpaper.Engine
             RenderFactory.Renders.Add(new ExeRender());
             RenderFactory.Renders.Add(new VideoRender());
             RenderFactory.Renders.Add(new WebRender());
+            RenderFactory.Renders.Add(new ImageRender());
             _uiDispatcher = dispatcher;
             Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
         }
@@ -86,24 +88,25 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (wallpaper.Type == null)
                     throw new ArgumentException("Unsupported wallpaper type");
 
-
             foreach (var screenItem in screens)
             {
-                //壁纸为空
+                //当前屏幕没有壁纸
                 if (!CurrentWalpapers.ContainsKey(screenItem))
                 {
                     await currentRender.ShowWallpaper(wallpaper, screenItem);
 
                     CurrentWalpapers.Add(screenItem, wallpaper);
                 }
-                //有壁纸，但是路径不一样或者壁纸已经临时关闭
                 else
                 {
                     var tmpWallpaper = CurrentWalpapers[screenItem];
+                    //当前屏幕有壁纸，但是路径不一样或者壁纸已经临时关闭
                     if (tmpWallpaper.Path != wallpaper.Path || tmpWallpaper.IsStopedTemporary)
                     {
-                        //关闭之前的壁纸
-                        CloseWallpaper(screenItem);
+                        // 这里不要关闭已打开的壁纸，render内部去处理，重复开壁纸。
+                        // 不做统一处理，某些壁纸会造成多余的调用
+                        ////关闭之前的壁纸
+                        //await CloseWallpaper(screenItem);
                         await currentRender.ShowWallpaper(wallpaper, screenItem);
 
                         CurrentWalpapers[screenItem] = wallpaper;
@@ -114,14 +117,14 @@ namespace Giantapp.LiveWallpaper.Engine
             ApplyAudioSource();
         }
 
-        public static void CloseWallpaper(params string[] screens)
+        public static async Task CloseWallpaper(params string[] screens)
         {
             foreach (var screenItem in screens)
             {
                 if (CurrentWalpapers.ContainsKey(screenItem))
                     CurrentWalpapers.Remove(screenItem);
             }
-            InnerCloseWallpaper(screens);
+            await InnerCloseWallpaper(screens);
         }
 
         public static Task SetOptions(LiveWallpaperOptions options)
@@ -191,9 +194,10 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        private static void InnerCloseWallpaper(params string[] screens)
+        private static async Task InnerCloseWallpaper(params string[] screens)
         {
-            RenderFactory.Renders.ForEach(m => m.CloseWallpaperAsync(screens));
+            foreach (var m in RenderFactory.Renders)
+                await m.CloseWallpaperAsync(screens);
         }
 
         private static void StartTimer(bool enable)
@@ -237,7 +241,7 @@ namespace Giantapp.LiveWallpaper.Engine
             //Application.Current.Shutdown();
             //Application.Restart();
         }
-        private static void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
+        private static async void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
             var maximizedScreens = e.MaximizedScreens.Select((m, i) => m.DeviceName).ToList();
             bool anyScreenMaximized = maximizedScreens.Count > 0;
@@ -257,9 +261,8 @@ namespace Giantapp.LiveWallpaper.Engine
                     case ActionWhenMaximized.Stop:
                         if (currentScreenMaximized)
                         {
-                            InnerCloseWallpaper(currentScreen);
+                            await InnerCloseWallpaper(currentScreen);
                             CurrentWalpapers[currentScreen].IsStopedTemporary = true;
-
                         }
                         else if (CurrentWalpapers.ContainsKey(currentScreen))
                         {

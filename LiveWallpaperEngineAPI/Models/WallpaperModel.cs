@@ -33,13 +33,20 @@ namespace Giantapp.LiveWallpaper.Engine
     }
     public class WallpaperModel
     {
+        /// <summary>
+        /// 是否支持鼠标事件，exe和web才行。其他类型设置无效
+        /// </summary>
+        public bool EnableMouseEvent { get; set; } = true;
         public WallpaperType? Type { get; set; }
         public bool IsEventWallpaper
         {
             get
             {
-                var r = Type.Value == WallpaperType.Exe ||
-                        Type.Value == WallpaperType.Web;
+                var r = EnableMouseEvent &&
+                    (
+                    Type.Value == WallpaperType.Exe ||
+                    Type.Value == WallpaperType.Web
+                    );
                 return r;
             }
         }

@@ -63,7 +63,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             await InnerCloseWallpaper(playingWallpaper);
 
-            playingWallpaper.ForEach(m =>
+            playingWallpaper.ToList().ForEach(m =>
             {
                 DesktopMouseEventReciver.RemoveHandle(m.ReceiveMouseEventHandle);
                 _currentWallpapers.Remove(m);
@@ -101,8 +101,16 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             foreach (var wallpaper in playingWallpaper)
             {
-                var p = Process.GetProcessById(wallpaper.PId);
-                p.Suspend();
+                try
+                {
+                    var p = Process.GetProcessById(wallpaper.PId);
+                    p.Suspend();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                    continue;
+                }
             }
         }
 
@@ -117,8 +125,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     var p = Process.GetProcessById(wallpaper.PId);
                     p.Resume();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine(ex);
                     continue;
                 }
             }
@@ -151,21 +160,23 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             //更新当前壁纸
             infos.ForEach(m => _currentWallpapers.Add(m));
 
-            var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).ToList();
-            foreach (var item in eventWallpapers)
-                DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle);
-            if (eventWallpapers.Count > 0)
-                await Task.Run(DesktopMouseEventReciver.Start);
+            if (WallpaperManager.Options.ForwardMouseEvent)
+            {
+                var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).ToList();
+                foreach (var item in eventWallpapers)
+                    DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle);
+                if (eventWallpapers.Count > 0)
+                    await Task.Run(DesktopMouseEventReciver.Start);
+            }
         }
 
         protected virtual Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
-            return Task.FromResult(new List<RenderInfo>());
-        }
-
-        protected virtual ProcessStartInfo GenerateProcessInfo(string path)
-        {
-            return new ProcessStartInfo(path);
+            return Task.FromResult(screens.Select(m => new RenderInfo()
+            {
+                Wallpaper = wallpaper,
+                Screen = m
+            }).ToList());
         }
     }
 }
