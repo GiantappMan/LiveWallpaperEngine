@@ -61,25 +61,31 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             var playingWallpaper = _currentWallpapers.Where(m => screens.Contains(m.Screen)).ToList();
 
-            await InnerCloseWallpaper(playingWallpaper);
-
-            playingWallpaper.ToList().ForEach(m =>
-            {
-                DesktopMouseEventReciver.RemoveHandle(m.ReceiveMouseEventHandle);
-                _currentWallpapers.Remove(m);
-            });
+            await InnerCloseWallpaperAsync(playingWallpaper);
 
             var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).Count();
             if (eventWallpapers == 0)
                 DesktopMouseEventReciver.Stop();
         }
 
+        private async Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper)
+        {
+            await CloseRender(playingWallpaper);
+
+            playingWallpaper.ToList().ForEach(m =>
+            {
+                DesktopMouseEventReciver.RemoveHandle(m.ReceiveMouseEventHandle);
+                _currentWallpapers.Remove(m);
+            });
+        }
+
         /// <summary>
         /// 可重载，处理具体的关闭逻辑
         /// </summary>
         /// <param name="playingWallpaper"></param>
+        /// <param name="isTemporary">是否是临时关闭，临时关闭表示马上又会继续播放其他壁纸</param>
         /// <returns></returns>
-        protected virtual Task InnerCloseWallpaper(List<RenderInfo> playingWallpaper)
+        protected virtual Task CloseRender(List<RenderInfo> playingWallpaper, bool isTemporary = false)
         {
             return Task.CompletedTask;
         }
@@ -144,15 +150,28 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             foreach (var item in screens)
                 Debug.WriteLine($"show {GetType().Name} {item}");
 
+            List<RenderInfo> changedRender = new List<RenderInfo>();
             //过滤无变化的屏幕
             var changedScreen = screens.Where(m =>
             {
+                bool ok = false;
                 var existRender = _currentWallpapers.FirstOrDefault(x => x.Screen == m);
                 if (existRender == null)
-                    return true;
-
-                return existRender.Wallpaper.Path != wallpaper.Path;
+                    ok = true;
+                else
+                {
+                    ok = existRender.Wallpaper.Path != wallpaper.Path;
+                    changedRender.Add(existRender);
+                }
+                return ok;
             }).ToArray();
+
+
+            if (changedScreen.Length == 0)
+                return;
+
+            //关闭已经展现的壁纸
+            await InnerCloseWallpaperAsync(changedRender);
 
             _showWallpaperCts = new CancellationTokenSource();
             List<RenderInfo> infos = await InnerShowWallpaper(wallpaper, _showWallpaperCts.Token, changedScreen);

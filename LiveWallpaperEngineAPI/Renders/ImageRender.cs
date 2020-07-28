@@ -63,8 +63,12 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        protected override Task InnerCloseWallpaper(List<RenderInfo> playingWallpaper)
+        protected override Task CloseRender(List<RenderInfo> playingWallpaper, bool isTemporary)
         {
+            //临时关闭不用处理
+            if (isTemporary)
+                return Task.CompletedTask;
+
             return Task.Run(() =>
             {
                 foreach (var w in playingWallpaper)

@@ -15,7 +15,7 @@ namespace Giantapp.LiveWallpaper.Engine
         /// </summary>
         void Dispose();
         /// <summary>
-        /// 加载壁纸
+        /// 加载壁纸，内部处理重复开壁纸问题
         /// </summary>
         /// <param name="path"></param>
         Task ShowWallpaper(WallpaperModel wallpaper, params string[] screen);

@@ -22,14 +22,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     public class ExternalProcessRender : BaseRender
     {
         private static ProcessJobTracker _pj = new ProcessJobTracker();
-        private List<RenderInfo> _playingRenders = new List<RenderInfo>();
+        //private List<RenderInfo> _playingRenders = new List<RenderInfo>();
 
         protected ExternalProcessRender(WallpaperType type, List<string> extension) : base(type, extension)
         {
         }
 
-        protected override Task InnerCloseWallpaper(List<RenderInfo> wallpaperRenders)
+        protected override Task CloseRender(List<RenderInfo> wallpaperRenders, bool isTemporary)
         {
+            //不论是否临时关闭，都需要关闭进程重启进程
             return Task.Run(() =>
             {
                 foreach (var render in wallpaperRenders)
@@ -45,8 +46,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     }
                     finally
                     {
-                        if (_playingRenders.Contains(render))
-                            _playingRenders.Remove(render);
+                        //if (_playingRenders.Contains(render))
+                        //    _playingRenders.Remove(render);
                     }
                 }
             });
@@ -54,10 +55,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         protected override async Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
-            var changedRender = _playingRenders.Where(m => screens.Contains(m.Screen) || wallpaper.Path != m.Wallpaper.Path).ToList();
-            //关闭 已经修改壁纸路径的render，重启开进程            
-            if (changedRender.Count > 0)
-                await InnerCloseWallpaper(changedRender);
+            //var changedRender = _playingRenders.Where(m => screens.Contains(m.Screen) || wallpaper.Path != m.Wallpaper.Path).ToList();
+            ////关闭 已经修改壁纸路径的render，重启开进程            
+            //if (changedRender.Count > 0)
+            //    await InnerCloseWallpaper(changedRender);
 
             List<RenderInfo> result = new List<RenderInfo>();
             List<Task> tmpTasks = new List<Task>();
@@ -100,7 +101,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
             await Task.WhenAll(tmpTasks);
 
-            _playingRenders = new List<RenderInfo>(result);
+            //_playingRenders = new List<RenderInfo>(result);
             return result;
         }
 

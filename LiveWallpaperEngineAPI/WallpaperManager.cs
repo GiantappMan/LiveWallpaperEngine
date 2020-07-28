@@ -94,23 +94,20 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (!CurrentWalpapers.ContainsKey(screenItem))
                 {
                     await currentRender.ShowWallpaper(wallpaper, screenItem);
-
                     CurrentWalpapers.Add(screenItem, wallpaper);
                 }
                 else
                 {
                     var tmpWallpaper = CurrentWalpapers[screenItem];
-                    //当前屏幕有壁纸，但是路径不一样或者壁纸已经临时关闭
-                    if (tmpWallpaper.Path != wallpaper.Path || tmpWallpaper.IsStopedTemporary)
-                    {
-                        // 这里不要关闭已打开的壁纸，render内部去处理，重复开壁纸。
-                        // 不做统一处理，某些壁纸会造成多余的调用
-                        ////关闭之前的壁纸
-                        //await CloseWallpaper(screenItem);
-                        await currentRender.ShowWallpaper(wallpaper, screenItem);
 
-                        CurrentWalpapers[screenItem] = wallpaper;
-                    }
+                    //壁纸 路径相同
+                    if (tmpWallpaper.Path == wallpaper.Path)
+                        continue;
+
+                    //关闭之前的壁纸
+                    await CloseWallpaper(screenItem);
+                    await currentRender.ShowWallpaper(wallpaper, screenItem);
+                    CurrentWalpapers[screenItem] = wallpaper;
                 }
             }
 
@@ -266,7 +263,11 @@ namespace Giantapp.LiveWallpaper.Engine
                         }
                         else if (CurrentWalpapers.ContainsKey(currentScreen))
                         {
-                            _ = ShowWallpaper(CurrentWalpapers[currentScreen], currentScreen);
+                            //_ = ShowWallpaper(CurrentWalpapers[currentScreen], currentScreen);
+
+                            var wallpaper = CurrentWalpapers[currentScreen];
+                            var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                            await currentRender.ShowWallpaper(wallpaper, currentScreen);
                         }
                         break;
                     case ActionWhenMaximized.Play:
