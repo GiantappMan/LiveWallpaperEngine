@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
+    /// <summary>
+    /// 呈现一种类型的壁纸
+    /// </summary>
     public interface IRender
     {
         WallpaperType SupportedType { get; }

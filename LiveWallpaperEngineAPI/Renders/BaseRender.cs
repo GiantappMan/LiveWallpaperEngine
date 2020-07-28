@@ -11,31 +11,8 @@ using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {
-    public class RenderProcess
-    {
-        public IntPtr HostHandle { get; set; }
-        public IntPtr ReceiveMouseEventHandle { get; set; }
-        public int PId { get; set; }
-    }
-    public class RenderInfo : RenderProcess
-    {
-        public RenderInfo()
-        {
-
-        }
-        public RenderInfo(RenderProcess p)
-        {
-            HostHandle = p.HostHandle;
-            ReceiveMouseEventHandle = p.ReceiveMouseEventHandle;
-            PId = p.PId;
-        }
-        public WallpaperModel Wallpaper { get; set; }
-        public string Screen { get; set; }
-    }
-
     public class BaseRender : IRender
     {
-        //screen,renderInfo
         private readonly List<RenderInfo> _currentWallpapers = new List<RenderInfo>();
 
         private CancellationTokenSource _showWallpaperCts = new CancellationTokenSource();
@@ -183,7 +160,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             {
                 var eventWallpapers = _currentWallpapers.Where(m => m.Wallpaper.IsEventWallpaper).ToList();
                 foreach (var item in eventWallpapers)
-                    DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle);
+                    DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle, item.Screen);
                 if (eventWallpapers.Count > 0)
                     await Task.Run(DesktopMouseEventReciver.Start);
             }

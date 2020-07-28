@@ -4,18 +4,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DZY.WinAPI;
 using EventHook;
 using EventHook.Hooks;
 
 namespace Giantapp.LiveWallpaper.Engine.Utils
 {
+
     /// <summary>
     /// 监听桌面鼠标消息
     /// </summary>
     public static class DesktopMouseEventReciver
     {
-        private static List<IntPtr> _targetWindows = new List<IntPtr>();
+        private class TargetWindow
+        {
+            public TargetWindow(IntPtr handle, string screen)
+            {
+                Handle = handle;
+                Screen = screen;
+            }
+
+            public IntPtr Handle { get; set; }
+            public string Screen { get; set; }
+
+        }
+        private static List<TargetWindow> _targetWindows = new List<TargetWindow>();
         private static EventHookFactory eventHookFactory = new EventHookFactory();
         private static MouseWatcher mouseWatcher;
         private static bool started = false;
@@ -24,15 +38,18 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         //转发间隔，防止消阻塞
         public static int SendInterval { get; set; } = 0;
 
-        public static void AddHandle(IntPtr handle)
+        public static void AddHandle(IntPtr handle, string screen)
         {
             var threadSafeList = ArrayList.Synchronized(_targetWindows);
-            threadSafeList.Add(handle);
+            threadSafeList.Add(new TargetWindow(handle, screen));
         }
         public static void RemoveHandle(IntPtr handle)
         {
             var threadSafeList = ArrayList.Synchronized(_targetWindows);
-            threadSafeList.Remove(handle);
+            var exist = _targetWindows.FirstOrDefault(m => m.Handle == handle);
+            if (exist == null)
+                return;
+            threadSafeList.Remove(exist);
         }
         public static void Stop()
         {
@@ -68,34 +85,38 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                 //if (!supportMessage.Contains(e.Message))
                 //    return;
 
+                int x = e.Point.x;
+                int y = e.Point.y;
+                var currentDisplay = Screen.FromPoint(new System.Drawing.Point(x, y));
+
+                if (x < 0)
+                    x = SystemInformation.VirtualScreen.Width + x - Screen.PrimaryScreen.Bounds.Width;
+                else
+                    x -= Math.Abs(currentDisplay.Bounds.X);
+
+                if (y < 0)
+                    y = SystemInformation.VirtualScreen.Height + y - Screen.PrimaryScreen.Bounds.Height;
+                else
+                    y -= Math.Abs(currentDisplay.Bounds.Y);
+
                 // 根据官网文档中定义，lParam低16位存储鼠标的x坐标，高16位存储y坐标
-                int lParam = e.Point.y;
+                int lParam = y;
                 lParam <<= 16;
-                lParam |= e.Point.x;
+                lParam |= x;
                 // 发送消息给目标窗口
 
                 IntPtr wParam = (IntPtr)0x0020;
-                //switch (e.Message)
-                //{
-                //    case EventHook.Hooks.MouseMessages.WM_LBUTTONDOWN:
-                //    case EventHook.Hooks.MouseMessages.WM_LBUTTONUP:
-                //        wParam = (IntPtr)0x0001;
-                //        break;
-                //    case EventHook.Hooks.MouseMessages.WM_MOUSEMOVE:
-                //        wParam = (IntPtr)0x0020;
-                //        break;
-                //    case EventHook.Hooks.MouseMessages.WM_RBUTTONDOWN:
-                //        wParam = (IntPtr)0x0002;
-                //        break;
-                //}
 
-                //if (wParam == IntPtr.Zero)
-                //    return;
+                foreach (var window in _targetWindows)
+                {
+                    if (window.Screen != currentDisplay.DeviceName)
+                        continue;
 
-                foreach (IntPtr window in _targetWindows)
-                    User32Wrapper.PostMessageW(window, (uint)e.Message, wParam, (IntPtr)lParam);
+                    User32Wrapper.PostMessageW(window.Handle, (uint)e.Message, wParam, (IntPtr)lParam);
+                }
 
-                System.Diagnostics.Debug.WriteLine("Mouse event {0} at point {1},{2}", e.Message.ToString(), e.Point.x, e.Point.y);
+                //System.Diagnostics.Debug.WriteLine("Mouse event {0} --000-- {1},{2}", e.Message.ToString(), e.Point.x, e.Point.y);
+                System.Diagnostics.Debug.WriteLine("Mouse event {0} {1},{2}", e.Message.ToString(), x, y);
             };
 
             started = true;

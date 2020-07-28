@@ -4,16 +4,27 @@ using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
-    //public static class ConstWallpaperTypes
-    //{
-    //    public static Dictionary<WallpaperType, string[]> DefinedType = new Dictionary<WallpaperType, string[]>()
-    //    {
-    //        { WallpaperType.Exe,new string[]{".exe" }},
-    //        { WallpaperType.Video,new string[]{".mp4", ".flv", ".blv", ".avi", ".gif" }},
-    //        { WallpaperType.Image,new string[]{".jpg", ".png", ".jpeg", ".bmp" }},
-    //        { WallpaperType.Web,new string[]{".html", ".htm" }},
-    //    };
-    //}
+    public class RenderProcess
+    {
+        public IntPtr HostHandle { get; set; }
+        public IntPtr ReceiveMouseEventHandle { get; set; }
+        public int PId { get; set; }
+    }
+    public class RenderInfo : RenderProcess
+    {
+        public RenderInfo()
+        {
+
+        }
+        public RenderInfo(RenderProcess p)
+        {
+            HostHandle = p.HostHandle;
+            ReceiveMouseEventHandle = p.ReceiveMouseEventHandle;
+            PId = p.PId;
+        }
+        public WallpaperModel Wallpaper { get; set; }
+        public string Screen { get; set; }
+    }
     public class WallpaperInfo
     {
         public string Description { get; set; }
