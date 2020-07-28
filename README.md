@@ -21,7 +21,7 @@ WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},Wallpap
 	- [x] 鼠标事件转发 (感谢[ADD-SP](https://github.com/ADD-SP)提供的思路)  
 - [x] 视频壁纸
 - [x] Web壁纸
-- [ ] 系统图片壁纸
+- [x] 系统图片壁纸
 - [x] 音量设置
 
 ## 对于开源的期望:

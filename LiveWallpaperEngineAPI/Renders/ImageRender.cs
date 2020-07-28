@@ -17,7 +17,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         IDesktopWallpaper _desktopFactory;
         Dictionary<string, string> _oldWallpapers = new Dictionary<string, string>();
 
-        public ImageRender() : base(WallpaperType.Image, new List<string>() { ".jpg", ".jpeg", ".png", ".bmp" })
+        public ImageRender() : base(WallpaperType.Image, new List<string>() { ".jpg", ".jpeg", ".png", ".bmp" }, false)
         {
             _desktopFactory = DesktopWallpaperFactory.Create();
         }
@@ -63,7 +63,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        protected override Task CloseRender(List<RenderInfo> playingWallpaper, bool isTemporary)
+        protected override Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper, bool isTemporary)
         {
             //临时关闭不用处理
             if (isTemporary)
@@ -74,7 +74,17 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 foreach (var w in playingWallpaper)
                 {
                     string monitoryId = GetMonitoryId(w.Screen);
-                    _desktopFactory.SetWallpaper(monitoryId, GetOldWallpaper(w.Screen));
+                    try
+                    {
+                        var oldWallpaper = GetOldWallpaper(w.Screen);
+                        if (!System.IO.File.Exists(oldWallpaper))
+                            continue;
+                        _desktopFactory.SetWallpaper(monitoryId, oldWallpaper);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex);
+                    }
                 }
             });
         }

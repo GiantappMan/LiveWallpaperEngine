@@ -79,7 +79,7 @@ namespace Giantapp.LiveWallpaper.Engine
             if (wallpaper.Type == null)
             {
                 currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
-                wallpaper.Type = currentRender.SupportedType;
+                wallpaper.Type = currentRender.SupportType;
             }
             else
                 currentRender = RenderFactory.GetRender(wallpaper.Type.Value);

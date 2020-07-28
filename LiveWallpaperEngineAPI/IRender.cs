@@ -10,9 +10,9 @@ namespace Giantapp.LiveWallpaper.Engine
     /// </summary>
     public interface IRender
     {
-        WallpaperType SupportedType { get; }
+        WallpaperType SupportType { get; }
 
-        List<string> SupportedExtension { get; }
+        List<string> SupportExtension { get; }
         /// <summary>
         /// 释放
         /// </summary>

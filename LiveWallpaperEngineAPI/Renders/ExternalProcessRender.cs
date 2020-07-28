@@ -24,33 +24,31 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         private static ProcessJobTracker _pj = new ProcessJobTracker();
         //private List<RenderInfo> _playingRenders = new List<RenderInfo>();
 
-        protected ExternalProcessRender(WallpaperType type, List<string> extension) : base(type, extension)
+        protected ExternalProcessRender(WallpaperType type, List<string> extension, bool mouseEvent = true) : base(type, extension, mouseEvent)
         {
         }
 
-        protected override Task CloseRender(List<RenderInfo> wallpaperRenders, bool isTemporary)
+        protected override async Task InnerCloseWallpaperAsync(List<RenderInfo> wallpaperRenders, bool isTemporary)
         {
             //不论是否临时关闭，都需要关闭进程重启进程
-            return Task.Run(() =>
+
+            foreach (var render in wallpaperRenders)
             {
-                foreach (var render in wallpaperRenders)
+                try
                 {
-                    try
-                    {
-                        var p = Process.GetProcessById(render.PId);
-                        p.Kill();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"InnerCloseWallpaper ex:{ex}");
-                    }
-                    finally
-                    {
-                        //if (_playingRenders.Contains(render))
-                        //    _playingRenders.Remove(render);
-                    }
+                    var p = Process.GetProcessById(render.PId);
+                    p.Kill();
                 }
-            });
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"InnerCloseWallpaper ex:{ex}");
+                }
+                finally
+                {
+                    if (SupportMouseEvent)
+                        await DesktopMouseEventReciver.RemoveHandle(render.ReceiveMouseEventHandle);
+                }
+            }
         }
 
         protected override async Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
@@ -101,7 +99,11 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
             await Task.WhenAll(tmpTasks);
 
-            //_playingRenders = new List<RenderInfo>(result);
+            if (SupportMouseEvent && WallpaperManager.Options.ForwardMouseEvent && wallpaper.EnableMouseEvent)
+            {
+                foreach (var item in result)
+                    await DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle, item.Screen);
+            }
             return result;
         }
 

@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DZY.WinAPI;
 using EventHook;
@@ -38,26 +40,38 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         //转发间隔，防止消阻塞
         public static int SendInterval { get; set; } = 0;
 
-        public static void AddHandle(IntPtr handle, string screen)
+        public static Task AddHandle(IntPtr handle, string screen)
         {
-            var threadSafeList = ArrayList.Synchronized(_targetWindows);
-            threadSafeList.Add(new TargetWindow(handle, screen));
+            return Task.Run(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"AddHandle {handle}");
+                var threadSafeList = ArrayList.Synchronized(_targetWindows);
+                threadSafeList.Add(new TargetWindow(handle, screen));
+                if (threadSafeList.Count > 0)
+                    Start();
+            });
         }
-        public static void RemoveHandle(IntPtr handle)
+        public static Task RemoveHandle(IntPtr handle)
         {
-            var threadSafeList = ArrayList.Synchronized(_targetWindows);
-            var exist = _targetWindows.FirstOrDefault(m => m.Handle == handle);
-            if (exist == null)
-                return;
-            threadSafeList.Remove(exist);
+            return Task.Run(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"RemoveHandle {handle}");
+                var threadSafeList = ArrayList.Synchronized(_targetWindows);
+                var exist = _targetWindows.FirstOrDefault(m => m.Handle == handle);
+                if (exist == null)
+                    return;
+                threadSafeList.Remove(exist);
+                if (threadSafeList.Count == 0)
+                    Stop();
+            });
         }
-        public static void Stop()
+        private static void Stop()
         {
             mouseWatcher?.Stop();
             started = false;
         }
 
-        public static void Start()
+        private static void Start()
         {
             if (started)
                 return;
@@ -116,7 +130,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                 }
 
                 //System.Diagnostics.Debug.WriteLine("Mouse event {0} --000-- {1},{2}", e.Message.ToString(), e.Point.x, e.Point.y);
-                System.Diagnostics.Debug.WriteLine("Mouse event {0} {1},{2}", e.Message.ToString(), x, y);
+                //System.Diagnostics.Debug.WriteLine("Mouse event {0} {1},{2}", e.Message.ToString(), x, y);
             };
 
             started = true;

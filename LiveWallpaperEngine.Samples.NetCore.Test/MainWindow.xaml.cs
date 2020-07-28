@@ -110,17 +110,17 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
         private void MainWindow_Deactivated(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainWindow_Deactivated " + GetActiveWindowTitle());
+            //System.Diagnostics.Debug.WriteLine("MainWindow_Deactivated " + GetActiveWindowTitle());
         }
 
         private void MainWindow_Activated(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainWindow_Activated " + GetActiveWindowTitle());
+            //System.Diagnostics.Debug.WriteLine("MainWindow_Activated " + GetActiveWindowTitle());
         }
 
         private async void btnSelect_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("before ShowWallpaper " + GetActiveWindowTitle());
+            //System.Diagnostics.Debug.WriteLine("before ShowWallpaper " + GetActiveWindowTitle());
             using (var openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "WallpaperSamples";
@@ -133,7 +133,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     await WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
                 }
             }
-            System.Diagnostics.Debug.WriteLine("after ShowWallpaper" + GetActiveWindowTitle());
+            //System.Diagnostics.Debug.WriteLine("after ShowWallpaper" + GetActiveWindowTitle());
             //IntPtr progman = User32Wrapper.FindWindow("Progman", null);
             //User32Wrapper.SetForegroundWindow(window); //change focus from the started window//application.
             //User32Wrapper.SetFocus(window);
@@ -154,7 +154,8 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         private async void btnStop_Click(object sender, RoutedEventArgs e)
         {
             var activeWindowTitle = GetActiveWindowTitle();
-            System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
+            //System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); 
+            var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
             await WallpaperManager.CloseWallpaper(displayIds);
         }
 
