@@ -70,7 +70,7 @@ namespace Giantapp.LiveWallpaper.Engine
             throw new NotImplementedException();
         }
 
-        public static async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public static async Task<bool> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             if (screens.Length == 0)
                 screens = Screens;
@@ -79,6 +79,9 @@ namespace Giantapp.LiveWallpaper.Engine
             if (wallpaper.Type == null)
             {
                 currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                if (currentRender == null)
+                    return false;
+
                 wallpaper.Type = currentRender.SupportType;
             }
             else
@@ -112,6 +115,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
 
             ApplyAudioSource();
+            return true;
         }
 
         public static async Task CloseWallpaper(params string[] screens)
