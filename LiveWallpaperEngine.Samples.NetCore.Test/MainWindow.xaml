@@ -6,7 +6,7 @@
     xmlns:giantappconfiger="clr-namespace:GiantappConfiger;assembly=GiantappConfiger"
     xmlns:local="clr-namespace:LiveWallpaperEngine.Samples.NetCore.Test"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="MainWindow"
+    Title="LiveWallpaperEngine.Samples"
     Width="800"
     Height="450"
     mc:Ignorable="d">

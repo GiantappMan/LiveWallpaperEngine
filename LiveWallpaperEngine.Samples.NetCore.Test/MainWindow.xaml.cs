@@ -83,6 +83,12 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     Text="全屏检测影响所有屏幕",
                                     DefaultValue=true,
                             }},
+                               {
+                                nameof(LiveWallpaperOptions.ForwardMouseEvent),
+                                new DescriptorInfo(){
+                                    Text="转发鼠标事件",
+                                    DefaultValue=true,
+                            }},
                             {
                                 nameof(LiveWallpaperOptions.ScreenOptions),
                                 new DescriptorInfo(){
