@@ -34,7 +34,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             var r = new ProcessStartInfo(playerPath);
 
-            r.Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs";
+            r.Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000";
             r.UseShellExecute = false;
             return r;
         }
