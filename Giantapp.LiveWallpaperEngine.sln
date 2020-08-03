@@ -8,9 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E3554D4E-7CD8-4128-9438-95CDBCDE4B25}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\Build.md = Docs\Build.md
-		Docs\Changelog.md = Docs\Changelog.md
-		Docs\Develop.md = Docs\Develop.md
-		Docs\LiveWallpaperEngineAPI.md = Docs\LiveWallpaperEngineAPI.md
+		Docs\build_webrender.ps1 = Docs\build_webrender.ps1
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -22,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7CA7FDEC-C03
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineAPI", "LiveWallpaperEngineAPI\LiveWallpaperEngineAPI.csproj", "{AAFB595F-C9DA-4F56-84B7-6874608E89CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveWallpaperEngineWebRender", "LiveWallpaperEngineWebRender\LiveWallpaperEngineWebRender.csproj", "{ABC18B70-4250-4281-AE39-F9AC644C6735}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveWallpaperEngineWebRender", "LiveWallpaperEngineWebRender\LiveWallpaperEngineWebRender.csproj", "{ABC18B70-4250-4281-AE39-F9AC644C6735}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
