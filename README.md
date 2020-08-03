@@ -12,6 +12,10 @@ WallpaperManager.Initlize(Dispatcher);
 WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.mp4"},WallpaperManager.Screens[0])
 //显示exe壁纸
 WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},WallpaperManager.Screens[0])
+//显示html壁纸
+WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.html"},WallpaperManager.Screens[0])
+//显示图片壁纸
+WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperManager.Screens[0])
 ```
 
 ## 功能目标：
