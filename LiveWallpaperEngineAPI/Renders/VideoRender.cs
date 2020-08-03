@@ -1,4 +1,4 @@
-﻿using SevenZipExtractor;
+﻿using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         }
 
-        protected override ProcessStartInfo GenerateProcessInfo(string path)
+        protected override ProcessStartInfo GetRenderExeInfo(string path)
         {
             //文档：https://mpv.io/manual/stable/
             var assembly = Assembly.GetEntryAssembly();
@@ -25,17 +25,18 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             if (!File.Exists(playerPath) && File.Exists(zipPath))
             {
-                using ArchiveFile archiveFile = new ArchiveFile(zipPath);
+                SevenZip archiveFile = new SevenZip(zipPath);
                 archiveFile.Extract($@"{appDir}\players\mpv");
             }
 
             if (!File.Exists(playerPath))
                 return null;
 
-            var r = new ProcessStartInfo(playerPath);
-
-            r.Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000";
-            r.UseShellExecute = false;
+            ProcessStartInfo r = new ProcessStartInfo(playerPath)
+            {
+                Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000",
+                UseShellExecute = false
+            };
             return r;
         }
     }

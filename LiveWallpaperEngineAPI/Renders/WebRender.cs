@@ -1,9 +1,13 @@
 ﻿using DZY.WinAPI;
-using SevenZipExtractor;
+using Giantapp.LiveWallpaper.Engine.Utils;
+using SharpCompress.Archives;
+using SharpCompress.Archives.SevenZip;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +22,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         }
 
-        protected override ProcessStartInfo GenerateProcessInfo(string path)
+        protected override ProcessStartInfo GetRenderExeInfo(string path)
         {
             //文档：https://mpv.io/manual/stable/
             var assembly = Assembly.GetEntryAssembly();
@@ -28,18 +32,18 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             if (!File.Exists(playerPath) && File.Exists(zipPath))
             {
-                using ArchiveFile archiveFile = new ArchiveFile(zipPath);
+                SevenZip archiveFile = new SevenZip(zipPath);
                 archiveFile.Extract($@"{appDir}\players\web");
             }
 
             if (!File.Exists(playerPath))
                 return null;
 
-            var r = new ProcessStartInfo(playerPath);
-
-            //r.Arguments = $"\"{path}\" --position=-10000,-10000";
-            r.Arguments = $"\"{path}\" --position=-0,0";
-            r.UseShellExecute = false;
+            var r = new ProcessStartInfo(playerPath)
+            {
+                Arguments = $"\"{path}\" --position=-0,0",
+                UseShellExecute = false
+            };
             return r;
         }
 

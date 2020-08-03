@@ -107,7 +107,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             return result;
         }
 
-        protected virtual ProcessStartInfo GenerateProcessInfo(string path)
+        protected virtual ProcessStartInfo GetRenderExeInfo(string path)
         {
             return new ProcessStartInfo(path);
         }
@@ -119,7 +119,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 sw.Start();
                 int timeout = 30 * 1000;
 
-                ProcessStartInfo info = GenerateProcessInfo(path);
+                ProcessStartInfo info = GetRenderExeInfo(path);
                 if (info == null)
                     return new RenderProcess();
                 info.WindowStyle = ProcessWindowStyle.Maximized;
