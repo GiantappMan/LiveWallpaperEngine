@@ -131,7 +131,8 @@ namespace LiveWallpaperEngineAPI
             {
                 await Task.Run(() =>
                 {
-                    File.Delete(oldPreview);
+                    if (oldPreview != null)
+                        File.Delete(oldPreview);
                     IOHelper.CopyFileToDir(previewPath, destDir);
                 });
             }
