@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
@@ -46,5 +48,26 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 转发鼠标事件
         /// </summary>
         public bool ForwardMouseEvent { get; set; } = true;
+
+        private string _externalPlayerFolder;
+        /// <summary>
+        /// 视频播放器，浏览器等存储位置
+        /// </summary>
+        public string ExternalPlayerFolder
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_externalPlayerFolder))
+                {
+                    //默认位置
+                    var assembly = Assembly.GetEntryAssembly();
+                    string appDir = Path.GetDirectoryName(assembly.Location);
+                    return $@"{appDir}\players\";
+                }
+
+                return _externalPlayerFolder;
+            }
+            set => _externalPlayerFolder = value;
+        }
     }
 }

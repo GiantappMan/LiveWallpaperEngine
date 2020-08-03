@@ -42,5 +42,11 @@
             <giantappconfiger:ConfigControl x:Name="configer" BorderBrush="Gray" />
         </ScrollViewer>
         <Button Grid.Row="2" Click="btnApply_Click">应用设置</Button>
+        <Grid
+            x:Name="popup"
+            Background="Gray"
+            Visibility="Collapsed">
+            <TextBlock x:Name="txtPopup" />
+        </Grid>
     </Grid>
 </Window>

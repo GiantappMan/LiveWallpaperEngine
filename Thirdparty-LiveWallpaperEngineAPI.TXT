@@ -16,15 +16,13 @@ Copyright © Mark Heath 2020
 License available at https://github.com/naudio/NAudio/blob/master/license.txt
 
 
-License notice for SevenZipExtractor (v1.0.15)
+License notice for SharpCompress (v0.26.0)
 ------------------------------------
 
-https://github.com/adoconnection/SevenZipExtractor
-
-Copyright 2020
+https://github.com/adamhathcock/sharpcompress at a7944f28c5de942859f33070f41b18479ab81eee
 
 
-License notice for Microsoft.NETCore.Platforms (v3.1.0)
+License notice for Microsoft.NETCore.Platforms (v3.1.1)
 ------------------------------------
 
 https://github.com/dotnet/corefx
@@ -73,6 +71,18 @@ Available at https://licenses.nuget.org/MIT
 
 
 License notice for System.Security.Principal.Windows (v4.7.0)
+------------------------------------
+
+https://github.com/dotnet/corefx
+
+Copyright © Microsoft Corporation. All rights reserved.
+
+Licensed under MIT
+
+Available at https://licenses.nuget.org/MIT
+
+
+License notice for System.Text.Encoding.CodePages (v4.7.1)
 ------------------------------------
 
 https://github.com/dotnet/corefx

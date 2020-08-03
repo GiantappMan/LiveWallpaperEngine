@@ -14,11 +14,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     public class BaseRender : IRender
     {
         private readonly List<RenderInfo> _currentWallpapers = new List<RenderInfo>();
-
         private CancellationTokenSource _showWallpaperCts = new CancellationTokenSource();
-
         public WallpaperType SupportType { get; private set; }
-
         public List<string> SupportExtension { get; private set; }
         public bool SupportMouseEvent { get; private set; }
 
@@ -28,7 +25,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             SupportExtension = extension;
             SupportMouseEvent = supportMouseEvent;
         }
-        public async Task ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public async Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             foreach (var item in screens)
                 Debug.WriteLine($"show {GetType().Name} {item}");
@@ -49,18 +46,21 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 return ok;
             }).ToArray();
 
+            if (changedScreen.Length > 0)
+            {
+                //关闭已经展现的壁纸
+                await InnerCloseWallpaperAsync(changedRender, true);
 
-            if (changedScreen.Length == 0)
-                return;
+                _showWallpaperCts = new CancellationTokenSource();
+                var showResult = await InnerShowWallpaper(wallpaper, _showWallpaperCts.Token, changedScreen);
+                if (!showResult.Ok)
+                    return showResult;
 
-            //关闭已经展现的壁纸
-            await InnerCloseWallpaperAsync(changedRender);
+                //更新当前壁纸
+                showResult.RenderInfos.ForEach(m => _currentWallpapers.Add(m));
+            }
 
-            _showWallpaperCts = new CancellationTokenSource();
-            List<RenderInfo> infos = await InnerShowWallpaper(wallpaper, _showWallpaperCts.Token, changedScreen);
-
-            //更新当前壁纸
-            infos.ForEach(m => _currentWallpapers.Add(m));
+            return new ShowWallpaperResult() { Ok = true };
         }
         public async Task CloseWallpaperAsync(params string[] screens)
         {
@@ -88,9 +88,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         /// 可重载，处理具体的关闭逻辑
         /// </summary>
         /// <param name="playingWallpaper"></param>
-        /// <param name="isTemporary">是否是临时关闭，临时关闭表示马上又会继续播放其他壁纸</param>
+        /// <param name="closeBeforeOpening">是否是临时关闭，临时关闭表示马上又会继续播放其他壁纸</param>
         /// <returns></returns>
-        protected virtual Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper, bool isTemporary = false)
+        protected virtual Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper, bool closeBeforeOpening = false)
         {
             return Task.CompletedTask;
         }
@@ -150,13 +150,14 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             AudioHelper.SetVolume(playingWallpaper.PId, v);
         }
 
-        protected virtual Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected virtual Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
-            return Task.FromResult(screens.Select(m => new RenderInfo()
+            var infos = screens.Select(m => new RenderInfo()
             {
                 Wallpaper = wallpaper,
                 Screen = m
-            }).ToList());
+            }).ToList();
+            return Task.FromResult(new ShowWallpaperResult() { RenderInfos = infos, Ok = true });
         }
     }
 }

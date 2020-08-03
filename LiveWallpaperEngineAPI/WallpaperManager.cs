@@ -31,6 +31,19 @@ namespace Giantapp.LiveWallpaper.Engine
         //Dictionary<DeviceName，WallpaperModel>
         public static Dictionary<string, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<string, WallpaperModel>();
 
+        public static bool Initialized { get; private set; }
+
+        public static List<(WallpaperType Type, string DownloadUrl)> PlayerUrls = new List<(WallpaperType Type, string DownloadUrl)>()
+        {
+            (WallpaperType.Video,"https://gitee.com/DaZiYuan/LiveWallpaperEngine/attach_files/446813/download"),
+            (WallpaperType.Video,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/mpv.7z"),
+            (WallpaperType.Web,"https://gitee.com/DaZiYuan/LiveWallpaperEngine/attach_files/446814/download"),
+            (WallpaperType.Web,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/web.7z"),
+        };
+
+        public static event EventHandler<DownloadPlayerProgressArgs> DownloadPlayerProgressChangedEvent;
+        public static event EventHandler<SetupPlayerProgressArgs> SetupPlayerProgressChangedEvent;
+
         #endregion
 
         #region public
@@ -43,6 +56,7 @@ namespace Giantapp.LiveWallpaper.Engine
             RenderFactory.Renders.Add(new ImageRender());
             _uiDispatcher = dispatcher;
             Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
+            Initialized = true;
         }
 
         internal static void UIInvoke(Action a)
@@ -70,8 +84,11 @@ namespace Giantapp.LiveWallpaper.Engine
             throw new NotImplementedException();
         }
 
-        public static async Task<bool> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public static async Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
+            if (!Initialized)
+                throw new ArgumentException("You need to initialize the SDK first");
+
             if (screens.Length == 0)
                 screens = Screens;
 
@@ -80,7 +97,12 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                 if (currentRender == null)
-                    return false;
+                    return new ShowWallpaperResult()
+                    {
+                        Ok = false,
+                        Error = ShowWallpaperResult.ErrorType.NoRender,
+                        Message = "This wallpaper type is not supported"
+                    };
 
                 wallpaper.Type = currentRender.SupportType;
             }
@@ -95,27 +117,24 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 //当前屏幕没有壁纸
                 if (!CurrentWalpapers.ContainsKey(screenItem))
-                {
-                    await currentRender.ShowWallpaper(wallpaper, screenItem);
-                    CurrentWalpapers.Add(screenItem, wallpaper);
-                }
-                else
-                {
-                    var tmpWallpaper = CurrentWalpapers[screenItem];
+                    CurrentWalpapers.Add(screenItem, null);
 
-                    //壁纸 路径相同
-                    if (tmpWallpaper.Path == wallpaper.Path)
-                        continue;
+                var existWallpaper = CurrentWalpapers[screenItem];
 
-                    //关闭之前的壁纸
-                    await CloseWallpaper(screenItem);
-                    await currentRender.ShowWallpaper(wallpaper, screenItem);
-                    CurrentWalpapers[screenItem] = wallpaper;
-                }
+                //壁纸 路径相同
+                if (existWallpaper != null && existWallpaper.Path == wallpaper.Path)
+                    continue;
+
+                //关闭之前的壁纸
+                await CloseWallpaper(screenItem);
+                var showResult = await currentRender.ShowWallpaper(wallpaper, screenItem);
+                if (!showResult.Ok)
+                    return showResult;
+                CurrentWalpapers[screenItem] = wallpaper;
             }
 
             ApplyAudioSource();
-            return true;
+            return new ShowWallpaperResult() { Ok = true };
         }
 
         public static async Task CloseWallpaper(params string[] screens)
@@ -175,6 +194,16 @@ namespace Giantapp.LiveWallpaper.Engine
                     currentRender.Resume(screens);
                 }
             }
+        }
+
+        public static Task SetupPlayer(WallpaperType type, string downloadPosition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static Task<bool> DownloadPlayer(string DownloadUrl, string downloadPosition)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

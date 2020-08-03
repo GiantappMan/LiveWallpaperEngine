@@ -4,6 +4,36 @@ using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
+    public class DownloadPlayerProgressArgs : EventArgs
+    {
+        public string DownloadUrl { get; set; }
+        public bool Completed { get; set; }
+        public string Error { get; set; }
+        public float ProgressPercent { get; set; }
+    }
+    public class SetupPlayerProgressArgs : DownloadPlayerProgressArgs
+    {
+        public string FilePath { get; set; }
+
+#pragma warning disable IDE0051 // 删除未使用的私有成员
+        private new string DownloadUrl { get; set; }
+#pragma warning restore IDE0051 // 删除未使用的私有成员
+    }
+    public class ShowWallpaperResult
+    {
+        public enum ErrorType
+        {
+            None,
+            NoPlayer,
+            Exception,
+            NoRender
+        }
+        public bool Ok { get; set; }
+        public ErrorType Error { get; set; }
+        public string Message { get; set; }
+        public List<RenderInfo> RenderInfos { get; set; }
+    }
+
     public class RenderProcess
     {
         public IntPtr HostHandle { get; set; }

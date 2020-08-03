@@ -21,14 +21,13 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     //目前所有动态壁纸都是这个类实现，通过启用外部exe来渲染，以防止崩溃。
     public class ExternalProcessRender : BaseRender
     {
-        private static ProcessJobTracker _pj = new ProcessJobTracker();
-        //private List<RenderInfo> _playingRenders = new List<RenderInfo>();
+        private static readonly ProcessJobTracker _pj = new ProcessJobTracker();
 
         protected ExternalProcessRender(WallpaperType type, List<string> extension, bool mouseEvent = true) : base(type, extension, mouseEvent)
         {
         }
 
-        protected override async Task InnerCloseWallpaperAsync(List<RenderInfo> wallpaperRenders, bool isTemporary)
+        protected override async Task InnerCloseWallpaperAsync(List<RenderInfo> wallpaperRenders, bool closeBeforeOpening)
         {
             //不论是否临时关闭，都需要关闭进程重启进程
 
@@ -51,15 +50,19 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        protected override async Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected override async Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
-            //var changedRender = _playingRenders.Where(m => screens.Contains(m.Screen) || wallpaper.Path != m.Wallpaper.Path).ToList();
-            ////关闭 已经修改壁纸路径的render，重启开进程            
-            //if (changedRender.Count > 0)
-            //    await InnerCloseWallpaper(changedRender);
-
-            List<RenderInfo> result = new List<RenderInfo>();
+            List<RenderInfo> infos = new List<RenderInfo>();
             List<Task> tmpTasks = new List<Task>();
+
+            ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper.Path));
+            if (pInfo == null)
+                return new ShowWallpaperResult()
+                {
+                    Ok = false,
+                    Error = ShowWallpaperResult.ErrorType.NoPlayer,
+                };
+
             foreach (var screenItem in screens)
             {
                 if (ct.IsCancellationRequested)
@@ -68,7 +71,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 {
                     try
                     {
-                        var processResult = await StartProcess(wallpaper.Path, ct);
+                        var processResult = await StartProcess(pInfo, ct);
 
                         //壁纸启动失败
                         if (processResult.HostHandle == IntPtr.Zero)
@@ -77,7 +80,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                         var host = LiveWallpaperRenderForm.GetHost(screenItem);
                         host!.ShowWallpaper(processResult.HostHandle);
 
-                        result.Add(new RenderInfo(processResult)
+                        infos.Add(new RenderInfo(processResult)
                         {
                             Wallpaper = wallpaper,
                             Screen = screenItem
@@ -90,9 +93,6 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     {
                         Debug.WriteLine(ex);
                     }
-                    finally
-                    {
-                    }
                 }, ct);
 
                 tmpTasks.Add(task);
@@ -101,17 +101,21 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             if (SupportMouseEvent && WallpaperManager.Options.ForwardMouseEvent && wallpaper.EnableMouseEvent)
             {
-                foreach (var item in result)
+                foreach (var item in infos)
                     await DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle, item.Screen);
             }
-            return result;
+            return new ShowWallpaperResult()
+            {
+                Ok = true,
+                RenderInfos = infos
+            };
         }
 
         protected virtual ProcessStartInfo GetRenderExeInfo(string path)
         {
             return new ProcessStartInfo(path);
         }
-        protected virtual Task<RenderProcess> StartProcess(string path, CancellationToken ct)
+        protected virtual Task<RenderProcess> StartProcess(ProcessStartInfo info, CancellationToken ct)
         {
             return Task.Run(() =>
             {
@@ -119,9 +123,6 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 sw.Start();
                 int timeout = 30 * 1000;
 
-                ProcessStartInfo info = GetRenderExeInfo(path);
-                if (info == null)
-                    return new RenderProcess();
                 info.WindowStyle = ProcessWindowStyle.Maximized;
                 info.CreateNoWindow = true;
                 Process targetProcess = Process.Start(info);

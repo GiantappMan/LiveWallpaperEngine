@@ -11,6 +11,7 @@ using DZY.WinAPI;
 using System;
 using System.Text;
 using System.Windows.Forms.Design;
+using System.IO;
 
 namespace LiveWallpaperEngine.Samples.NetCore.Test
 {
@@ -136,7 +137,51 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
-                    await WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
+                    var wp = new WallpaperModel() { Path = openFileDialog.FileName };
+                    var result = await WallpaperManager.ShowWallpaper(wp, displayScreen);
+                    if (!result.Ok)
+                    {
+                        if (result.Error == ShowWallpaperResult.ErrorType.NoPlayer)
+                        {
+                            var r = System.Windows.MessageBox.Show($"{result.Error} {result.Message} ", "", MessageBoxButton.OKCancel);
+                            if (r == MessageBoxResult.OK)
+                            {
+                                popup.Visibility = Visibility.Visible;
+                                var url = WallpaperManager.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type);
+                                string downloadPosition = Path.GetRandomFileName();
+
+
+                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressArgs e)
+                                {
+                                    Dispatcher.BeginInvoke(new Action(() =>
+                                    {
+                                        txtPopup.Text = $"设置中{e.ProgressPercent}";
+                                    }));
+                                }
+
+                                void WallpaperManager_DownloadPlayerProgressChangedEvent(object sender, DownloadPlayerProgressArgs e)
+                                {
+                                    Dispatcher.BeginInvoke(new Action(() =>
+                                    {
+                                        txtPopup.Text = $"下载中{e.ProgressPercent} ,{e.DownloadUrl}";
+                                    }));
+                                }
+
+                                WallpaperManager.DownloadPlayerProgressChangedEvent += WallpaperManager_DownloadPlayerProgressChangedEvent;
+                                await WallpaperManager.DownloadPlayer(url.DownloadUrl, downloadPosition);
+                                WallpaperManager.DownloadPlayerProgressChangedEvent -= WallpaperManager_DownloadPlayerProgressChangedEvent;
+
+                                WallpaperManager.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
+                                await WallpaperManager.SetupPlayer(wp.Type.Value, downloadPosition);
+                                WallpaperManager.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
+
+                                popup.Visibility = Visibility.Collapsed;
+                            }
+
+                        }
+                        else
+                            System.Windows.MessageBox.Show($"{result.Error} {result.Message} ");
+                    }
                 }
             }
             //System.Diagnostics.Debug.WriteLine("after ShowWallpaper" + GetActiveWindowTitle());
@@ -145,6 +190,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             //User32Wrapper.SetFocus(window);
             Activate();
         }
+
         private string GetActiveWindowTitle()
         {
             const int nChars = 256;

@@ -22,7 +22,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             _desktopFactory = DesktopWallpaperFactory.Create();
         }
 
-        protected override Task<List<RenderInfo>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected override Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
             return Task.Run(() =>
             {
@@ -34,11 +34,16 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     _desktopFactory.SetWallpaper(monitoryId, wallpaper.Path);
                 }
 
-                return screens.Select(m => new RenderInfo()
+                List<RenderInfo> infos = screens.Select(m => new RenderInfo()
                 {
                     Wallpaper = wallpaper,
                     Screen = m
                 }).ToList();
+                return new ShowWallpaperResult()
+                {
+                    Ok = true,
+                    RenderInfos = infos
+                };
             });
         }
 
@@ -63,10 +68,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        protected override Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper, bool isTemporary)
+        protected override Task InnerCloseWallpaperAsync(List<RenderInfo> playingWallpaper, bool closeBeforeOpening)
         {
             //临时关闭不用处理
-            if (isTemporary)
+            if (closeBeforeOpening)
                 return Task.CompletedTask;
 
             return Task.Run(() =>

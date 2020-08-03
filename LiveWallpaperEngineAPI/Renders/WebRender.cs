@@ -25,31 +25,30 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         protected override ProcessStartInfo GetRenderExeInfo(string path)
         {
             //文档：https://mpv.io/manual/stable/
-            var assembly = Assembly.GetEntryAssembly();
-            string appDir = Path.GetDirectoryName(assembly.Location);
-            string playerPath = $@"{appDir}\players\web\LiveWallpaperEngineWebRender.exe";
-            string zipPath = $@"{appDir}\players\web.7z";
-
-            if (!File.Exists(playerPath) && File.Exists(zipPath))
-            {
-                SevenZip archiveFile = new SevenZip(zipPath);
-                archiveFile.Extract($@"{appDir}\players\web");
-            }
-
+            string playerPath = Path.Combine(WallpaperManager.Options.ExternalPlayerFolder, @"web_v0\LiveWallpaperEngineWebRender.exe");
             if (!File.Exists(playerPath))
                 return null;
 
+            //if (!File.Exists(playerPath) && File.Exists(zipPath))
+            //{
+            //    SevenZip archiveFile = new SevenZip(zipPath);
+            //    archiveFile.Extract($@"{appDir}\players\web");
+            //}
+
+            //if (!File.Exists(playerPath))
+            //    return null;
+
             var r = new ProcessStartInfo(playerPath)
             {
-                Arguments = $"\"{path}\" --position=-0,0",
+                Arguments = $"\"{path}\" --position=-10000,-10000",
                 UseShellExecute = false
             };
             return r;
         }
 
-        protected override async Task<RenderProcess> StartProcess(string path, CancellationToken ct)
+        protected override async Task<RenderProcess> StartProcess(ProcessStartInfo info, CancellationToken ct)
         {
-            var result = await base.StartProcess(path, ct);
+            var result = await base.StartProcess(info, ct);
             return await Task.Run(() =>
              {
                  var p = Process.GetProcessById(result.PId);
