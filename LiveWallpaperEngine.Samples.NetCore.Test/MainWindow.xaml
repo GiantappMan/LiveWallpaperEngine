@@ -44,7 +44,8 @@
         <Button Grid.Row="2" Click="btnApply_Click">应用设置</Button>
         <Grid
             x:Name="popup"
-            Background="Gray"
+            Grid.RowSpan="3"
+            Background="LightGray"
             Visibility="Collapsed">
             <TextBlock x:Name="txtPopup" />
         </Grid>

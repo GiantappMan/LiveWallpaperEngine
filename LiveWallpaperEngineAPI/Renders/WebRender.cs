@@ -17,6 +17,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     //本想单进程渲染多屏幕，但是发现声音不可控。故改为单进程只渲染一个屏幕
     public class WebRender : ExternalProcessRender
     {
+        public static string PlayerFolderName { get; } = "web0";
         public WebRender() : base(WallpaperType.Web, new List<string>() { ".html", ".htm" })
         {
 
@@ -25,18 +26,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         protected override ProcessStartInfo GetRenderExeInfo(string path)
         {
             //文档：https://mpv.io/manual/stable/
-            string playerPath = Path.Combine(WallpaperManager.Options.ExternalPlayerFolder, @"web_v0\LiveWallpaperEngineWebRender.exe");
+            string playerPath = Path.Combine(WallpaperManager.Options.ExternalPlayerFolder, $@"{PlayerFolderName}\LiveWallpaperEngineWebRender.exe");
             if (!File.Exists(playerPath))
                 return null;
-
-            //if (!File.Exists(playerPath) && File.Exists(zipPath))
-            //{
-            //    SevenZip archiveFile = new SevenZip(zipPath);
-            //    archiveFile.Extract($@"{appDir}\players\web");
-            //}
-
-            //if (!File.Exists(playerPath))
-            //    return null;
 
             var r = new ProcessStartInfo(playerPath)
             {

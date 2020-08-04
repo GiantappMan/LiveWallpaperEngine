@@ -143,13 +143,12 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     {
                         if (result.Error == ShowWallpaperResult.ErrorType.NoPlayer)
                         {
-                            var r = System.Windows.MessageBox.Show($"{result.Error} {result.Message} ", "", MessageBoxButton.OKCancel);
+                            var r = System.Windows.MessageBox.Show($"{result.Error} {result.Message}， Whether to download the player？", "", MessageBoxButton.OKCancel);
                             if (r == MessageBoxResult.OK)
                             {
                                 popup.Visibility = Visibility.Visible;
+                                txtPopup.Text = "downloading...";
                                 var url = WallpaperManager.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type);
-                                string downloadPosition = Path.GetRandomFileName();
-
 
                                 void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressArgs e)
                                 {
@@ -168,11 +167,17 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 }
 
                                 WallpaperManager.DownloadPlayerProgressChangedEvent += WallpaperManager_DownloadPlayerProgressChangedEvent;
-                                await WallpaperManager.DownloadPlayer(url.DownloadUrl, downloadPosition);
+                                string downloadFile = await WallpaperManager.DownloadPlayer(wp.Type.Value, url.DownloadUrl);
                                 WallpaperManager.DownloadPlayerProgressChangedEvent -= WallpaperManager_DownloadPlayerProgressChangedEvent;
 
+                                if (downloadFile == null)
+                                {
+                                    System.Windows.MessageBox.Show("download failed");
+                                    return;
+                                }
+
                                 WallpaperManager.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
-                                await WallpaperManager.SetupPlayer(wp.Type.Value, downloadPosition);
+                                await WallpaperManager.SetupPlayer(wp.Type.Value, downloadFile);
                                 WallpaperManager.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 popup.Visibility = Visibility.Collapsed;

@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -35,9 +38,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static List<(WallpaperType Type, string DownloadUrl)> PlayerUrls = new List<(WallpaperType Type, string DownloadUrl)>()
         {
-            (WallpaperType.Video,"https://gitee.com/DaZiYuan/LiveWallpaperEngine/attach_files/446813/download"),
             (WallpaperType.Video,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/mpv.7z"),
-            (WallpaperType.Web,"https://gitee.com/DaZiYuan/LiveWallpaperEngine/attach_files/446814/download"),
             (WallpaperType.Web,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/web.7z"),
         };
 
@@ -196,14 +197,108 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        public static Task SetupPlayer(WallpaperType type, string downloadPosition)
+        public static async Task SetupPlayer(WallpaperType type, string zipFile)
         {
-            throw new NotImplementedException();
+
+            void ArchiveFile_UnzipProgressChanged(object sender, SevenZipUnzipProgressArgs e)
+            {
+                SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressArgs()
+                {
+                    Completed = false,
+                    FilePath = zipFile,
+                    ProgressPercent = e.Progress,
+                });
+            }
+
+            if (File.Exists(zipFile))
+            {
+                string distFolder = null;
+                switch (type)
+                {
+                    case WallpaperType.Web:
+                        distFolder = WebRender.PlayerFolderName;
+                        break;
+                    case WallpaperType.Video:
+                        distFolder = VideoRender.PlayerFolderName;
+                        break;
+                }
+                SevenZip archiveFile = new SevenZip(zipFile);
+                archiveFile.UnzipProgressChanged += ArchiveFile_UnzipProgressChanged;
+                string dist = $@"{Options.ExternalPlayerFolder}\{distFolder}";
+
+                try
+                {
+                    await Task.Run(() => archiveFile.Extract(dist));
+                    SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressArgs()
+                    {
+                        Completed = true,
+                        FilePath = zipFile,
+                        ProgressPercent = 100
+                    });
+                }
+                catch (Exception ex)
+                {
+                    SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressArgs()
+                    {
+                        Completed = true,
+                        FilePath = zipFile,
+                        Error = ex.Message,
+                        ProgressPercent = 100
+                    });
+                }
+                finally
+                {
+                    archiveFile.UnzipProgressChanged -= ArchiveFile_UnzipProgressChanged;
+                }
+
+            }
         }
 
-        public static Task<bool> DownloadPlayer(string DownloadUrl, string downloadPosition)
+        public static async Task<string> DownloadPlayer(WallpaperType type, string url)
         {
-            throw new NotImplementedException();
+            string downloadFile = Path.Combine(Options.ExternalPlayerFolder, $"tmp{type}");
+            if (File.Exists(downloadFile))
+                return downloadFile;
+
+            void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+            {
+                var args = new DownloadPlayerProgressArgs()
+                {
+                    Completed = true,
+                    DownloadUrl = url,
+                    ProgressPercent = 100,
+                    Error = e.Error?.ToString()
+                };
+                DownloadPlayerProgressChangedEvent?.Invoke(e, args);
+            }
+            void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+            {
+                var args = new DownloadPlayerProgressArgs()
+                {
+                    Completed = false,
+                    DownloadUrl = url,
+                    ProgressPercent = (float)e.BytesReceived / e.TotalBytesToReceive
+                };
+                DownloadPlayerProgressChangedEvent?.Invoke(e, args);
+            }
+
+            var client = new WebClient();
+            client.DownloadProgressChanged += Client_DownloadProgressChanged;
+            client.DownloadFileCompleted += Client_DownloadFileCompleted;
+            try
+            {
+                await client.DownloadFileTaskAsync(url, downloadFile);
+                return downloadFile;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                client.DownloadProgressChanged -= Client_DownloadProgressChanged;
+                client.DownloadFileCompleted -= Client_DownloadFileCompleted;
+            }
         }
 
         #endregion
@@ -311,5 +406,15 @@ namespace Giantapp.LiveWallpaper.Engine
         }
 
         #endregion
+    }
+
+    public class MyWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            var request = (HttpWebRequest)base.GetWebRequest(address);
+            request.AllowAutoRedirect = true;
+            return request;
+        }
     }
 }
