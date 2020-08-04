@@ -18,7 +18,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
     {
         private readonly string _zipFile;
         private long _total;
-        private long _current;
+        private long _completed;
         public event EventHandler<SevenZipUnzipProgressArgs> UnzipProgressChanged;
 
 
@@ -30,39 +30,48 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         internal void Extract(string path)
         {
             _total = 0;
+            _completed = 0;
             using var archive = SevenZipArchive.Open(_zipFile);
-            try
+            //try
+            //{
+            //    archive.CompressedBytesRead += Archive_CompressedBytesRead;
+            _total = archive.Entries.Sum(m => m.Size);
+            foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
             {
-                archive.CompressedBytesRead += Archive_CompressedBytesRead;
-                _total = archive.Entries.Count;
-                foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                entry.WriteToDirectory(path, new ExtractionOptions()
                 {
-                    entry.WriteToDirectory(path, new ExtractionOptions()
-                    {
-                        ExtractFullPath = true,
-                        Overwrite = true
-                    });
-                }
+                    ExtractFullPath = true,
+                    Overwrite = true
+                });
+
+                _completed += entry.Size;
+                UnzipProgressChanged?.Invoke(this, new SevenZipUnzipProgressArgs()
+                {
+                    Progress = (float)_completed / _total
+                });
+                //System.Diagnostics.Debug.WriteLine($"{_completed} {_total}");
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                archive.CompressedBytesRead -= Archive_CompressedBytesRead;
-            }
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+            //    finally
+            //    {
+            //        archive.CompressedBytesRead -= Archive_CompressedBytesRead;
+            //    }
         }
 
-        private void Archive_CompressedBytesRead(object sender, CompressedBytesReadEventArgs e)
-        {
-            _current++;
-            //System.Diagnostics.Debug.WriteLine($"{e.CompressedBytesRead} {e.CurrentFilePartCompressedBytesRead}");
-            //System.Diagnostics.Debug.WriteLine($"-----------{_tmp} {_total}");
-            UnzipProgressChanged?.Invoke(this, new SevenZipUnzipProgressArgs()
-            {
-                Progress = (float)_current / _total
-            });
-        }
+        //private void Archive_CompressedBytesRead(object sender, CompressedBytesReadEventArgs e)
+        //{
+        //    _completed += e.CompressedBytesRead;
+        //    //System.Diagnostics.Debug.WriteLine($"{e.CompressedBytesRead} {e.CurrentFilePartCompressedBytesRead}");
+        //    //System.Diagnostics.Debug.WriteLine($"-----------{_tmp} {_total}");
+        //    UnzipProgressChanged?.Invoke(this, new SevenZipUnzipProgressArgs()
+        //    {
+        //        Progress = (float)_completed / _total
+        //    });
+        //    System.Diagnostics.Debug.WriteLine($"{_completed} {_total}");
+        //}
     }
 }

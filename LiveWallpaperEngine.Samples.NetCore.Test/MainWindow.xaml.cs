@@ -154,7 +154,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 {
                                     Dispatcher.BeginInvoke(new Action(() =>
                                     {
-                                        txtPopup.Text = $"设置中{e.ProgressPercent}";
+                                        txtPopup.Text = $"unpacking... {(int)(e.ProgressPercent * 100)}%";
                                     }));
                                 }
 
@@ -162,7 +162,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 {
                                     Dispatcher.BeginInvoke(new Action(() =>
                                     {
-                                        txtPopup.Text = $"下载中{e.ProgressPercent} ,{e.DownloadUrl}";
+                                        txtPopup.Text = $"downloading... {e.DownloadUrl}  {((int)e.ProgressPercent * 100)}% ";
                                     }));
                                 }
 
@@ -181,8 +181,8 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 WallpaperManager.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 popup.Visibility = Visibility.Collapsed;
+                                result = await WallpaperManager.ShowWallpaper(wp, displayScreen);
                             }
-
                         }
                         else
                             System.Windows.MessageBox.Show($"{result.Error} {result.Message} ");
