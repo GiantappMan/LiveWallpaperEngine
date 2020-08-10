@@ -254,7 +254,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     Completed = false,
                     Path = zipFile,
-                    ProgressPercent = e.Progress,
+                    ProgressPercentage = e.Progress,
                     ActionType = ProgressChangedArgs.Type.Unpacking
                 });
             }
@@ -282,7 +282,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     {
                         Completed = true,
                         Path = zipFile,
-                        ProgressPercent = 100,
+                        ProgressPercentage = 1,
                         ActionType = ProgressChangedArgs.Type.Unpacking
                     });
                 }
@@ -311,7 +311,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     {
                         Completed = false,
                         Path = url,
-                        ProgressPercent = (float)c / t,
+                        ProgressPercentage = (float)c / t,
                         ActionType = ProgressChangedArgs.Type.Downloading
                     };
                     SetupPlayerProgressChangedEvent?.Invoke(null, args);
@@ -321,7 +321,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     Completed = true,
                     Path = url,
-                    ProgressPercent = 100,
+                    ProgressPercentage = 1,
                     ActionType = ProgressChangedArgs.Type.Downloading
                 });
 
@@ -339,7 +339,15 @@ namespace Giantapp.LiveWallpaper.Engine
         public static async Task DownloadFileAsync(string uri, string distFile, CancellationToken cancellationToken = default, Action<long, long> progressCallback = null)
         {
             using HttpClient client = new HttpClient();
+            System.Diagnostics.Debug.WriteLine($"download {uri}");
             using HttpResponseMessage response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+
+            await Task.Run(() =>
+            {
+                var dir = Path.GetDirectoryName(distFile);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+            });
 
             using FileStream distFileStream = new FileStream(distFile, FileMode.OpenOrCreate, FileAccess.Write);
             if (progressCallback != null)

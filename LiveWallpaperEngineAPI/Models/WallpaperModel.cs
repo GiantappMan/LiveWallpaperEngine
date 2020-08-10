@@ -14,7 +14,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public Type ActionType { get; set; }
         public bool Completed { get; set; }
         public string Error { get; set; }
-        public float ProgressPercent { get; set; }
+        public float ProgressPercentage { get; set; }
         public string Path { get; set; }
     }
 
