@@ -83,6 +83,12 @@ namespace Giantapp.LiveWallpaper.Engine
             throw new NotImplementedException();
         }
 
+        public static WallpaperType? GetWallpaperType(string wallpaper)
+        {
+            var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper));
+            return currentRender?.SupportType;
+        }
+
         public static async Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             if (!Initialized)
