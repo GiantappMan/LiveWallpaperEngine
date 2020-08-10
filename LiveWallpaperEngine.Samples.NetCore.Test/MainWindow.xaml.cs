@@ -138,54 +138,42 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
                     var wp = new WallpaperModel() { Path = openFileDialog.FileName };
-                    var result = await WallpaperManager.ShowWallpaper(wp, displayScreen);
-                    if (!result.Ok)
+                    var showResult = await WallpaperManager.ShowWallpaper(wp, displayScreen);
+                    if (!showResult.Ok)
                     {
-                        if (result.Error == ShowWallpaperResult.ErrorType.NoPlayer)
+                        if (showResult.Error == ShowWallpaperResult.ErrorType.NoPlayer)
                         {
-                            var r = System.Windows.MessageBox.Show($"{result.Error} {result.Message}， Whether to download the player？", "", MessageBoxButton.OKCancel);
+                            var r = System.Windows.MessageBox.Show($"{showResult.Error} {showResult.Message}， Whether to download the player？", "", MessageBoxButton.OKCancel);
                             if (r == MessageBoxResult.OK)
                             {
                                 popup.Visibility = Visibility.Visible;
                                 txtPopup.Text = "downloading...";
-                                var url = WallpaperManager.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type);
+                                var url = WallpaperManager.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type).DownloadUrl;
 
-                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressArgs e)
+                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, ProgressChangedArgs e)
                                 {
                                     Dispatcher.BeginInvoke(new Action(() =>
                                     {
-                                        txtPopup.Text = $"unpacking... {(int)(e.ProgressPercent * 100)}%";
+                                        txtPopup.Text = $"{(e.ActionType == ProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercent * 100)}%";
                                     }));
-                                }
-
-                                void WallpaperManager_DownloadPlayerProgressChangedEvent(object sender, DownloadPlayerProgressArgs e)
-                                {
-                                    Dispatcher.BeginInvoke(new Action(() =>
-                                    {
-                                        txtPopup.Text = $"downloading... {e.DownloadUrl}  {((int)e.ProgressPercent * 100)}% ";
-                                    }));
-                                }
-
-                                WallpaperManager.DownloadPlayerProgressChangedEvent += WallpaperManager_DownloadPlayerProgressChangedEvent;
-                                string downloadFile = await WallpaperManager.DownloadPlayer(wp.Type.Value, url.DownloadUrl);
-                                WallpaperManager.DownloadPlayerProgressChangedEvent -= WallpaperManager_DownloadPlayerProgressChangedEvent;
-
-                                if (downloadFile == null)
-                                {
-                                    System.Windows.MessageBox.Show("download failed");
-                                    return;
                                 }
 
                                 WallpaperManager.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
-                                await WallpaperManager.SetupPlayer(wp.Type.Value, downloadFile);
+
+                                var setupResult = await WallpaperManager.SetupPlayer(wp.Type.Value, url);
                                 WallpaperManager.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 popup.Visibility = Visibility.Collapsed;
-                                result = await WallpaperManager.ShowWallpaper(wp, displayScreen);
+                                if (!setupResult.Ok)
+                                {
+                                    System.Windows.Forms.MessageBox.Show($"Message:{setupResult.Message},Error:{setupResult.Error}");
+                                    return;
+                                }
+                                showResult = await WallpaperManager.ShowWallpaper(wp, displayScreen);
                             }
                         }
                         else
-                            System.Windows.MessageBox.Show($"{result.Error} {result.Message} ");
+                            System.Windows.MessageBox.Show($"{showResult.Error} {showResult.Message} ");
                     }
                 }
             }
@@ -221,6 +209,11 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
             _ = WallpaperManager.SetOptions(setting);
+        }
+
+        private void btnCancelSetupPlayer_Click(object sender, RoutedEventArgs e)
+        {
+            WallpaperManager.StopSetupPlayer();
         }
     }
 }

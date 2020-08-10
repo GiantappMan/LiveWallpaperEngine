@@ -47,7 +47,10 @@
             Grid.RowSpan="3"
             Background="LightGray"
             Visibility="Collapsed">
-            <TextBlock x:Name="txtPopup" />
+            <StackPanel>
+                <TextBlock x:Name="txtPopup" />
+                <Button Click="btnCancelSetupPlayer_Click">Cancel</Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

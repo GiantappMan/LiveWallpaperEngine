@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine.Utils
 {
@@ -27,7 +28,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             _zipFile = zipPath;
         }
 
-        internal void Extract(string path)
+        internal void Extract(string path, System.Threading.CancellationToken token)
         {
             _total = 0;
             _completed = 0;
@@ -38,6 +39,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             _total = archive.Entries.Sum(m => m.Size);
             foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
             {
+                token.ThrowIfCancellationRequested();
                 entry.WriteToDirectory(path, new ExtractionOptions()
                 {
                     ExtractFullPath = true,
@@ -60,6 +62,24 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             //    {
             //        archive.CompressedBytesRead -= Archive_CompressedBytesRead;
             //    }
+        }
+
+        internal static Task<bool> CanOpenAsync(string file)
+        {
+            return Task.Run(() => CanOpen(file));
+        }
+
+        internal static bool CanOpen(string downloadFile)
+        {
+            try
+            {
+                using var archive = SevenZipArchive.Open(downloadFile);
+                return archive.Entries.Count > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         //private void Archive_CompressedBytesRead(object sender, CompressedBytesReadEventArgs e)
