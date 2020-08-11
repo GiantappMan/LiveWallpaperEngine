@@ -60,7 +60,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 return new ShowWallpaperResult()
                 {
                     Ok = false,
-                    Error = ShowWallpaperResult.ErrorType.NoPlayer,
+                    Error = ErrorType.NoPlayer,
                 };
 
             foreach (var screenItem in screens)

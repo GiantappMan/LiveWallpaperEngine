@@ -1,6 +1,7 @@
 ﻿using Giantapp.LiveWallpaper.Engine.Renders;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -19,6 +20,7 @@ namespace Giantapp.LiveWallpaper.Engine
     {
         #region field
 
+        private static ConcurrentDictionary<string, string> _busyMethods = new ConcurrentDictionary<string, string>();
         private static System.Timers.Timer _timer;
         private static Dispatcher _uiDispatcher;
         private static CancellationTokenSource _ctsSetupPlayer = new CancellationTokenSource();
@@ -89,91 +91,210 @@ namespace Giantapp.LiveWallpaper.Engine
             return currentRender?.SupportType;
         }
 
-        public static async Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public static async Task<BaseApiResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             if (!Initialized)
-                throw new ArgumentException("You need to initialize the SDK first");
+                return new BaseApiResult() { Ok = false, Message = "You need to initialize the SDK first", Error = ErrorType.Uninitialized };
 
-            if (screens.Length == 0)
-                screens = Screens;
-
-            IRender currentRender;
-            if (wallpaper.Type == null)
+            try
             {
-                currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
-                if (currentRender == null)
-                    return new ShowWallpaperResult()
-                    {
-                        Ok = false,
-                        Error = ShowWallpaperResult.ErrorType.NoRender,
-                        Message = "This wallpaper type is not supported"
-                    };
+                if (!EnterBusyState(nameof(ShowWallpaper)))
+                    return BaseApiResult.BusyState();
 
-                wallpaper.Type = currentRender.SupportType;
-            }
-            else
-                currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
+                if (screens.Length == 0)
+                    screens = Screens;
 
-            if (currentRender == null)
+                IRender currentRender;
                 if (wallpaper.Type == null)
-                    throw new ArgumentException("Unsupported wallpaper type");
+                {
+                    currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    if (currentRender == null)
+                        return new ShowWallpaperResult()
+                        {
+                            Ok = false,
+                            Error = ErrorType.NoRender,
+                            Message = "This wallpaper type is not supported"
+                        };
 
-            foreach (var screenItem in screens)
-            {
-                //当前屏幕没有壁纸
-                if (!CurrentWalpapers.ContainsKey(screenItem))
-                    CurrentWalpapers.Add(screenItem, null);
+                    wallpaper.Type = currentRender.SupportType;
+                }
+                else
+                    currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
 
-                var existWallpaper = CurrentWalpapers[screenItem];
+                if (currentRender == null)
+                    if (wallpaper.Type == null)
+                        throw new ArgumentException("Unsupported wallpaper type");
 
-                //壁纸 路径相同
-                if (existWallpaper != null && existWallpaper.Path == wallpaper.Path)
-                    continue;
+                foreach (var screenItem in screens)
+                {
+                    //当前屏幕没有壁纸
+                    if (!CurrentWalpapers.ContainsKey(screenItem))
+                        CurrentWalpapers.Add(screenItem, null);
 
-                //关闭之前的壁纸
-                await CloseWallpaper(screenItem);
-                var showResult = await currentRender.ShowWallpaper(wallpaper, screenItem);
-                if (!showResult.Ok)
-                    return showResult;
-                CurrentWalpapers[screenItem] = wallpaper;
+                    var existWallpaper = CurrentWalpapers[screenItem];
+
+                    //壁纸 路径相同
+                    if (existWallpaper != null && existWallpaper.Path == wallpaper.Path)
+                        continue;
+
+                    //关闭之前的壁纸
+                    await CloseWallpaper(screenItem);
+                    var showResult = await currentRender.ShowWallpaper(wallpaper, screenItem);
+                    if (!showResult.Ok)
+                        return showResult;
+                    CurrentWalpapers[screenItem] = wallpaper;
+                }
+
+                ApplyAudioSource();
+                return new BaseApiResult() { Ok = true };
             }
-
-            ApplyAudioSource();
-            return new ShowWallpaperResult() { Ok = true };
-        }
-
-        public static async Task CloseWallpaper(params string[] screens)
-        {
-            foreach (var screenItem in screens)
+            catch (Exception ex)
             {
-                if (CurrentWalpapers.ContainsKey(screenItem))
-                    CurrentWalpapers.Remove(screenItem);
+                return BaseApiResult.ExceptionState(ex);
             }
-            await InnerCloseWallpaper(screens);
+            finally
+            {
+                QuitBusyState(nameof(ShowWallpaper));
+            }
         }
 
-        public static Task SetOptions(LiveWallpaperOptions options)
+        public static async Task<BaseApiResult> CloseWallpaper(params string[] screens)
         {
-            Options = options;
+            try
+            {
+                if (!EnterBusyState(nameof(CloseWallpaper)))
+                    return BaseApiResult.BusyState();
 
-            ExplorerMonitor.ExpolrerCreated -= ExplorerMonitor_ExpolrerCreated;
-            MaximizedMonitor.AppMaximized -= MaximizedMonitor_AppMaximized;
-
-            if (options.AutoRestartWhenExplorerCrash == true)
-                ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
-
-            bool enableMaximized = options.ScreenOptions.ToList().Exists(m => m.WhenAppMaximized != ActionWhenMaximized.Play);
-            if (enableMaximized)
-                MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
-
-            StartTimer(options.AutoRestartWhenExplorerCrash || enableMaximized);
-
-            ApplyAudioSource();
-
-            return Task.CompletedTask;
+                foreach (var screenItem in screens)
+                {
+                    if (CurrentWalpapers.ContainsKey(screenItem))
+                        CurrentWalpapers.Remove(screenItem);
+                }
+                await InnerCloseWallpaper(screens);
+                return new BaseApiResult() { Ok = true };
+            }
+            catch (Exception ex)
+            {
+                return BaseApiResult.ExceptionState(ex);
+            }
+            finally
+            {
+                QuitBusyState(nameof(CloseWallpaper));
+            }
         }
 
-        public static void Pause(params string[] screens)
+        public static Task<BaseApiResult> SetOptions(LiveWallpaperOptions options)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    if (!EnterBusyState(nameof(SetOptions)))
+                        return BaseApiResult.BusyState();
+
+                    Options = options;
+
+                    ExplorerMonitor.ExpolrerCreated -= ExplorerMonitor_ExpolrerCreated;
+                    MaximizedMonitor.AppMaximized -= MaximizedMonitor_AppMaximized;
+
+                    if (options.AutoRestartWhenExplorerCrash == true)
+                        ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
+
+                    bool enableMaximized = options.ScreenOptions.ToList().Exists(m => m.WhenAppMaximized != ActionWhenMaximized.Play);
+                    if (enableMaximized)
+                        MaximizedMonitor.AppMaximized += MaximizedMonitor_AppMaximized;
+
+                    StartTimer(options.AutoRestartWhenExplorerCrash || enableMaximized);
+
+                    ApplyAudioSource();
+                    return new BaseApiResult() { Ok = true };
+                }
+                catch (Exception ex)
+                {
+                    return BaseApiResult.ExceptionState(ex);
+                }
+                finally
+                {
+                    QuitBusyState(nameof(SetOptions));
+                }
+            });
+        }
+
+        public static async Task<BaseApiResult> SetupPlayer(WallpaperType type, string url)
+        {
+            try
+            {
+                if (!EnterBusyState(nameof(SetupPlayer)))
+                    return BaseApiResult.BusyState();
+
+                _ctsSetupPlayer?.Cancel();
+                _ctsSetupPlayer?.Dispose();
+                _ctsSetupPlayer = new CancellationTokenSource();
+
+                string downloadFile = await DownloadPlayer(type, url, _ctsSetupPlayer.Token);
+                if (downloadFile == null)
+                {
+                    return BaseApiResult.ErrorState(ErrorType.DownloadFailed);
+                }
+
+                await UnpackPlayer(type, downloadFile, _ctsSetupPlayer.Token);
+                return BaseApiResult.SuccessState();
+            }
+            catch (OperationCanceledException)
+            {
+                return BaseApiResult.ErrorState(ErrorType.Canceled);
+            }
+            catch (Exception ex)
+            {
+                return BaseApiResult.ExceptionState(ex);
+            }
+            finally
+            {
+                QuitBusyState(nameof(SetupPlayer));
+            }
+        }
+
+        public static async Task<BaseApiResult> StopSetupPlayer()
+        {
+            try
+            {
+                if (!EnterBusyState(nameof(StopSetupPlayer)))
+                    return BaseApiResult.BusyState();
+
+                _ctsSetupPlayer?.Cancel();
+                return BaseApiResult.SuccessState();
+            }
+            catch (Exception ex)
+            {
+                return BaseApiResult.ExceptionState(ex);
+            }
+            finally
+            {
+                QuitBusyState(nameof(StopSetupPlayer));
+            }
+        }
+
+        #endregion
+
+        #region private
+        //离开busy状态
+        private static void QuitBusyState(string method)
+        {
+            if (_busyMethods.ContainsKey(method))
+                return;
+
+            _busyMethods.TryRemove(method, out _);
+        }
+        //进入busy状态，失败返回false
+        private static bool EnterBusyState(string method)
+        {
+            if (_busyMethods.ContainsKey(method))
+                return false;
+
+            var r = _busyMethods.TryAdd(method, null);
+            return r;
+        }
+        private static void Pause(params string[] screens)
         {
             foreach (var screenItem in screens)
             {
@@ -186,8 +307,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-
-        public static void Resume(params string[] screens)
+        private static void Resume(params string[] screens)
         {
             foreach (var screenItem in screens)
             {
@@ -200,52 +320,6 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-
-        public static async Task<SetupPlayerResult> SetupPlayer(WallpaperType type, string url)
-        {
-            SetupPlayerResult result = new SetupPlayerResult
-            {
-                Ok = false
-            };
-
-            try
-            {
-                _ctsSetupPlayer?.Cancel();
-                _ctsSetupPlayer?.Dispose();
-                _ctsSetupPlayer = new CancellationTokenSource();
-
-                string downloadFile = await DownloadPlayer(type, url, _ctsSetupPlayer.Token);
-                if (downloadFile == null)
-                {
-                    result.Error = SetupPlayerResult.ErrorType.DownloadFailed;
-                    return result;
-                }
-
-                await UnpackPlayer(type, downloadFile, _ctsSetupPlayer.Token);
-
-                result.Ok = true;
-            }
-            catch (OperationCanceledException)
-            {
-                result.Error = SetupPlayerResult.ErrorType.Cancel;
-            }
-            catch (Exception ex)
-            {
-                result.Error = SetupPlayerResult.ErrorType.Exception;
-                result.Message = ex.Message;
-            }
-            return result;
-        }
-
-        public static void StopSetupPlayer()
-        {
-            _ctsSetupPlayer?.Cancel();
-        }
-
-        #endregion
-
-        #region private
-
         private static async Task UnpackPlayer(WallpaperType type, string zipFile, CancellationToken token)
         {
             void ArchiveFile_UnzipProgressChanged(object sender, SevenZipUnzipProgressArgs e)
@@ -296,7 +370,6 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-
         private static async Task<string> DownloadPlayer(WallpaperType type, string url, CancellationToken token)
         {
             string downloadFile = Path.Combine(Options.ExternalPlayerFolder, $"tmp{type}.7z");

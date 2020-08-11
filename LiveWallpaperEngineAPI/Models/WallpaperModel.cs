@@ -17,35 +17,53 @@ namespace Giantapp.LiveWallpaper.Engine
         public float ProgressPercentage { get; set; }
         public string Path { get; set; }
     }
-
-    public class BaseResult<T>
+    //包含所有的错误类型
+    public enum ErrorType
+    {
+        None,
+        NoPlayer,
+        DownloadFailed,
+        NoRender,
+        Canceled,
+        Uninitialized,
+        Busy,
+        Exception
+    }
+    public class BaseApiResult
     {
         public bool Ok { get; set; }
-        public T Error { get; set; }
+        public ErrorType Error { get; set; }
         public string Message { get; set; }
+
+        internal static BaseApiResult BusyState()
+        {
+            return new BaseApiResult() { Ok = false, Error = ErrorType.Busy };
+        }
+
+        internal static BaseApiResult ExceptionState(Exception ex)
+        {
+            return new BaseApiResult() { Ok = false, Error = ErrorType.Exception, Message = ex.Message };
+        }
+
+        internal static BaseApiResult ErrorState(ErrorType type, string msg = null)
+        {
+            return new BaseApiResult() { Ok = false, Error = type, Message = msg };
+        }
+
+        internal static BaseApiResult SuccessState()
+        {
+            return new BaseApiResult() { Ok = true };
+        }
     }
 
-    public class ShowWallpaperResult : BaseResult<ShowWallpaperResult.ErrorType>
+    public class BaseApiResult<T> : BaseApiResult
     {
-        public enum ErrorType
-        {
-            None,
-            NoPlayer,
-            Exception,
-            NoRender
-        }
-        public List<RenderInfo> RenderInfos { get; set; }
+        public T Data { get; set; }
     }
 
-    public class SetupPlayerResult : BaseResult<SetupPlayerResult.ErrorType>
+    public class ShowWallpaperResult : BaseApiResult
     {
-        public enum ErrorType
-        {
-            None,
-            DownloadFailed,
-            Cancel,
-            Exception
-        }
+        internal List<RenderInfo> RenderInfos { get; set; }
     }
 
     public class RenderProcess
@@ -54,6 +72,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public IntPtr ReceiveMouseEventHandle { get; set; }
         public int PId { get; set; }
     }
+
     public class RenderInfo : RenderProcess
     {
         public RenderInfo()
@@ -69,6 +88,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public WallpaperModel Wallpaper { get; set; }
         public string Screen { get; set; }
     }
+
     public class WallpaperInfo
     {
         public string Description { get; set; }
@@ -79,6 +99,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public string Type { get; set; }
         public string Visibility { get; set; }
     }
+
     public enum WallpaperType
     {
         Video,
@@ -86,6 +107,7 @@ namespace Giantapp.LiveWallpaper.Engine
         Web,
         Exe
     }
+
     public class WallpaperModel
     {
         /// <summary>
@@ -109,6 +131,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public bool IsStopedTemporary { get; set; }
         public string Path { get; set; }
     }
+
     public class WallpaperModelInfo : WallpaperModel
     {
         public WallpaperInfo Info { get; set; }

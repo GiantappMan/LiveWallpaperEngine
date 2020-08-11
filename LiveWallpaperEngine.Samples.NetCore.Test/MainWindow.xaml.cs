@@ -141,7 +141,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     var showResult = await WallpaperManager.ShowWallpaper(wp, displayScreen);
                     if (!showResult.Ok)
                     {
-                        if (showResult.Error == ShowWallpaperResult.ErrorType.NoPlayer)
+                        if (showResult.Error == ErrorType.NoPlayer)
                         {
                             var r = System.Windows.MessageBox.Show($"{showResult.Error} {showResult.Message}， Whether to download the player？", "", MessageBoxButton.OKCancel);
                             if (r == MessageBoxResult.OK)
@@ -154,7 +154,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 {
                                     Dispatcher.BeginInvoke(new Action(() =>
                                     {
-                                        txtPopup.Text = $"{(e.ActionType == ProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercent * 100)}%";
+                                        txtPopup.Text = $"{(e.ActionType == ProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercentage * 100)}%";
                                     }));
                                 }
 
