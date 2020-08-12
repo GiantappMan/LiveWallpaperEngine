@@ -35,22 +35,22 @@ namespace Giantapp.LiveWallpaper.Engine
         public ErrorType Error { get; set; }
         public string Message { get; set; }
 
-        internal static BaseApiResult BusyState()
+        public static BaseApiResult BusyState()
         {
             return new BaseApiResult() { Ok = false, Error = ErrorType.Busy };
         }
 
-        internal static BaseApiResult ExceptionState(Exception ex)
+        public static BaseApiResult ExceptionState(Exception ex)
         {
             return new BaseApiResult() { Ok = false, Error = ErrorType.Exception, Message = ex.Message };
         }
 
-        internal static BaseApiResult ErrorState(ErrorType type, string msg = null)
+        public static BaseApiResult ErrorState(ErrorType type, string msg = null)
         {
             return new BaseApiResult() { Ok = false, Error = type, Message = msg };
         }
 
-        internal static BaseApiResult SuccessState()
+        public static BaseApiResult SuccessState()
         {
             return new BaseApiResult() { Ok = true };
         }
