@@ -19,7 +19,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         protected override ProcessStartInfo GetRenderExeInfo(string path)
         {
             //文档：https://mpv.io/manual/stable/
-            string playerPath = Path.Combine(WallpaperManager.Options.ExternalPlayerFolder, $@"{PlayerFolderName}\mpv.exe");
+            string playerPath = Path.Combine(WallpaperApi.Options.ExternalPlayerFolder, $@"{PlayerFolderName}\mpv.exe");
             if (!File.Exists(playerPath))
                 return null;
             ProcessStartInfo r = new ProcessStartInfo(playerPath)

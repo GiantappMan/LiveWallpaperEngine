@@ -89,17 +89,6 @@ namespace Giantapp.LiveWallpaper.Engine
         public string Screen { get; set; }
     }
 
-    public class WallpaperInfo
-    {
-        public string Description { get; set; }
-        public string File { get; set; }
-        public string Preview { get; set; }
-        public string Tags { get; set; }
-        public string Title { get; set; }
-        public string Type { get; set; }
-        public string Visibility { get; set; }
-    }
-
     public enum WallpaperType
     {
         Video,
@@ -107,33 +96,40 @@ namespace Giantapp.LiveWallpaper.Engine
         Web,
         Exe
     }
-
-    public class WallpaperModel
+    public class WallpaperOption
     {
         /// <summary>
         /// 是否支持鼠标事件，exe和web才行。其他类型设置无效
         /// </summary>
         public bool EnableMouseEvent { get; set; } = true;
-        public WallpaperType? Type { get; set; }
-        public bool IsEventWallpaper
-        {
-            get
-            {
-                var r = EnableMouseEvent &&
-                    (
-                    Type.Value == WallpaperType.Exe ||
-                    Type.Value == WallpaperType.Web
-                    );
-                return r;
-            }
-        }
-        public bool IsPaused { get; set; }
-        public bool IsStopedTemporary { get; set; }
-        public string Path { get; set; }
     }
 
-    public class WallpaperModelInfo : WallpaperModel
+    public class WallpaperRunningData
     {
-        public WallpaperInfo Info { get; set; }
+        /// <summary>
+        /// 壁纸所在文件夹
+        /// </summary>
+        public string Dir { get; set; }
+        public bool IsPaused { get; set; }
+        public bool IsStopedTemporary { get; set; }
+    }
+    public class WallpaperProjectInfo
+    {
+        public string Description { get; set; }
+        public string Title { get; set; }
+        public string File { get; set; }
+        public string Preview { get; set; }
+        public string Type { get; set; }
+        public string Visibility { get; set; }
+        public List<string> Tags { get; set; }
+    }
+
+    public class WallpaperModel
+    {
+        public WallpaperOption Option { get; set; } = new WallpaperOption();
+        public WallpaperRunningData RunningData { get; set; } = new WallpaperRunningData();
+        public WallpaperProjectInfo Info { get; set; } = new WallpaperProjectInfo();
+        public WallpaperType? Type { get; set; }
+        public string Path { get; set; }
     }
 }

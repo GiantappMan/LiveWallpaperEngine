@@ -99,7 +99,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
             await Task.WhenAll(tmpTasks);
 
-            if (SupportMouseEvent && WallpaperManager.Options.ForwardMouseEvent && wallpaper.EnableMouseEvent)
+            if (SupportMouseEvent && WallpaperApi.Options.ForwardMouseEvent && wallpaper.Option.EnableMouseEvent)
             {
                 foreach (var item in infos)
                     await DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle, item.Screen);

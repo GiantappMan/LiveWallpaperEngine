@@ -30,7 +30,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         {
             Activated += MainWindow_Activated;
             Deactivated += MainWindow_Deactivated;
-            WallpaperManager.Initlize(Dispatcher);
+            WallpaperApi.Initlize(Dispatcher);
             InitializeComponent();
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
@@ -138,7 +138,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
                     var wp = new WallpaperModel() { Path = openFileDialog.FileName };
-                    var showResult = await WallpaperManager.ShowWallpaper(wp, displayScreen);
+                    var showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
                     if (!showResult.Ok)
                     {
                         if (showResult.Error == ErrorType.NoPlayer)
@@ -148,7 +148,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                             {
                                 popup.Visibility = Visibility.Visible;
                                 txtPopup.Text = "downloading...";
-                                var url = WallpaperManager.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type).DownloadUrl;
+                                var url = WallpaperApi.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type).DownloadUrl;
 
                                 void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, ProgressChangedArgs e)
                                 {
@@ -158,10 +158,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     }));
                                 }
 
-                                WallpaperManager.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
+                                WallpaperApi.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
 
-                                var setupResult = await WallpaperManager.SetupPlayer(wp.Type.Value, url);
-                                WallpaperManager.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
+                                var setupResult = await WallpaperApi.SetupPlayer(wp.Type.Value, url);
+                                WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 popup.Visibility = Visibility.Collapsed;
                                 if (!setupResult.Ok)
@@ -169,7 +169,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     System.Windows.Forms.MessageBox.Show($"Message:{setupResult.Message},Error:{setupResult.Error}");
                                     return;
                                 }
-                                showResult = await WallpaperManager.ShowWallpaper(wp, displayScreen);
+                                showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
                             }
                         }
                         else
@@ -201,19 +201,19 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             var activeWindowTitle = GetActiveWindowTitle();
             //System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); 
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
-            await WallpaperManager.CloseWallpaper(displayIds);
+            await WallpaperApi.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
-            _ = WallpaperManager.SetOptions(setting);
+            _ = WallpaperApi.SetOptions(setting);
         }
 
         private void btnCancelSetupPlayer_Click(object sender, RoutedEventArgs e)
         {
-            WallpaperManager.StopSetupPlayer();
+            WallpaperApi.StopSetupPlayer();
         }
     }
 }

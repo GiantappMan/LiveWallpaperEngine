@@ -6,16 +6,16 @@ Windows10 动态壁纸极简API
 ## 示例：
 ```csharp
 //初始化
-WallpaperManager.Initlize(Dispatcher);
+WallpaperApi.Initlize(Dispatcher);
 
 //显示视频壁纸
-WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.mp4"},WallpaperManager.Screens[0])
+WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.mp4"},WallpaperManager.Screens[0])
 //显示exe壁纸
-WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},WallpaperManager.Screens[0])
+WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.exe"},WallpaperManager.Screens[0])
 //显示html壁纸
-WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.html"},WallpaperManager.Screens[0])
+WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.html"},WallpaperManager.Screens[0])
 //显示图片壁纸
-WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperManager.Screens[0])
+WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperManager.Screens[0])
 ```
 
 ## 功能目标：

@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,11 +18,11 @@ using static Giantapp.LiveWallpaper.Engine.ScreenOption;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
-    public static class WallpaperManager
+    public static class WallpaperApi
     {
         #region field
 
-        private static ConcurrentDictionary<string, string> _busyMethods = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> _busyMethods = new ConcurrentDictionary<string, string>();
         private static System.Timers.Timer _timer;
         private static Dispatcher _uiDispatcher;
         private static CancellationTokenSource _ctsSetupPlayer = new CancellationTokenSource();
@@ -51,12 +53,15 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static void Initlize(Dispatcher dispatcher)
         {
-            RenderFactory.Renders.Add(new ExeRender());
-            RenderFactory.Renders.Add(new VideoRender());
-            RenderFactory.Renders.Add(new WebRender());
-            RenderFactory.Renders.Add(new ImageRender());
             _uiDispatcher = dispatcher;
-            Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
+            if (!Initialized)
+            {
+                RenderFactory.Renders.Add(new ExeRender());
+                RenderFactory.Renders.Add(new VideoRender());
+                RenderFactory.Renders.Add(new WebRender());
+                RenderFactory.Renders.Add(new ImageRender());
+                Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
+            }
             Initialized = true;
         }
 
@@ -65,22 +70,57 @@ namespace Giantapp.LiveWallpaper.Engine
             _uiDispatcher.Invoke(a);
         }
 
-        public static Task<List<WallpaperModel>> GetWallpapers(string dir)
+        public static async Task<BaseApiResult<List<WallpaperModel>>> GetWallpapers(string dir)
+        {
+            try
+            {
+                if (!EnterBusyState(nameof(GetWallpapers)))
+                    return new BaseApiResult<List<WallpaperModel>>() { Ok = false, Error = ErrorType.Busy };
+
+                DirectoryInfo dirInfo = new DirectoryInfo(dir);
+
+                List<WallpaperModel> result = new List<WallpaperModel>();
+                //test E:\SteamLibrary\steamapps\workshop\content\431960
+                //foreach (var item in Directory.EnumerateFiles(dir, "project.json", SearchOption.AllDirectories))
+                var files = await Task.Run(() => dirInfo.GetFiles("project.json", SearchOption.AllDirectories).OrderByDescending(m => m.CreationTime));
+                foreach (var item in files)
+                {
+                    using FileStream fs = File.OpenRead(item.FullName);
+                    var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
+                    var saveDir = Path.GetDirectoryName(item.FullName);
+                    result.Add(new WallpaperModel()
+                    {
+                        RunningData = new WallpaperRunningData()
+                        {
+                            Dir = saveDir,
+                        },
+                        Info = info,
+                    });
+                }
+
+                return new BaseApiResult<List<WallpaperModel>>() { Data = result, Ok = true };
+            }
+            catch (Exception ex)
+            {
+                return new BaseApiResult<List<WallpaperModel>>() { Ok = false, Error = ErrorType.Exception, Message = ex.Message };
+            }
+            finally
+            {
+                QuitBusyState(nameof(ShowWallpaper));
+            }
+        }
+
+        public static Task<BaseApiResult> DeleteWallpaperPack(string absolutePath)
         {
             throw new NotImplementedException();
         }
 
-        public static async Task<bool> DeleteWallpaperPack(string absolutePath)
+        public static Task<BaseApiResult<WallpaperModel>> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
         {
             throw new NotImplementedException();
         }
 
-        public static async Task<WallpaperModel> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static async Task<WallpaperModel> CreateWallpaper(string path)
+        public static Task<BaseApiResult<WallpaperModel>> CreateWallpaper(string path)
         {
             throw new NotImplementedException();
         }
@@ -262,6 +302,11 @@ namespace Giantapp.LiveWallpaper.Engine
                     return BaseApiResult.BusyState();
 
                 _ctsSetupPlayer?.Cancel();
+
+                while (IsBusyState(nameof(SetupPlayer)))
+                {
+                    await Task.Delay(1000);
+                }
                 return BaseApiResult.SuccessState();
             }
             catch (Exception ex)
@@ -285,10 +330,18 @@ namespace Giantapp.LiveWallpaper.Engine
 
             _busyMethods.TryRemove(method, out _);
         }
+
+        private static bool IsBusyState(string method)
+        {
+            if (_busyMethods.ContainsKey(method))
+                return true;
+            return false;
+        }
+
         //进入busy状态，失败返回false
         private static bool EnterBusyState(string method)
         {
-            if (_busyMethods.ContainsKey(method))
+            if (IsBusyState(method))
                 return false;
 
             var r = _busyMethods.TryAdd(method, null);
@@ -301,7 +354,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    wallpaper.IsPaused = true;
+                    wallpaper.RunningData.IsPaused = true;
                     var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Pause(screens);
                 }
@@ -314,7 +367,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screenItem))
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
-                    wallpaper.IsPaused = false;
+                    wallpaper.RunningData.IsPaused = false;
                     var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Resume(screens);
                 }
@@ -409,7 +462,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
             }
         }
-        public static async Task DownloadFileAsync(string uri, string distFile, CancellationToken cancellationToken = default, Action<long, long> progressCallback = null)
+        public static async Task DownloadFileAsync(string uri, string distFile, CancellationToken cancellationToken, Action<long, long> progressCallback = null)
         {
             using HttpClient client = new HttpClient();
             System.Diagnostics.Debug.WriteLine($"download {uri}");
@@ -525,7 +578,7 @@ namespace Giantapp.LiveWallpaper.Engine
                         if (currentScreenMaximized)
                         {
                             await InnerCloseWallpaper(currentScreen);
-                            CurrentWalpapers[currentScreen].IsStopedTemporary = true;
+                            CurrentWalpapers[currentScreen].RunningData.IsStopedTemporary = true;
                         }
                         else if (CurrentWalpapers.ContainsKey(currentScreen))
                         {
@@ -537,7 +590,7 @@ namespace Giantapp.LiveWallpaper.Engine
                         }
                         break;
                     case ActionWhenMaximized.Play:
-                        CurrentWalpapers[currentScreen].IsStopedTemporary = false;
+                        CurrentWalpapers[currentScreen].RunningData.IsStopedTemporary = false;
                         break;
                 }
             }

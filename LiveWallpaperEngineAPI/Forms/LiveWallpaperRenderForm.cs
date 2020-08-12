@@ -15,9 +15,8 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
     /// </summary>
     public partial class LiveWallpaperRenderForm : Form
     {
-        static Dictionary<string, LiveWallpaperRenderForm> _hosts = new Dictionary<string, LiveWallpaperRenderForm>();
-        string _screenName;
-        IntPtr _currentWallpaperHandle;
+        static readonly Dictionary<string, LiveWallpaperRenderForm> _hosts = new Dictionary<string, LiveWallpaperRenderForm>();
+        readonly string _screenName;
 
         public LiveWallpaperRenderForm(string screenName)
         {
@@ -36,7 +35,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
         internal void ShowWallpaper(IntPtr wallpaperHandle)
         {
             IntPtr hostForm = IntPtr.Zero;
-            WallpaperManager.UIInvoke(() =>
+            WallpaperApi.UIInvoke(() =>
             {
                 try
                 {
@@ -46,7 +45,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
                 }
                 catch (Exception ex)
                 {
-
+                    System.Diagnostics.Debug.WriteLine($"ShowWallpaper ex:{ex}");
                 }
             });
 
@@ -63,7 +62,7 @@ namespace Giantapp.LiveWallpaper.Engine.Forms
             if (!_hosts.ContainsKey(screen))
             {
                 if (autoCreate)
-                    WallpaperManager.UIInvoke(() =>
+                    WallpaperApi.UIInvoke(() =>
                     {
                         var host = _hosts[screen] = new LiveWallpaperRenderForm(screen);
                         host.Show();
