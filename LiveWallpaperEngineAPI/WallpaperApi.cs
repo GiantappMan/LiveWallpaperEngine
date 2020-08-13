@@ -78,6 +78,11 @@ namespace Giantapp.LiveWallpaper.Engine
                     return new BaseApiResult<List<WallpaperModel>>() { Ok = false, Error = ErrorType.Busy };
 
                 DirectoryInfo dirInfo = new DirectoryInfo(dir);
+                if (!dirInfo.Exists)
+                    return new BaseApiResult<List<WallpaperModel>>()
+                    {
+                        Ok = true
+                    };
 
                 List<WallpaperModel> result = new List<WallpaperModel>();
                 //test E:\SteamLibrary\steamapps\workshop\content\431960
@@ -106,7 +111,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
             finally
             {
-                QuitBusyState(nameof(ShowWallpaper));
+                QuitBusyState(nameof(GetWallpapers));
             }
         }
 
@@ -325,7 +330,7 @@ namespace Giantapp.LiveWallpaper.Engine
         //离开busy状态
         private static void QuitBusyState(string method)
         {
-            if (_busyMethods.ContainsKey(method))
+            if (!IsBusyState(method))
                 return;
 
             _busyMethods.TryRemove(method, out _);
