@@ -4,15 +4,25 @@ using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
-    public class ProgressChangedArgs : EventArgs
+    public class SetupPlayerProgressChangedArgs : EventArgs
     {
         public enum Type
         {
             Downloading,
-            Unpacking
+            Unpacking,
+            Completed
         }
         public Type ActionType { get; set; }
+        /// <summary>
+        /// 当前动作完成
+        /// </summary>
+        public bool ActionCompleted { get; set; }
+
+        /// <summary>
+        /// 所有动作完成
+        /// </summary>
         public bool Completed { get; set; }
+        public BaseApiResult Result { get; set; }
         public string Error { get; set; }
         public float ProgressPercentage { get; set; }
         public string Path { get; set; }

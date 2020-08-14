@@ -45,7 +45,7 @@ namespace Giantapp.LiveWallpaper.Engine
             (WallpaperType.Web,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/web.7z"),
         };
 
-        public static event EventHandler<ProgressChangedArgs> SetupPlayerProgressChangedEvent;
+        public static event EventHandler<SetupPlayerProgressChangedArgs> SetupPlayerProgressChangedEvent;
 
         #endregion
 
@@ -265,38 +265,52 @@ namespace Giantapp.LiveWallpaper.Engine
             });
         }
 
-        public static async Task<BaseApiResult> SetupPlayer(WallpaperType type, string url)
+        public static BaseApiResult SetupPlayer(WallpaperType type, string url, Action<BaseApiResult> callback = null)
         {
+            if (IsBusyState(nameof(SetupPlayer)))
+                return BaseApiResult.BusyState();
+
+            _ = InnertSetupPlayer(type, url).ContinueWith(m => callback?.Invoke(m.Result));
+
+            return BaseApiResult.SuccessState();
+        }
+
+        private static async Task<BaseApiResult> InnertSetupPlayer(WallpaperType type, string url)
+        {
+            BaseApiResult result = null;
             try
             {
-                if (!EnterBusyState(nameof(SetupPlayer)))
-                    return BaseApiResult.BusyState();
-
                 _ctsSetupPlayer?.Cancel();
                 _ctsSetupPlayer?.Dispose();
                 _ctsSetupPlayer = new CancellationTokenSource();
 
                 string downloadFile = await DownloadPlayer(type, url, _ctsSetupPlayer.Token);
-                if (downloadFile == null)
-                {
-                    return BaseApiResult.ErrorState(ErrorType.DownloadFailed);
-                }
-
                 await UnpackPlayer(type, downloadFile, _ctsSetupPlayer.Token);
-                return BaseApiResult.SuccessState();
+
+                result = BaseApiResult.SuccessState();
             }
             catch (OperationCanceledException)
             {
-                return BaseApiResult.ErrorState(ErrorType.Canceled);
+                result = BaseApiResult.ErrorState(ErrorType.Canceled);
             }
             catch (Exception ex)
             {
-                return BaseApiResult.ExceptionState(ex);
+                result = BaseApiResult.ExceptionState(ex);
             }
             finally
             {
+                SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
+                {
+                    Completed = true,
+                    Path = url,
+                    ProgressPercentage = 1,
+                    ActionType = SetupPlayerProgressChangedArgs.Type.Completed,
+                    Result = result
+                });
+
                 QuitBusyState(nameof(SetupPlayer));
             }
+            return result;
         }
 
         public static async Task<BaseApiResult> StopSetupPlayer()
@@ -382,12 +396,12 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             void ArchiveFile_UnzipProgressChanged(object sender, SevenZipUnzipProgressArgs e)
             {
-                SetupPlayerProgressChangedEvent?.Invoke(null, new ProgressChangedArgs()
+                SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
                 {
-                    Completed = false,
+                    ActionCompleted = false,
                     Path = zipFile,
                     ProgressPercentage = e.Progress,
-                    ActionType = ProgressChangedArgs.Type.Unpacking
+                    ActionType = SetupPlayerProgressChangedArgs.Type.Unpacking
                 });
             }
 
@@ -410,12 +424,12 @@ namespace Giantapp.LiveWallpaper.Engine
                 try
                 {
                     await Task.Run(() => archiveFile.Extract(dist, token));
-                    SetupPlayerProgressChangedEvent?.Invoke(null, new ProgressChangedArgs()
+                    SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
                     {
-                        Completed = true,
+                        ActionCompleted = true,
                         Path = zipFile,
                         ProgressPercentage = 1,
-                        ActionType = ProgressChangedArgs.Type.Unpacking
+                        ActionType = SetupPlayerProgressChangedArgs.Type.Unpacking
                     });
                 }
                 catch (Exception)
@@ -438,22 +452,22 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 await DownloadFileAsync(url, downloadFile, token, (c, t) =>
                 {
-                    var args = new ProgressChangedArgs()
+                    var args = new SetupPlayerProgressChangedArgs()
                     {
-                        Completed = false,
+                        ActionCompleted = false,
                         Path = url,
                         ProgressPercentage = (float)c / t,
-                        ActionType = ProgressChangedArgs.Type.Downloading
+                        ActionType = SetupPlayerProgressChangedArgs.Type.Downloading
                     };
                     SetupPlayerProgressChangedEvent?.Invoke(null, args);
                 });
 
-                SetupPlayerProgressChangedEvent?.Invoke(null, new ProgressChangedArgs()
+                SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
                 {
-                    Completed = true,
+                    ActionCompleted = true,
                     Path = url,
                     ProgressPercentage = 1,
-                    ActionType = ProgressChangedArgs.Type.Downloading
+                    ActionType = SetupPlayerProgressChangedArgs.Type.Downloading
                 });
 
                 return downloadFile;
@@ -462,15 +476,11 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 throw;
             }
-            finally
-            {
-
-            }
         }
         public static async Task DownloadFileAsync(string uri, string distFile, CancellationToken cancellationToken, Action<long, long> progressCallback = null)
         {
             using HttpClient client = new HttpClient();
-            System.Diagnostics.Debug.WriteLine($"download {uri}");
+            Debug.WriteLine($"download {uri}");
             using HttpResponseMessage response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
             await Task.Run(() =>
