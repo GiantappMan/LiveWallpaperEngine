@@ -30,7 +30,7 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperMa
 
 ## 对于开源的期望:
 - 本项目是为了回赠开源社区对我的提升，欢迎所有开源开发者白piao本仓库~。
-- 严禁闭源项目抄袭使用本仓库代码，保留法律权利。
+- 不建议商业项目使用。
 
 ## 运行效果：
 * 本仓库自带demo，运行即可。  
