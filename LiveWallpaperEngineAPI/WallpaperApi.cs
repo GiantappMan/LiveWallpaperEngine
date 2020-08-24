@@ -239,11 +239,11 @@ namespace Giantapp.LiveWallpaper.Engine
 
                     Options = options;
 
-                    ExplorerMonitor.ExpolrerCreated -= ExplorerMonitor_ExpolrerCreated;
+                    ExplorerMonitor.ExplorerCreated -= ExplorerMonitor_ExpolrerCreated;
                     MaximizedMonitor.AppMaximized -= MaximizedMonitor_AppMaximized;
 
                     if (options.AutoRestartWhenExplorerCrash == true)
-                        ExplorerMonitor.ExpolrerCreated += ExplorerMonitor_ExpolrerCreated;
+                        ExplorerMonitor.ExplorerCreated += ExplorerMonitor_ExpolrerCreated;
 
                     bool enableMaximized = options.ScreenOptions.ToList().Exists(m => m.WhenAppMaximized != ActionWhenMaximized.Play);
                     if (enableMaximized)

@@ -12,7 +12,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
 
         public static Process ExploreProcess { get; private set; }
 
-        public static event EventHandler ExpolrerCreated;
+        public static event EventHandler ExplorerCreated;
 
         static ExplorerMonitor()
         {
@@ -33,7 +33,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                 var workw = WallpaperHelper.GetWorkerW();
                 if (workw != IntPtr.Zero)
                 {
-                    ExpolrerCreated?.Invoke(null, new EventArgs());
+                    ExplorerCreated?.Invoke(null, new EventArgs());
                     _lastTriggerTime = null;
                 }
             }
