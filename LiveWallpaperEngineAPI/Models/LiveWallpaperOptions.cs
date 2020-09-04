@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -40,6 +41,13 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 壁纸音源来源哪块屏幕， -1 表示禁用
         /// </summary>
         public string AudioScreen { get; set; }
+        public List<string> AudioScreenOptions
+        {
+            get
+            {
+                return WallpaperApi.Screens.ToList();
+            }
+        }
         /// <summary>
         /// 屏幕最大化是否影响所有屏幕
         /// </summary>

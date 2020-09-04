@@ -568,9 +568,7 @@ namespace Giantapp.LiveWallpaper.Engine
         private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
         {
             //重启
-            //Process.Start(Application.ResourceAssembly.Location);
-            //Application.Current.Shutdown();
-            //Application.Restart();
+            Application.Restart();
         }
         private static async void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
