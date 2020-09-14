@@ -38,14 +38,15 @@ namespace Giantapp.LiveWallpaper.Engine
         /// </summary>
         public List<ScreenOption> ScreenOptions { get; set; }
         /// <summary>
-        /// 壁纸音源来源哪块屏幕， -1 表示禁用
+        /// 壁纸音源来源哪块屏幕， 非屏幕值表示禁用
         /// </summary>
         public string AudioScreen { get; set; }
         public List<string> AudioScreenOptions
         {
             get
             {
-                return WallpaperApi.Screens.ToList();
+                var r = WallpaperApi.Screens.ToList();
+                return r;
             }
         }
         /// <summary>
