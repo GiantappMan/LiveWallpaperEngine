@@ -150,17 +150,17 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                 txtPopup.Text = "downloading...";
                                 var url = WallpaperApi.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type).DownloadUrl;
 
-                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, ProgressChangedArgs e)
+                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressChangedArgs e)
                                 {
                                     Dispatcher.BeginInvoke(new Action(() =>
                                     {
-                                        txtPopup.Text = $"{(e.ActionType == ProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercentage * 100)}%";
+                                        txtPopup.Text = $"{(e.ActionType == SetupPlayerProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercentage * 100)}%";
                                     }));
                                 }
 
                                 WallpaperApi.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
 
-                                var setupResult = await WallpaperApi.SetupPlayer(wp.Type.Value, url);
+                                var setupResult = WallpaperApi.SetupPlayer(wp.Type.Value, url);
                                 WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 popup.Visibility = Visibility.Collapsed;
