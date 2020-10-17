@@ -152,24 +152,31 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
                                 void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressChangedArgs e)
                                 {
-                                    Dispatcher.BeginInvoke(new Action(() =>
+                                    Dispatcher.BeginInvoke(new Action(async () =>
                                     {
                                         txtPopup.Text = $"{(e.ActionType == SetupPlayerProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercentage * 100)}%";
+
+                                        if (e.AllCompleted)
+                                        {
+                                            WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
+                                            popup.Visibility = Visibility.Collapsed;
+
+                                            if (e.Result.Ok)
+                                            {
+                                                showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
+                                            }
+                                            else
+                                            {
+                                                System.Windows.Forms.MessageBox.Show($"Message:{e.Result.Message},Error:{e.Result.Error}");
+                                            }
+                                        }
                                     }));
                                 }
 
+                                WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
                                 WallpaperApi.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
 
                                 var setupResult = WallpaperApi.SetupPlayer(wp.Type.Value, url);
-                                WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
-
-                                popup.Visibility = Visibility.Collapsed;
-                                if (!setupResult.Ok)
-                                {
-                                    System.Windows.Forms.MessageBox.Show($"Message:{setupResult.Message},Error:{setupResult.Error}");
-                                    return;
-                                }
-                                showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
                             }
                         }
                         else
@@ -211,9 +218,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             _ = WallpaperApi.SetOptions(setting);
         }
 
-        private void btnCancelSetupPlayer_Click(object sender, RoutedEventArgs e)
+        private async void btnCancelSetupPlayer_Click(object sender, RoutedEventArgs e)
         {
-            WallpaperApi.StopSetupPlayer();
+            var result = await WallpaperApi.StopSetupPlayer();
+            popup.Visibility = Visibility.Collapsed;
         }
     }
 }

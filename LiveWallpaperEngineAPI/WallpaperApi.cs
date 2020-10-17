@@ -301,7 +301,7 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
                 {
-                    Completed = true,
+                    AllCompleted = true,
                     Path = url,
                     ProgressPercentage = 1,
                     ActionType = SetupPlayerProgressChangedArgs.Type.Completed,

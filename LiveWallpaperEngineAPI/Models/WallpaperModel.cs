@@ -21,7 +21,7 @@ namespace Giantapp.LiveWallpaper.Engine
         /// <summary>
         /// 所有动作完成
         /// </summary>
-        public bool Completed { get; set; }
+        public bool AllCompleted { get; set; }
         public BaseApiResult Result { get; set; }
         public string Error { get; set; }
         public float ProgressPercentage { get; set; }
