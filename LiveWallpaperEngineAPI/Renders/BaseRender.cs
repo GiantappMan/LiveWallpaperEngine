@@ -145,7 +145,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         public void SetVolume(int v, string screen)
         {
             var playingWallpaper = _currentWallpapers.Where(m => screen == m.Screen).FirstOrDefault();
-            AudioHelper.SetVolume(playingWallpaper.PId, v);
+            if (playingWallpaper != null)
+                AudioHelper.SetVolume(playingWallpaper.PId, v);
         }
 
         protected virtual Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
