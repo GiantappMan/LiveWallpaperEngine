@@ -47,3 +47,7 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 ---
 
 ## 如果对你有帮助请star支持一下
+
+## 分支管理
+- master 开发中的版本，可能有各种报错
+- 1.x 目前线上稳定版本
