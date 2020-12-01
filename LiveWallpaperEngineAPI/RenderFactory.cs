@@ -18,7 +18,7 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             foreach (var instance in Renders)
             {
-                if (instance.SupportedType == dType)
+                if (instance.SupportType == dType)
                     return instance;
             }
 
@@ -29,7 +29,7 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             foreach (var instance in Renders)
             {
-                var exist = instance.SupportedExtension.FirstOrDefault(m => m == extension.ToLower());
+                var exist = instance.SupportExtension.FirstOrDefault(m => m == extension.ToLower());
                 if (exist != null)
                     return instance;
             }

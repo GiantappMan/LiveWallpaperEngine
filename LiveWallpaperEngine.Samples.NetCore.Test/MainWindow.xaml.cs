@@ -7,6 +7,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using static Giantapp.LiveWallpaper.Engine.ScreenOption;
+using DZY.WinAPI;
+using System;
+using System.Text;
+using System.Windows.Forms.Design;
+using System.IO;
 
 namespace LiveWallpaperEngine.Samples.NetCore.Test
 {
@@ -23,11 +28,10 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
         List<Monitor> monitorsVM = new List<Monitor>();
         public MainWindow()
         {
-            WallpaperManager.Initlize(Dispatcher);
+            Activated += MainWindow_Activated;
+            Deactivated += MainWindow_Deactivated;
+            WallpaperApi.Initlize(Dispatcher);
             InitializeComponent();
-            ////用node+electron+http api渲染，待c#有更好的库时，再考虑c#渲染
-            //RenderFactory.Renders.Add(typeof(ElectronWebRender), ElectronWebRender.StaticSupportTypes);
-
             monitors.ItemsSource = monitorsVM = Screen.AllScreens.Select(m => new Monitor()
             {
                 DeviceName = m.DeviceName,
@@ -80,6 +84,12 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                                     Text="全屏检测影响所有屏幕",
                                     DefaultValue=true,
                             }},
+                               {
+                                nameof(LiveWallpaperOptions.ForwardMouseEvent),
+                                new DescriptorInfo(){
+                                    Text="转发鼠标事件",
+                                    DefaultValue=true,
+                            }},
                             {
                                 nameof(LiveWallpaperOptions.ScreenOptions),
                                 new DescriptorInfo(){
@@ -105,12 +115,19 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
             configer.DataContext = vm;
         }
 
-        ~MainWindow()
+        private void MainWindow_Deactivated(object sender, EventArgs e)
         {
+            //System.Diagnostics.Debug.WriteLine("MainWindow_Deactivated " + GetActiveWindowTitle());
         }
 
-        private void btnSelect_Click(object sender, RoutedEventArgs e)
+        private void MainWindow_Activated(object sender, EventArgs e)
         {
+            //System.Diagnostics.Debug.WriteLine("MainWindow_Activated " + GetActiveWindowTitle());
+        }
+
+        private async void btnSelect_Click(object sender, RoutedEventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine("before ShowWallpaper " + GetActiveWindowTitle());
             using (var openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "WallpaperSamples";
@@ -120,29 +137,91 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
-                    _ = WallpaperManager.ShowWallpaper(new WallpaperModel() { Path = openFileDialog.FileName }, displayScreen);
-                    //var form = new MpvPlayer.MpvForm();
-                    //form.FormBorderStyle = FormBorderStyle.FixedSingle;
+                    var wp = new WallpaperModel() { Path = openFileDialog.FileName };
+                    var showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
+                    if (!showResult.Ok)
+                    {
+                        if (showResult.Error == ErrorType.NoPlayer)
+                        {
+                            var r = System.Windows.MessageBox.Show($"{showResult.Error} {showResult.Message}， Whether to download the player？", "", MessageBoxButton.OKCancel);
+                            if (r == MessageBoxResult.OK)
+                            {
+                                popup.Visibility = Visibility.Visible;
+                                txtPopup.Text = "downloading...";
+                                var url = WallpaperApi.PlayerUrls.FirstOrDefault(m => m.Type == wp.Type).DownloadUrl;
 
-                    //form.Show();
-                    //form.InitPlayer();
-                    //form.Player.AutoPlay = true;
-                    //form.Player.Load(openFileDialog.FileName);
+                                void WallpaperManager_SetupPlayerProgressChangedEvent(object sender, SetupPlayerProgressChangedArgs e)
+                                {
+                                    Dispatcher.BeginInvoke(new Action(async () =>
+                                    {
+                                        txtPopup.Text = $"{(e.ActionType == SetupPlayerProgressChangedArgs.Type.Unpacking ? "unpacking" : "downloading")} ... {(int)(e.ProgressPercentage * 100)}%";
+
+                                        if (e.AllCompleted)
+                                        {
+                                            WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
+                                            popup.Visibility = Visibility.Collapsed;
+
+                                            if (e.Result.Ok)
+                                            {
+                                                showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
+                                            }
+                                            else
+                                            {
+                                                System.Windows.Forms.MessageBox.Show($"Message:{e.Result.Message},Error:{e.Result.Error}");
+                                            }
+                                        }
+                                    }));
+                                }
+
+                                WallpaperApi.SetupPlayerProgressChangedEvent -= WallpaperManager_SetupPlayerProgressChangedEvent;
+                                WallpaperApi.SetupPlayerProgressChangedEvent += WallpaperManager_SetupPlayerProgressChangedEvent;
+
+                                var setupResult = WallpaperApi.SetupPlayer(wp.Type.Value, url);
+                            }
+                        }
+                        else
+                            System.Windows.MessageBox.Show($"{showResult.Error} {showResult.Message} ");
+                    }
                 }
             }
+            //System.Diagnostics.Debug.WriteLine("after ShowWallpaper" + GetActiveWindowTitle());
+            //IntPtr progman = User32Wrapper.FindWindow("Progman", null);
+            //User32Wrapper.SetForegroundWindow(window); //change focus from the started window//application.
+            //User32Wrapper.SetFocus(window);
+            Activate();
         }
 
-        private void btnStop_Click(object sender, RoutedEventArgs e)
+        private string GetActiveWindowTitle()
         {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = User32Wrapper.GetForegroundWindow();
+
+            if (User32Wrapper.GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+        private async void btnStop_Click(object sender, RoutedEventArgs e)
+        {
+            var activeWindowTitle = GetActiveWindowTitle();
+            //System.Diagnostics.Debug.WriteLine("btnStop_Click " + activeWindowTitle); 
             var displayIds = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
-            WallpaperManager.CloseWallpaper(displayIds);
+            await WallpaperApi.CloseWallpaper(displayIds);
         }
 
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             var vm = (ConfigerViewModel)configer.DataContext;
             var setting = ConfigerService.GetData<LiveWallpaperOptions>(vm.Nodes);
-            _ = WallpaperManager.SetOptions(setting);
+            _ = WallpaperApi.SetOptions(setting);
+        }
+
+        private async void btnCancelSetupPlayer_Click(object sender, RoutedEventArgs e)
+        {
+            var result = await WallpaperApi.StopSetupPlayer();
+            popup.Visibility = Visibility.Collapsed;
         }
     }
 }

@@ -5,24 +5,27 @@ using System.Threading.Tasks;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
+    /// <summary>
+    /// 呈现一种类型的壁纸
+    /// </summary>
     public interface IRender
     {
-        WallpaperType SupportedType { get; }
+        WallpaperType SupportType { get; }
 
-        List<string> SupportedExtension { get; }
+        List<string> SupportExtension { get; }
         /// <summary>
         /// 释放
         /// </summary>
         void Dispose();
         /// <summary>
-        /// 加载壁纸
+        /// 加载壁纸，内部处理重复开壁纸问题
         /// </summary>
         /// <param name="path"></param>
-        Task ShowWallpaper(WallpaperModel wallpaper, params string[] screen);
+        Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screen);
         void Pause(params string[] screens);
         void Resume(params string[] screens);
         void SetVolume(int v, string screen);
         int GetVolume(string screen);
-        void CloseWallpaper(params string[] screens);
+        Task CloseWallpaperAsync(params string[] screens);
     }
 }
