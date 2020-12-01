@@ -265,7 +265,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static BaseApiResult SetupPlayer(WallpaperType type, string url, Action<BaseApiResult> callback = null)
         {
-            if (IsBusyState(nameof(SetupPlayer)))
+            if (!EnterBusyState(nameof(SetupPlayer)))
                 return BaseApiResult.BusyState();
 
             _ = InnertSetupPlayer(type, url).ContinueWith(m => callback?.Invoke(m.Result));
@@ -443,6 +443,7 @@ namespace Giantapp.LiveWallpaper.Engine
         private static async Task<string> DownloadPlayer(WallpaperType type, string url, CancellationToken token)
         {
             string downloadFile = Path.Combine(Options.ExternalPlayerFolder, $"tmp{type}.7z");
+            Debug.WriteLine("destpath:", downloadFile);
             if (File.Exists(downloadFile) && await SevenZip.CanOpenAsync(downloadFile))
                 return downloadFile;
 

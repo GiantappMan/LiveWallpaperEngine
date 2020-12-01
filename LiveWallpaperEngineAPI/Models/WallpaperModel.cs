@@ -47,12 +47,12 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static BaseApiResult BusyState()
         {
-            return new BaseApiResult() { Ok = false, Error = ErrorType.Busy };
+            return ErrorState(ErrorType.Busy);
         }
 
         public static BaseApiResult ExceptionState(Exception ex)
         {
-            return new BaseApiResult() { Ok = false, Error = ErrorType.Exception, Message = ex.Message };
+            return ErrorState(ErrorType.Exception, ex.Message);
         }
 
         public static BaseApiResult ErrorState(ErrorType type, string msg = null)
