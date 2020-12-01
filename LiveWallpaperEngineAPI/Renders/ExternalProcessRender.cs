@@ -1,20 +1,11 @@
-﻿using DZY.WinAPI;
-using DZY.WinAPI.Desktop.API;
-using DZY.WinAPI.Extension;
-using DZY.WinAPI.Helpers;
+﻿using DZY.WinAPI.Helpers;
 using Giantapp.LiveWallpaper.Engine.Forms;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Forms;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Giantapp.LiveWallpaper.Engine.Renders;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
@@ -10,7 +9,7 @@ namespace Giantapp.LiveWallpaper.Engine
     /// 定义render类型的实现
     /// </summary>
     /// <typeparam name="Render"></typeparam>
-    public static class RenderFactory
+    public static class RenderManager
     {
         public static List<IRender> Renders { get; set; } = new List<IRender>();
 

@@ -6,10 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -56,10 +54,10 @@ namespace Giantapp.LiveWallpaper.Engine
             _uiDispatcher = dispatcher;
             if (!Initialized)
             {
-                RenderFactory.Renders.Add(new ExeRender());
-                RenderFactory.Renders.Add(new VideoRender());
-                RenderFactory.Renders.Add(new WebRender());
-                RenderFactory.Renders.Add(new ImageRender());
+                RenderManager.Renders.Add(new ExeRender());
+                RenderManager.Renders.Add(new VideoRender());
+                RenderManager.Renders.Add(new WebRender());
+                RenderManager.Renders.Add(new ImageRender());
                 Screens = Screen.AllScreens.Select(m => m.DeviceName).ToArray();
             }
             Initialized = true;
@@ -132,7 +130,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static WallpaperType? GetWallpaperType(string wallpaper)
         {
-            var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper));
+            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper));
             return currentRender?.SupportType;
         }
 
@@ -152,7 +150,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 IRender currentRender;
                 if (wallpaper.Type == null)
                 {
-                    currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     if (currentRender == null)
                         return new ShowWallpaperResult()
                         {
@@ -164,7 +162,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     wallpaper.Type = currentRender.SupportType;
                 }
                 else
-                    currentRender = RenderFactory.GetRender(wallpaper.Type.Value);
+                    currentRender = RenderManager.GetRender(wallpaper.Type.Value);
 
                 if (currentRender == null)
                     if (wallpaper.Type == null)
@@ -374,7 +372,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
                     wallpaper.RunningData.IsPaused = true;
-                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Pause(screens);
                 }
             }
@@ -387,7 +385,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
                     wallpaper.RunningData.IsPaused = false;
-                    var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                     currentRender.Resume(screens);
                 }
             }
@@ -519,7 +517,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (CurrentWalpapers.ContainsKey(screen))
                 {
                     var wallpaper = CurrentWalpapers[screen];
-                    var currentRender = RenderFactory.GetRender(wallpaper);
+                    var currentRender = RenderManager.GetRender(wallpaper);
                     currentRender.SetVolume(screen == Options.AudioScreen ? 100 : 0, screen);
                 }
             }
@@ -527,7 +525,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         private static async Task InnerCloseWallpaper(params string[] screens)
         {
-            foreach (var m in RenderFactory.Renders)
+            foreach (var m in RenderManager.Renders)
                 await m.CloseWallpaperAsync(screens);
         }
 
@@ -598,7 +596,7 @@ namespace Giantapp.LiveWallpaper.Engine
                             //_ = ShowWallpaper(CurrentWalpapers[currentScreen], currentScreen);
 
                             var wallpaper = CurrentWalpapers[currentScreen];
-                            var currentRender = RenderFactory.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
                             await currentRender.ShowWallpaper(wallpaper, currentScreen);
                         }
                         break;

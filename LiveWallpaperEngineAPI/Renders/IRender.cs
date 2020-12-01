@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Giantapp.LiveWallpaper.Engine
+namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     /// <summary>
     /// 呈现一种类型的壁纸
