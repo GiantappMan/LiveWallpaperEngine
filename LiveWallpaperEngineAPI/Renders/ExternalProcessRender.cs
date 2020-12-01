@@ -48,11 +48,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
             ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper.Path));
             if (pInfo == null)
-                return new ShowWallpaperResult()
-                {
-                    Ok = false,
-                    Error = ErrorType.NoPlayer,
-                };
+                return BaseApiResult.ErrorState<ShowWallpaperResult>(ErrorType.NoPlayer);
 
             foreach (var screenItem in screens)
             {

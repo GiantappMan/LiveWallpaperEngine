@@ -57,7 +57,12 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static BaseApiResult ErrorState(ErrorType type, string msg = null)
         {
-            return new BaseApiResult() { Ok = false, Error = type, Message = msg };
+            return ErrorState<BaseApiResult>(type, msg);
+        }
+
+        public static T ErrorState<T>(ErrorType type, string msg = null) where T : BaseApiResult, new()
+        {
+            return new T() { Ok = false, Error = type, Message = msg ?? type.ToString() };
         }
 
         public static BaseApiResult SuccessState()
