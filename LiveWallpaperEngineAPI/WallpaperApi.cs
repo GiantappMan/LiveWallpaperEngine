@@ -91,14 +91,21 @@ namespace Giantapp.LiveWallpaper.Engine
                     using FileStream fs = File.OpenRead(item.FullName);
                     var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
                     var saveDir = Path.GetDirectoryName(item.FullName);
-                    result.Add(new WallpaperModel()
+
+                    var wp = new WallpaperModel();
+                    if (info != null)
                     {
-                        RunningData = new WallpaperRunningData()
-                        {
-                            Dir = saveDir,
-                        },
-                        Info = info,
-                    });
+                        var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(info.File));
+                        if (currentRender != null)
+                            wp.Type = currentRender.SupportType;
+                    }
+                    wp.RunningData = new WallpaperRunningData()
+                    {
+                        Dir = saveDir,
+                    };
+                    wp.Info = info;
+
+                    result.Add(wp);
                 }
 
                 return new BaseApiResult<List<WallpaperModel>>() { Data = result, Ok = true };
@@ -128,10 +135,10 @@ namespace Giantapp.LiveWallpaper.Engine
             throw new NotImplementedException();
         }
 
-        public static WallpaperType? GetWallpaperType(string wallpaper)
+        public static WallpaperType GetWallpaperType(string wallpaper)
         {
             var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper));
-            return currentRender?.SupportType;
+            return currentRender.SupportType;
         }
 
         public static async Task<BaseApiResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
@@ -144,7 +151,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 if (!EnterBusyState(nameof(ShowWallpaper)))
                     return BaseApiResult.BusyState();
 
-                if(IsBusyState(nameof(SetupPlayer)))
+                if (IsBusyState(nameof(SetupPlayer)))
                     return BaseApiResult.BusyState();
 
                 if (screens.Length == 0)
@@ -279,15 +286,19 @@ namespace Giantapp.LiveWallpaper.Engine
         private static async Task<BaseApiResult> InnertSetupPlayer(WallpaperType type, string url)
         {
             BaseApiResult result = null;
+            SetupPlayerProgressChangedArgs.Type currentType = SetupPlayerProgressChangedArgs.Type.Downloading;
             try
             {
                 _ctsSetupPlayer?.Cancel();
                 _ctsSetupPlayer?.Dispose();
                 _ctsSetupPlayer = new CancellationTokenSource();
 
+                currentType = SetupPlayerProgressChangedArgs.Type.Downloading;
                 string downloadFile = await DownloadPlayer(type, url, _ctsSetupPlayer.Token);
+                currentType = SetupPlayerProgressChangedArgs.Type.Unpacking;
                 await UnpackPlayer(type, downloadFile, _ctsSetupPlayer.Token);
 
+                currentType = SetupPlayerProgressChangedArgs.Type.Completed;
                 result = BaseApiResult.SuccessState();
             }
             catch (OperationCanceledException)
@@ -305,7 +316,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     AllCompleted = true,
                     Path = url,
                     ProgressPercentage = 1,
-                    ActionType = SetupPlayerProgressChangedArgs.Type.Completed,
+                    ActionType = currentType,
                     Result = result
                 });
 
