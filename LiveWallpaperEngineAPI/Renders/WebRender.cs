@@ -11,6 +11,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     //本想单进程渲染多屏幕，但是发现声音不可控。故改为单进程只渲染一个屏幕
     public class WebRender : ExternalProcessRender
     {
+        //每次升级就修改这个文件名
         public static string PlayerFolderName { get; } = "web0";
         public WebRender() : base(WallpaperType.Web, new List<string>() { ".html", ".htm" })
         {

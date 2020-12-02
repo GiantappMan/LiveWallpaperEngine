@@ -6,6 +6,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 {
     public class VideoRender : ExternalProcessRender
     {
+        //每次升级就修改这个文件名
         public static string PlayerFolderName { get; } = "video0";
         public VideoRender() : base(WallpaperType.Video, new List<string>() { ".mp4", ".flv", ".blv", ".avi", ".gif", }, false)
         {
