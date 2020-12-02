@@ -445,7 +445,8 @@ namespace Giantapp.LiveWallpaper.Engine
         }
         private static async Task<string> DownloadPlayer(WallpaperType type, string url, CancellationToken token)
         {
-            string downloadFile = Path.Combine(Options.ExternalPlayerFolder, $"{type}.7z");
+            string fileName = Path.GetFileName(url);
+            string downloadFile = Path.Combine(Options.ExternalPlayerFolder, fileName); //$"{type}.7z"
             Debug.WriteLine("destpath:", downloadFile);
             if (File.Exists(downloadFile) && await SevenZip.CanOpenAsync(downloadFile))
                 return downloadFile;
