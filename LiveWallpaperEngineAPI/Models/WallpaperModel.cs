@@ -37,6 +37,7 @@ namespace Giantapp.LiveWallpaper.Engine
         Canceled,
         Uninitialized,
         Busy,
+        Failed,
         Exception
     }
     public class BaseApiResult

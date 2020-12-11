@@ -120,9 +120,33 @@ namespace Giantapp.LiveWallpaper.Engine
             }
         }
 
-        public static Task<BaseApiResult> DeleteWallpaperPack(string absolutePath)
+        public static async Task<BaseApiResult> DeleteWallpaper(string absolutePath)
         {
-            throw new NotImplementedException();
+            foreach (var wp in CurrentWalpapers)
+            {
+                if (wp.Value.Path == absolutePath)
+                {
+                    //当前要删除的壁纸
+                    await CloseWallpaper(wp.Key);
+                }
+            }
+
+            string dir = Path.GetDirectoryName(absolutePath);
+            for (int i = 0; i < 3; i++)
+            {
+                await Task.Delay(1000);
+                try
+                {
+                    //尝试删除3次 
+                    Directory.Delete(dir, true);
+                    return BaseApiResult.SuccessState();
+                }
+                catch (Exception ex)
+                {
+                    return BaseApiResult.ErrorState(ErrorType.Exception, ex.Message);
+                }
+            }
+            return BaseApiResult.ErrorState(ErrorType.Failed);
         }
 
         public static Task<BaseApiResult<WallpaperModel>> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
