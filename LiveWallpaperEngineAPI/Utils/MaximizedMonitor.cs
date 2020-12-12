@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using WinAPI.Helpers;
 
 namespace Giantapp.LiveWallpaper.Engine.Utils
 {
@@ -22,7 +23,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             if (_cp == null)
                 _cp = Process.GetCurrentProcess();
 
-            new DZY.WinAPI.Helpers.OtherProgramChecker(_cp.Id).CheckMaximized(out List<Screen> fullscreenWindow);
+            new OtherProgramChecker(_cp.Id).CheckMaximized(out List<Screen> fullscreenWindow);
             if (maximizedScreens.Count == fullscreenWindow.Count)
                 return;
 

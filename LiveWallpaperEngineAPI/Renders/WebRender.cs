@@ -1,10 +1,10 @@
-﻿using DZY.WinAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using WinAPI;
 
 namespace Giantapp.LiveWallpaper.Engine.Renders
 {

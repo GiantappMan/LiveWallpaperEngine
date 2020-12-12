@@ -132,6 +132,7 @@ namespace Giantapp.LiveWallpaper.Engine
             }
 
             string dir = Path.GetDirectoryName(absolutePath);
+            Exception tmpEx = null;
             for (int i = 0; i < 3; i++)
             {
                 await Task.Delay(1000);
@@ -143,9 +144,13 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
                 catch (Exception ex)
                 {
-                    return BaseApiResult.ErrorState(ErrorType.Exception, ex.Message);
+                    tmpEx = ex;
                 }
             }
+
+            if (tmpEx != null)
+                return BaseApiResult.ExceptionState(tmpEx);
+
             return BaseApiResult.ErrorState(ErrorType.Failed);
         }
 

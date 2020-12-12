@@ -1,17 +1,14 @@
 ﻿//原理参考
 //https://www.codeproject.com/Articles/856020/Draw-Behind-Desktop-Icons-in-Windows 
 //https://github.com/Francesco149/weebp/blob/master/src/weebp.c 
-using DZY.WinAPI;
-using DZY.WinAPI.Desktop.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
-
+using WinAPI;
+using WinAPI.Desktop.API;
 
 namespace Giantapp.LiveWallpaper.Engine.Utils
 {
