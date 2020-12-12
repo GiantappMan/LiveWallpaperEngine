@@ -112,12 +112,17 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             {
                 try
                 {
+                    //多次pause可能导致视频无法恢复等问题
+                    if (wallpaper.IsPaused)
+                        continue;
+
                     var p = Process.GetProcessById(wallpaper.PId);
                     p.Suspend();
+                    wallpaper.IsPaused = true;
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex);
+                    Debug.WriteLine(ex);
                     continue;
                 }
             }
@@ -133,6 +138,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 {
                     var p = Process.GetProcessById(wallpaper.PId);
                     p.Resume();
+                    wallpaper.IsPaused = false;
                 }
                 catch (Exception ex)
                 {

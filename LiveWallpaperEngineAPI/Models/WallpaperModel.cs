@@ -103,6 +103,7 @@ namespace Giantapp.LiveWallpaper.Engine
         }
         public WallpaperModel Wallpaper { get; set; }
         public string Screen { get; set; }
+        public bool IsPaused { get; set; }
     }
 
     public enum WallpaperType
