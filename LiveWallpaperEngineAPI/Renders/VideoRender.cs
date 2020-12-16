@@ -19,6 +19,11 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             string playerPath = Path.Combine(WallpaperApi.Options.ExternalPlayerFolder, $@"{PlayerFolderName}\mpv.exe");
             if (!File.Exists(playerPath))
                 return null;
+
+            FileInfo info = new FileInfo(playerPath);
+            if (info.Length == 0)
+                return null;
+
             ProcessStartInfo r = new ProcessStartInfo(playerPath)
             {
                 Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000",
