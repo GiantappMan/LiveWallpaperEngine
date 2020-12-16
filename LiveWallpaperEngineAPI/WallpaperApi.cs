@@ -1,4 +1,5 @@
-﻿using Giantapp.LiveWallpaper.Engine.Renders;
+﻿using Common.Helpers;
+using Giantapp.LiveWallpaper.Engine.Renders;
 using Giantapp.LiveWallpaper.Engine.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -31,6 +32,19 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static string[] Screens { get; private set; }
         public static LiveWallpaperOptions Options { get; private set; } = new LiveWallpaperOptions();
+
+        /// <summary>
+        /// 创建草稿,返回壁纸目录
+        /// </summary>
+        /// <param name="wallpaperSaveDir"></param>
+        /// <returns></returns>
+        public static async Task<string> CreateWallpaperDraft(string destDir, WallpaperProjectInfo info)
+        {
+            destDir = Path.Combine(destDir, Guid.NewGuid().ToString());
+            string jsonPath = Path.Combine(destDir, "project.json");
+            await JsonHelper.JsonSerializeAsync(info, jsonPath);
+            return destDir;
+        }
 
         //Dictionary<DeviceName，WallpaperModel>
         public static Dictionary<string, WallpaperModel> CurrentWalpapers { get; private set; } = new Dictionary<string, WallpaperModel>();

@@ -21,11 +21,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
         protected override async Task InnerCloseWallpaperAsync(List<RenderInfo> wallpaperRenders, bool closeBeforeOpening)
         {
             //不论是否临时关闭，都需要关闭进程重启进程
-
             foreach (var render in wallpaperRenders)
             {
                 try
-                {
+                {                    
                     var p = Process.GetProcessById(render.PId);
                     p.Kill();
                 }
