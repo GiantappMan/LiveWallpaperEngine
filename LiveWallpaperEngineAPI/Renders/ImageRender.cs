@@ -70,23 +70,25 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 return Task.CompletedTask;
 
             return Task.Run(() =>
-            {
-                foreach (var w in playingWallpaper)
-                {
-                    string monitoryId = GetMonitoryId(w.Screen);
-                    try
-                    {
-                        var oldWallpaper = GetOldWallpaper(w.Screen);
-                        if (!System.IO.File.Exists(oldWallpaper))
-                            continue;
-                        _desktopFactory.SetWallpaper(monitoryId, oldWallpaper);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex);
-                    }
-                }
-            });
+           {
+               foreach (var w in playingWallpaper)
+               {
+                   string monitoryId = GetMonitoryId(w.Screen);
+                   try
+                   {
+                       var oldWallpaper = GetOldWallpaper(w.Screen);
+                       if (!System.IO.File.Exists(oldWallpaper))
+                           continue;
+                       _desktopFactory.SetWallpaper(monitoryId, oldWallpaper);
+                       //还原旧壁纸后，这里多等一秒，否则切换视频壁纸会失败
+                       Thread.Sleep(1000);
+                   }
+                   catch (Exception ex)
+                   {
+                       System.Diagnostics.Debug.WriteLine(ex);
+                   }
+               }
+           });
         }
 
         private string GetOldWallpaper(string screen)
