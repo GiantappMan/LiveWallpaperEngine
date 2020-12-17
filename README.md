@@ -37,12 +37,12 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperMa
 
 ## Run demo：
 ```
-Select files in this directory for testing
+//Select files in this directory for testing
 LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 ```
 
 ## Note：
-* This project is developed in win10 environment, if win7 is not compatible, you can submit PR by yourself。
+* This project is developed in win10 environment, Win7 is not compatible,if you want you can submit PR by yourself。
 * Sometimes it conflicts with desktop organization software, such as Fences。
 * Open the antivirus family bucket software, it may not be embedded in the desktop。
 ---
