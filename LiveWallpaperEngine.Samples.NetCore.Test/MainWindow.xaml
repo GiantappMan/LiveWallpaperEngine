@@ -19,11 +19,11 @@
         <StackPanel>
             <Button
                 VerticalAlignment="Center"
-                Click="btnSelect_Click"
+                Click="BtnSelect_Click"
                 Content="Show Wallpaper" />
             <Button
                 VerticalAlignment="Center"
-                Click="btnStop_Click"
+                Click="BtnStop_Click"
                 Content="Stop" />
             <StackPanel Orientation="Horizontal">
                 <TextBlock>Screen:</TextBlock>
@@ -41,7 +41,7 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <giantappconfiger:ConfigControl x:Name="configer" BorderBrush="Gray" />
         </ScrollViewer>
-        <Button Grid.Row="2" Click="btnApply_Click">Apply Settings</Button>
+        <Button Grid.Row="2" Click="BtnApply_Click">Apply Settings</Button>
         <Grid
             x:Name="popup"
             Grid.RowSpan="3"
@@ -49,7 +49,7 @@
             Visibility="Collapsed">
             <StackPanel>
                 <TextBlock x:Name="txtPopup" />
-                <Button Click="btnCancelSetupPlayer_Click">Cancel</Button>
+                <Button Click="BtnCancelSetupPlayer_Click">Cancel</Button>
             </StackPanel>
         </Grid>
     </Grid>

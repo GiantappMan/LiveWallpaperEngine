@@ -51,7 +51,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
         public static bool Initialized { get; private set; }
 
-        public static List<(WallpaperType Type, string DownloadUrl)> PlayerUrls = new List<(WallpaperType Type, string DownloadUrl)>()
+        public static readonly List<(WallpaperType Type, string DownloadUrl)> PlayerUrls = new List<(WallpaperType Type, string DownloadUrl)>()
         {
             (WallpaperType.Video,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/mpv.7z"),
             (WallpaperType.Web,"https://github.com/giant-app/LiveWallpaperEngine/releases/download/v2.0.4/web.7z"),
@@ -111,7 +111,7 @@ namespace Giantapp.LiveWallpaper.Engine
                     {
                         var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(info.File));
                         if (currentRender != null)
-                            wp.Type = currentRender.SupportType;
+                            wp.RunningData.Type = currentRender.SupportType;
                     }
                     wp.RunningData = new WallpaperRunningData()
                     {
@@ -213,19 +213,19 @@ namespace Giantapp.LiveWallpaper.Engine
                     screens = Screens;
 
                 IRender currentRender;
-                if (wallpaper.Type == null)
+                if (wallpaper.RunningData.Type == null)
                 {
                     currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
                     if (currentRender == null)
                         return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.NoRender, "This wallpaper type is not supported", wallpaper);
 
-                    wallpaper.Type = currentRender.SupportType;
+                    wallpaper.RunningData.Type = currentRender.SupportType;
                 }
                 else
-                    currentRender = RenderManager.GetRender(wallpaper.Type.Value);
+                    currentRender = RenderManager.GetRender(wallpaper.RunningData.Type.Value);
 
                 if (currentRender == null)
-                    if (wallpaper.Type == null)
+                    if (wallpaper.RunningData.Type == null)
                         throw new ArgumentException("Unsupported wallpaper type");
 
                 foreach (var screenItem in screens)
@@ -344,7 +344,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 _ctsSetupPlayer = new CancellationTokenSource();
 
                 currentType = SetupPlayerProgressChangedArgs.Type.Downloading;
-                string downloadFile = await DownloadPlayer(type, url, _ctsSetupPlayer.Token);
+                string downloadFile = await DownloadPlayer(url, _ctsSetupPlayer.Token);
                 currentType = SetupPlayerProgressChangedArgs.Type.Unpacking;
                 await UnpackPlayer(type, downloadFile, _ctsSetupPlayer.Token);
 
@@ -485,7 +485,7 @@ namespace Giantapp.LiveWallpaper.Engine
 
                 try
                 {
-                    await Task.Run(() => archiveFile.Extract(dist, token));
+                    await Task.Run(() => archiveFile.Extract(dist, token), token);
                     SetupPlayerProgressChangedEvent?.Invoke(null, new SetupPlayerProgressChangedArgs()
                     {
                         ActionCompleted = true,
@@ -504,7 +504,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-        private static async Task<string> DownloadPlayer(WallpaperType type, string url, CancellationToken token)
+        private static async Task<string> DownloadPlayer(string url, CancellationToken token)
         {
             string fileName = Path.GetFileName(url);
             string downloadFile = Path.Combine(Options.ExternalPlayerFolder, fileName); //$"{type}.7z"
@@ -562,9 +562,9 @@ namespace Giantapp.LiveWallpaper.Engine
                 byte[] buffer = new byte[4096];
                 int read;
                 int totalRead = 0;
-                while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                while ((read = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
                 {
-                    await distFileStream.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
+                    await distFileStream.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
                     totalRead += read;
                     progressCallback(totalRead, length);
                 }

@@ -126,6 +126,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public bool IsPaused { get; set; }
         public bool IsStopedTemporary { get; set; }
         public string AbsolutePath { get; set; }
+        public WallpaperType? Type { get; set; }
     }
     public class WallpaperProjectInfo
     {
@@ -151,6 +152,5 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 壁纸信息，服务端保存也是这些
         /// </summary>
         public WallpaperProjectInfo Info { get; set; } = new WallpaperProjectInfo();
-        public WallpaperType? Type { get; set; }
     }
 }
