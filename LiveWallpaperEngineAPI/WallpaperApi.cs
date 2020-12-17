@@ -138,7 +138,7 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             foreach (var wp in CurrentWalpapers)
             {
-                if (wp.Value.Path == absolutePath)
+                if (wp.Value.RunningData.AbsolutePath == absolutePath)
                 {
                     //当前要删除的壁纸
                     await CloseWallpaper(wp.Key);
@@ -184,18 +184,30 @@ namespace Giantapp.LiveWallpaper.Engine
             return currentRender.SupportType;
         }
 
-        public static async Task<BaseApiResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public static Task<BaseApiResult<WallpaperModel>> ShowWallpaper(string absolutePath, params string[] screens)
+        {
+            return ShowWallpaper(CreateWallpaperModel(absolutePath), screens);
+        }
+
+        public static WallpaperModel CreateWallpaperModel(string absolutePath)
+        {
+            var r = new WallpaperModel();
+            r.RunningData.AbsolutePath = absolutePath;
+            return r;
+        }
+
+        public static async Task<BaseApiResult<WallpaperModel>> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             if (!Initialized)
-                return new BaseApiResult() { Ok = false, Message = "You need to initialize the SDK first", Error = ErrorType.Uninitialized };
+                return new BaseApiResult<WallpaperModel>() { Ok = false, Message = "You need to initialize the SDK first", Error = ErrorType.Uninitialized };
 
             try
             {
                 if (!EnterBusyState(nameof(ShowWallpaper)))
-                    return BaseApiResult.BusyState();
+                    return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Busy, null, wallpaper);
 
                 if (IsBusyState(nameof(SetupPlayer)))
-                    return BaseApiResult.BusyState();
+                    return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Busy, null, wallpaper);
 
                 if (screens.Length == 0)
                     screens = Screens;
@@ -203,14 +215,9 @@ namespace Giantapp.LiveWallpaper.Engine
                 IRender currentRender;
                 if (wallpaper.Type == null)
                 {
-                    currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
                     if (currentRender == null)
-                        return new ShowWallpaperResult()
-                        {
-                            Ok = false,
-                            Error = ErrorType.NoRender,
-                            Message = "This wallpaper type is not supported"
-                        };
+                        return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.NoRender, "This wallpaper type is not supported", wallpaper);
 
                     wallpaper.Type = currentRender.SupportType;
                 }
@@ -230,23 +237,23 @@ namespace Giantapp.LiveWallpaper.Engine
                     var existWallpaper = CurrentWalpapers[screenItem];
 
                     //壁纸 路径相同
-                    if (existWallpaper != null && existWallpaper.Path == wallpaper.Path)
+                    if (existWallpaper != null && existWallpaper.RunningData.AbsolutePath == wallpaper.RunningData.AbsolutePath)
                         continue;
 
                     //关闭之前的壁纸
                     await CloseWallpaper(screenItem);
                     var showResult = await currentRender.ShowWallpaper(wallpaper, screenItem);
                     if (!showResult.Ok)
-                        return showResult;
+                        return BaseApiResult<WallpaperModel>.ErrorState(showResult.Error, showResult.Message, wallpaper);
                     CurrentWalpapers[screenItem] = wallpaper;
                 }
 
                 ApplyAudioSource();
-                return new BaseApiResult() { Ok = true };
+                return BaseApiResult<WallpaperModel>.SuccessState(wallpaper);
             }
             catch (Exception ex)
             {
-                return BaseApiResult.ExceptionState(ex);
+                return BaseApiResult<WallpaperModel>.ExceptionState(ex);
             }
             finally
             {
@@ -429,7 +436,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
                     wallpaper.RunningData.IsPaused = true;
-                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
                     currentRender.Pause(screens);
                 }
             }
@@ -442,7 +449,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     var wallpaper = CurrentWalpapers[screenItem];
                     wallpaper.RunningData.IsPaused = false;
-                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                    var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
                     currentRender.Resume(screens);
                 }
             }
@@ -655,7 +662,7 @@ namespace Giantapp.LiveWallpaper.Engine
                             //_ = ShowWallpaper(CurrentWalpapers[currentScreen], currentScreen);
 
                             var wallpaper = CurrentWalpapers[currentScreen];
-                            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+                            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
                             await currentRender.ShowWallpaper(wallpaper, currentScreen);
                         }
                         break;

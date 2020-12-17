@@ -24,7 +24,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             foreach (var render in wallpaperRenders)
             {
                 try
-                {                    
+                {
                     var p = Process.GetProcessById(render.PId);
                     p.Kill();
                 }
@@ -40,14 +40,14 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             }
         }
 
-        protected override async Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected override async Task<BaseApiResult<List<RenderInfo>>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
             List<RenderInfo> infos = new List<RenderInfo>();
             List<Task> tmpTasks = new List<Task>();
 
-            ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper.Path));
+            ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper.RunningData.AbsolutePath));
             if (pInfo == null)
-                return BaseApiResult.ErrorState<ShowWallpaperResult>(ErrorType.NoPlayer);
+                return BaseApiResult<List<RenderInfo>>.ErrorState(ErrorType.NoPlayer);
 
             foreach (var screenItem in screens)
             {
@@ -90,11 +90,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 foreach (var item in infos)
                     await DesktopMouseEventReciver.AddHandle(item.ReceiveMouseEventHandle, item.Screen);
             }
-            return new ShowWallpaperResult()
-            {
-                Ok = true,
-                RenderInfos = infos
-            };
+            return BaseApiResult<List<RenderInfo>>.SuccessState(infos);
         }
 
         protected virtual ProcessStartInfo GetRenderExeInfo(string path)

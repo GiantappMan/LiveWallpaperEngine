@@ -20,13 +20,13 @@
             <Button
                 VerticalAlignment="Center"
                 Click="btnSelect_Click"
-                Content="显示壁纸" />
+                Content="Show Wallpaper" />
             <Button
                 VerticalAlignment="Center"
                 Click="btnStop_Click"
-                Content="停止" />
+                Content="Stop" />
             <StackPanel Orientation="Horizontal">
-                <TextBlock>显示器:</TextBlock>
+                <TextBlock>Screen:</TextBlock>
                 <ItemsControl x:Name="monitors">
                     <ItemsControl.ItemTemplate>
                         <ItemContainerTemplate>
@@ -41,7 +41,7 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <giantappconfiger:ConfigControl x:Name="configer" BorderBrush="Gray" />
         </ScrollViewer>
-        <Button Grid.Row="2" Click="btnApply_Click">应用设置</Button>
+        <Button Grid.Row="2" Click="btnApply_Click">Apply Settings</Button>
         <Grid
             x:Name="popup"
             Grid.RowSpan="3"

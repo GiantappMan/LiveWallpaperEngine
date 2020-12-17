@@ -23,7 +23,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             SupportExtension = extension;
             SupportMouseEvent = supportMouseEvent;
         }
-        public async Task<ShowWallpaperResult> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
+        public async Task<BaseApiResult<List<RenderInfo>>> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
         {
             foreach (var item in screens)
                 Debug.WriteLine($"show {GetType().Name} {item}");
@@ -38,7 +38,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     ok = true;
                 else
                 {
-                    ok = existRender.Wallpaper.Path != wallpaper.Path;
+                    ok = existRender.Wallpaper.RunningData.AbsolutePath != wallpaper.RunningData.AbsolutePath;
                     changedRender.Add(existRender);
                 }
                 return ok;
@@ -55,10 +55,10 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     return showResult;
 
                 //更新当前壁纸
-                showResult.RenderInfos.ForEach(m => _currentWallpapers.Add(m));
+                showResult.Data.ForEach(m => _currentWallpapers.Add(m));
             }
 
-            return new ShowWallpaperResult() { Ok = true };
+            return BaseApiResult<List<RenderInfo>>.SuccessState();
         }
         public async Task CloseWallpaperAsync(params string[] screens)
         {
@@ -155,14 +155,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                 AudioHelper.SetVolume(playingWallpaper.PId, v);
         }
 
-        protected virtual Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected virtual Task<BaseApiResult<List<RenderInfo>>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
             var infos = screens.Select(m => new RenderInfo()
             {
                 Wallpaper = wallpaper,
                 Screen = m
             }).ToList();
-            return Task.FromResult(new ShowWallpaperResult() { RenderInfos = infos, Ok = true });
+
+            return Task.FromResult(BaseApiResult<List<RenderInfo>>.SuccessState(infos));
         }
     }
 }

@@ -7,11 +7,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using static Giantapp.LiveWallpaper.Engine.ScreenOption;
-using DZY.WinAPI;
 using System;
 using System.Text;
-using System.Windows.Forms.Design;
-using System.IO;
+using WinAPI;
 
 namespace LiveWallpaperEngine.Samples.NetCore.Test
 {
@@ -43,7 +41,7 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 Text = m.DeviceName,
                 DefaultValue = m.DeviceName
             }).ToList();
-            audioOption.Insert(0, new DescriptorInfo() { Text = "禁用", DefaultValue = null });
+            audioOption.Insert(0, new DescriptorInfo() { Text = "Disabled", DefaultValue = null });
 
             var screenSetting = Screen.AllScreens.Select(m => new ScreenOption()
             {
@@ -53,55 +51,55 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
 
             var screenSettingOptions = new List<DescriptorInfo>()
             {
-                new DescriptorInfo(){Text="播放",DefaultValue=ActionWhenMaximized.Play},
-                new DescriptorInfo(){Text="暂停",DefaultValue=ActionWhenMaximized.Pause},
-                new DescriptorInfo(){Text="停止",DefaultValue=ActionWhenMaximized.Stop},
+                new DescriptorInfo(){Text="Play",DefaultValue=ActionWhenMaximized.Play},
+                new DescriptorInfo(){Text="Pause",DefaultValue=ActionWhenMaximized.Pause},
+                new DescriptorInfo(){Text="Stop",DefaultValue=ActionWhenMaximized.Stop},
             };
 
             var descInfo = new DescriptorInfoDict()
             {
                 { nameof(LiveWallpaperOptions),
                     new DescriptorInfo(){
-                        Text="壁纸设置",
+                        Text="Wallpaper Settings",
                         PropertyDescriptors=new DescriptorInfoDict(){
                             {
                                 nameof(LiveWallpaperOptions.AudioScreen),
                                 new DescriptorInfo(){
-                                    Text="音源",
+                                    Text="Audio Source",
                                     Type=PropertyType.Combobox,Options=new ObservableCollection<DescriptorInfo>(audioOption),
                                     DefaultValue=null,
                                 }
                             },
-                            {
-                                nameof(LiveWallpaperOptions.AutoRestartWhenExplorerCrash),
-                                new DescriptorInfo(){
-                                    Text="崩溃后自动恢复",
-                                    DefaultValue=true,
-                            }},
+                            //{
+                            //    nameof(LiveWallpaperOptions.AutoRestartWhenExplorerCrash),
+                            //    new DescriptorInfo(){
+                            //        Text="崩溃后自动恢复",
+                            //        DefaultValue=true,
+                            //}},
                             {
                                 nameof(LiveWallpaperOptions.AppMaximizedEffectAllScreen),
                                 new DescriptorInfo(){
-                                    Text="全屏检测影响所有屏幕",
+                                    Text="Full screen detection affects all screens",
                                     DefaultValue=true,
                             }},
                                {
                                 nameof(LiveWallpaperOptions.ForwardMouseEvent),
                                 new DescriptorInfo(){
-                                    Text="转发鼠标事件",
+                                    Text="Forward mouse event",
                                     DefaultValue=true,
                             }},
                             {
                                 nameof(LiveWallpaperOptions.ScreenOptions),
                                 new DescriptorInfo(){
-                                    Text ="显示器设置",
+                                    Text ="Display Settings",
                                     Type =PropertyType.List,
                                     CanAddItem =false,
                                     CanRemoveItem=false,
                                     DefaultValue=screenSetting,
                                     PropertyDescriptors=new DescriptorInfoDict()
                                     {
-                                        {nameof(ScreenOption.Screen),new DescriptorInfo(){ Text="屏幕",Type=PropertyType.Label } },
-                                        {nameof(ScreenOption.WhenAppMaximized),new DescriptorInfo(){ Text="桌面被挡住时",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
+                                        {nameof(ScreenOption.Screen),new DescriptorInfo(){ Text="Screen",Type=PropertyType.Label } },
+                                        {nameof(ScreenOption.WhenAppMaximized),new DescriptorInfo(){ Text="When other programs are maximized",Options=new ObservableCollection<DescriptorInfo>(screenSettingOptions)} }
                                     }
                                 }
                             },
@@ -137,8 +135,8 @@ namespace LiveWallpaperEngine.Samples.NetCore.Test
                 {
                     var displayScreen = monitorsVM.Where(m => m.Checked).Select(m => m.DeviceName).ToArray();
                     btnApply_Click(null, null);
-                    var wp = new WallpaperModel() { Path = openFileDialog.FileName };
-                    var showResult = await WallpaperApi.ShowWallpaper(wp, displayScreen);
+                    var showResult = await WallpaperApi.ShowWallpaper(openFileDialog.FileName, displayScreen);
+                    var wp = showResult.Data;
                     if (!showResult.Ok)
                     {
                         if (showResult.Error == ErrorType.NoPlayer)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Giantapp.LiveWallpaper.Engine
 {
@@ -40,55 +39,54 @@ namespace Giantapp.LiveWallpaper.Engine
         Failed,
         Exception
     }
+    public class BaseApiResult<T> : BaseApiResult
+    {
+        public T Data { get; set; }
+        public static new BaseApiResult<T> BusyState()
+        {
+            return ErrorState(ErrorType.Busy);
+        }
+        public static new BaseApiResult<T> ExceptionState(Exception ex)
+        {
+            return ErrorState(ErrorType.Exception, ex.Message);
+        }
+        public static BaseApiResult<T> ErrorState(ErrorType type, string msg = null, T data = default)
+        {
+            return new BaseApiResult<T>() { Ok = false, Error = type, Message = msg ?? type.ToString(), Data = data };
+        }
+        public static BaseApiResult<T> SuccessState(T data = default)
+        {
+            return new BaseApiResult<T>() { Ok = true, Data = data };
+        }
+    }
     public class BaseApiResult
     {
         public bool Ok { get; set; }
         public ErrorType Error { get; set; }
         public string Message { get; set; }
-
         public static BaseApiResult BusyState()
         {
             return ErrorState(ErrorType.Busy);
         }
-
         public static BaseApiResult ExceptionState(Exception ex)
         {
             return ErrorState(ErrorType.Exception, ex.Message);
         }
-
         public static BaseApiResult ErrorState(ErrorType type, string msg = null)
         {
-            return ErrorState<BaseApiResult>(type, msg);
+            return new BaseApiResult() { Ok = false, Error = type, Message = msg ?? type.ToString() };
         }
-
-        public static T ErrorState<T>(ErrorType type, string msg = null) where T : BaseApiResult, new()
-        {
-            return new T() { Ok = false, Error = type, Message = msg ?? type.ToString() };
-        }
-
         public static BaseApiResult SuccessState()
         {
             return new BaseApiResult() { Ok = true };
         }
     }
-
-    public class BaseApiResult<T> : BaseApiResult
-    {
-        public T Data { get; set; }
-    }
-
-    public class ShowWallpaperResult : BaseApiResult
-    {
-        internal List<RenderInfo> RenderInfos { get; set; }
-    }
-
     public class RenderProcess
     {
         public IntPtr HostHandle { get; set; }
         public IntPtr ReceiveMouseEventHandle { get; set; }
         public int PId { get; set; }
     }
-
     public class RenderInfo : RenderProcess
     {
         public RenderInfo()
@@ -105,7 +103,6 @@ namespace Giantapp.LiveWallpaper.Engine
         public string Screen { get; set; }
         public bool IsPaused { get; set; }
     }
-
     public enum WallpaperType
     {
         Video,
@@ -120,7 +117,6 @@ namespace Giantapp.LiveWallpaper.Engine
         /// </summary>
         public bool EnableMouseEvent { get; set; } = true;
     }
-
     public class WallpaperRunningData
     {
         /// <summary>
@@ -129,6 +125,7 @@ namespace Giantapp.LiveWallpaper.Engine
         public string Dir { get; set; }
         public bool IsPaused { get; set; }
         public bool IsStopedTemporary { get; set; }
+        public string AbsolutePath { get; set; }
     }
     public class WallpaperProjectInfo
     {
@@ -140,13 +137,20 @@ namespace Giantapp.LiveWallpaper.Engine
         public string Visibility { get; set; }
         public List<string> Tags { get; set; }
     }
-
     public class WallpaperModel
     {
+        /// <summary>
+        /// 壁纸可控参数
+        /// </summary>
         public WallpaperOption Option { get; set; } = new WallpaperOption();
+        /// <summary>
+        /// 壁纸运行时产生的数据
+        /// </summary>
         public WallpaperRunningData RunningData { get; set; } = new WallpaperRunningData();
+        /// <summary>
+        /// 壁纸信息，服务端保存也是这些
+        /// </summary>
         public WallpaperProjectInfo Info { get; set; } = new WallpaperProjectInfo();
         public WallpaperType? Type { get; set; }
-        public string Path { get; set; }
     }
 }

@@ -40,8 +40,8 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             if (wallpaper.Type != null)
                 return GetRender(wallpaper.Type.Value);
-            else if (!string.IsNullOrEmpty(wallpaper.Path))
-                return GetRenderByExtension(Path.GetExtension(wallpaper.Path));
+            else if (!string.IsNullOrEmpty(wallpaper.RunningData.AbsolutePath))
+                return GetRenderByExtension(Path.GetExtension(wallpaper.RunningData.AbsolutePath));
             return null;
         }
 

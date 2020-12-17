@@ -21,7 +21,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             _desktopFactory = DesktopWallpaperFactory.Create();
         }
 
-        protected override Task<ShowWallpaperResult> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
+        protected override Task<BaseApiResult<List<RenderInfo>>> InnerShowWallpaper(WallpaperModel wallpaper, CancellationToken ct, params string[] screens)
         {
             return Task.Run(() =>
             {
@@ -30,7 +30,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     CacheOldWallpaper(screenName, () => _desktopFactory.GetWallpaper(screenName));
 
                     string monitoryId = GetMonitoryId(screenName);
-                    _desktopFactory.SetWallpaper(monitoryId, wallpaper.Path);
+                    _desktopFactory.SetWallpaper(monitoryId, wallpaper.RunningData.AbsolutePath);
                 }
 
                 List<RenderInfo> infos = screens.Select(m => new RenderInfo()
@@ -38,11 +38,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                     Wallpaper = wallpaper,
                     Screen = m
                 }).ToList();
-                return new ShowWallpaperResult()
-                {
-                    Ok = true,
-                    RenderInfos = infos
-                };
+                return BaseApiResult<List<RenderInfo>>.SuccessState(infos);
             });
         }
 
