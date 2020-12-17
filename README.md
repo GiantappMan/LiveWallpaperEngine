@@ -33,7 +33,7 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperMa
 
 ## Expectations for open source:
 - Welcom PR,Suggest
-- Not recommended for commercial projects。
+- Not recommended for commercial projects
 
 ## Run demo：
 ```
