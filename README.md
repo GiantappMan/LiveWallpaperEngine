@@ -2,7 +2,7 @@
 
 This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
 
-[中文文档](docs/README_zh.md)
+[中文文档](https://github.com/giant-app/LiveWallpaperEngine/blob/master/Docs/README_zh.md)
 
 ## Features：
 Windows10 Live Wallpaper Minimalist API
