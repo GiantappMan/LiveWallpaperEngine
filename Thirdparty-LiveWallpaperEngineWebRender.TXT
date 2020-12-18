@@ -1,4 +1,4 @@
-﻿License notice for CefSharp.WinForms (v83.4.20)
+﻿License notice for CefSharp.WinForms (v86.0.241)
 ------------------------------------
 
 https://github.com/cefsharp/cefsharp
@@ -8,7 +8,7 @@ Copyright © The CefSharp Authors
 License available at https://raw.github.com/cefsharp/CefSharp/master/LICENSE
 
 
-License notice for cef.redist.x64 (v83.4.2)
+License notice for cef.redist.x64 (v86.0.24)
 ------------------------------------
 
 https://github.com/cefsharp/cef-binary
@@ -18,7 +18,7 @@ Copyright © 2008-2015
 License available at https://raw.github.com/cefsharp/cef-binary/master/LICENSE.txt
 
 
-License notice for cef.redist.x86 (v83.4.2)
+License notice for cef.redist.x86 (v86.0.24)
 ------------------------------------
 
 https://github.com/cefsharp/cef-binary
@@ -28,7 +28,7 @@ Copyright © 2008-2015
 License available at https://raw.github.com/cefsharp/cef-binary/master/LICENSE.txt
 
 
-License notice for CefSharp.Common (v83.4.20)
+License notice for CefSharp.Common (v86.0.241)
 ------------------------------------
 
 https://github.com/cefsharp/CefSharp
