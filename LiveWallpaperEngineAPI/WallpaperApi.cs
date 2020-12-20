@@ -104,21 +104,7 @@ namespace Giantapp.LiveWallpaper.Engine
                 {
                     using FileStream fs = File.OpenRead(item.FullName);
                     var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
-                    var saveDir = Path.GetDirectoryName(item.FullName);
-
-                    var wp = new WallpaperModel();
-                    if (info != null)
-                    {
-                        var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(info.File));
-                        if (currentRender != null)
-                            wp.RunningData.Type = currentRender.SupportType;
-                    }
-                    wp.RunningData = new WallpaperRunningData()
-                    {
-                        Dir = saveDir,
-                    };
-                    wp.Info = info;
-
+                    var wp = CreateWallpaperModel(item.FullName.Replace("project.json", info.File), info);
                     result.Add(wp);
                 }
 
@@ -189,10 +175,19 @@ namespace Giantapp.LiveWallpaper.Engine
             return ShowWallpaper(CreateWallpaperModel(absolutePath), screens);
         }
 
-        public static WallpaperModel CreateWallpaperModel(string absolutePath)
+        public static WallpaperModel CreateWallpaperModel(string absolutePath, WallpaperProjectInfo info = null)
         {
             var r = new WallpaperModel();
+
             r.RunningData.AbsolutePath = absolutePath;
+
+            var saveDir = Path.GetDirectoryName(absolutePath);
+            r.RunningData.Dir = saveDir;
+
+            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(absolutePath));
+            r.RunningData.Type = currentRender?.SupportType;
+
+            r.Info = info;
             return r;
         }
 
