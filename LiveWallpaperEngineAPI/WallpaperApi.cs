@@ -187,7 +187,10 @@ namespace Giantapp.LiveWallpaper.Engine
             var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(absolutePath));
             r.RunningData.Type = currentRender?.SupportType;
 
-            r.Info = info;
+            if (info != null)
+                r.Info = info;
+
+            r.Info.File = Path.GetFileName(absolutePath);
             return r;
         }
 
