@@ -37,7 +37,8 @@ namespace Giantapp.LiveWallpaper.Engine
         Uninitialized,
         Busy,
         Failed,
-        Exception
+        Exception,
+        NoFFmpeg
     }
     public class BaseApiResult<T> : BaseApiResult
     {
@@ -63,6 +64,14 @@ namespace Giantapp.LiveWallpaper.Engine
     {
         public bool Ok { get; set; }
         public ErrorType Error { get; set; }
+        public string ErrorString
+        {
+            get
+            {
+                string r = Error.ToString();
+                return r;
+            }
+        }
         public string Message { get; set; }
         public static BaseApiResult BusyState()
         {
@@ -126,7 +135,17 @@ namespace Giantapp.LiveWallpaper.Engine
         public bool IsPaused { get; set; }
         public bool IsStopedTemporary { get; set; }
         public string AbsolutePath { get; set; }
-        public WallpaperType? Type { get; set; }
+        private WallpaperType? _type;
+        public string TypeString { get; private set; }
+        public WallpaperType? Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                TypeString = value.ToString();
+            }
+        }
     }
     public class WallpaperProjectInfo
     {
