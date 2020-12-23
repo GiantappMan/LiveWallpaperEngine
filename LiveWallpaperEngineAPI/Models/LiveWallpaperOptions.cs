@@ -29,6 +29,16 @@ namespace Giantapp.LiveWallpaper.Engine
     /// </summary>
     public class LiveWallpaperOptions
     {
+        private string _defaultExternalPlayerFolder;
+        public LiveWallpaperOptions()
+        {
+
+        }
+        public LiveWallpaperOptions(string defaultExternalPlayerFolder)
+        {
+            _defaultExternalPlayerFolder = defaultExternalPlayerFolder;
+        }
+
         /// <summary>
         /// explorer挂了是否重启
         /// </summary>
@@ -68,6 +78,10 @@ namespace Giantapp.LiveWallpaper.Engine
             {
                 if (string.IsNullOrEmpty(_externalPlayerFolder))
                 {
+                    //可以通过构造函数，控制默认值
+                    if (!string.IsNullOrEmpty(_defaultExternalPlayerFolder))
+                        return _defaultExternalPlayerFolder;
+
                     //默认位置
                     var assembly = Assembly.GetEntryAssembly();
                     string appDir = Path.GetDirectoryName(assembly.Location);
