@@ -13,8 +13,8 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
     /// </summary>
     public class ImageRender : BaseRender
     {
-        IDesktopWallpaper _desktopFactory;
-        Dictionary<string, string> _oldWallpapers = new Dictionary<string, string>();
+        readonly IDesktopWallpaper _desktopFactory;
+        readonly Dictionary<string, string> _oldWallpapers = new Dictionary<string, string>();
 
         public ImageRender() : base(WallpaperType.Image, new List<string>() { ".jpg", ".jpeg", ".png", ".bmp" }, false)
         {

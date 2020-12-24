@@ -55,27 +55,27 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
         {
             int MAX_PATH = 260;
             string wallpaper = new string('\0', MAX_PATH);
-            User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_GETDESKWALLPAPER, (uint)wallpaper.Length, wallpaper, 0);
+            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_GETDESKWALLPAPER, (uint)wallpaper.Length, wallpaper, 0);
             return wallpaper.Substring(0, wallpaper.IndexOf('\0'));
         }
 
         static void SetDesktopWallpaper(string filename)
         {
-            User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETDESKWALLPAPER, 0, filename,
+            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETDESKWALLPAPER, 0, filename,
                 User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
         }
-        private static string GetActiveWindowTitle()
-        {
-            const int nChars = 256;
-            StringBuilder Buff = new StringBuilder(nChars);
-            IntPtr handle = User32Wrapper.GetForegroundWindow();
+        //private static string GetActiveWindowTitle()
+        //{
+        //    const int nChars = 256;
+        //    StringBuilder Buff = new StringBuilder(nChars);
+        //    IntPtr handle = User32Wrapper.GetForegroundWindow();
 
-            if (User32Wrapper.GetWindowText(handle, Buff, nChars) > 0)
-            {
-                return $"handle:{handle} buff:{Buff}";
-            }
-            return $"handle:{handle}";
-        }
+        //    if (User32Wrapper.GetWindowText(handle, Buff, nChars) > 0)
+        //    {
+        //        return $"handle:{handle} buff:{Buff}";
+        //    }
+        //    return $"handle:{handle}";
+        //}
 
         internal static bool IsDesktop()
         {
@@ -108,7 +108,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             //https://stackoverflow.com/questions/357076/best-way-to-hide-a-window-from-the-alt-tab-program-switcher
             int exStyle = User32Wrapper.GetWindowLong(handler, WindowLongFlags.GWL_EXSTYLE);
             exStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
-            User32Wrapper.SetWindowLong(handler, WindowLongFlags.GWL_EXSTYLE, exStyle);
+            _ = User32Wrapper.SetWindowLong(handler, WindowLongFlags.GWL_EXSTYLE, exStyle);
 
             if (handler != _currentHandler)
                 //已经换了窗口，恢复上一个窗口
@@ -247,7 +247,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
 
         public static void FullScreen(IntPtr targeHandler, RECT rect, IntPtr parent)
         {
-            User32Wrapper.MapWindowPoints(IntPtr.Zero, parent, ref rect, 2);
+            _ = User32Wrapper.MapWindowPoints(IntPtr.Zero, parent, ref rect, 2);
             _ = User32WrapperEx.SetWindowPosEx(targeHandler, rect);
 
             var style = User32Wrapper.GetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE);
@@ -255,7 +255,7 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             //https://stackoverflow.com/questions/2398746/removing-window-border
             //消除游戏边框
             style &= ~(int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_CAPTION | WindowStyles.WS_THICKFRAME | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX | WindowStyles.WS_SYSMENU);
-            User32Wrapper.SetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE, style);
+            _ = User32Wrapper.SetWindowLong(targeHandler, WindowLongFlags.GWL_STYLE, style);
         }
 
         //刷新壁纸

@@ -29,7 +29,7 @@ namespace Giantapp.LiveWallpaper.Engine
     /// </summary>
     public class LiveWallpaperOptions
     {
-        private string _defaultExternalPlayerFolder;
+        private readonly string _defaultExternalPlayerFolder;
         public LiveWallpaperOptions()
         {
 
@@ -51,7 +51,9 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 壁纸音源来源哪块屏幕， 非屏幕值表示禁用
         /// </summary>
         public string AudioScreen { get; set; }
+#pragma warning disable CA1822 // 将成员标记为 static
         public List<string> AudioScreenOptions
+#pragma warning restore CA1822 // 将成员标记为 static
         {
             get
             {

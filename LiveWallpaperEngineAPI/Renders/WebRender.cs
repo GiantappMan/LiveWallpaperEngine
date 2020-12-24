@@ -53,7 +53,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
                      Thread.Sleep(10);
                  }
                  p?.Dispose();
-                 var handleStr = title.Substring(index + 4);
+                 string handleStr = title[(index + 4)..];
 
                  var cefHandle = new IntPtr(int.Parse(handleStr));
                  var handle = User32Wrapper.FindWindowEx(cefHandle, IntPtr.Zero, "Chrome_WidgetWin_0", IntPtr.Zero);
