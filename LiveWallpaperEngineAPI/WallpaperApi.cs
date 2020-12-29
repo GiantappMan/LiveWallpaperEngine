@@ -141,22 +141,40 @@ namespace Giantapp.LiveWallpaper.Engine
             return BaseApiResult.ErrorState(ErrorType.Failed);
         }
 
+        ///// <summary>
+        ///// 创建草稿,返回壁纸目录
+        ///// </summary>
+        ///// <param name="wallpaperSaveDir"></param>
+        ///// <returns></returns>
+        //public static async Task<string> CreateWallpaperDraft(string destDir, WallpaperProjectInfo info)
+        //{
+        //    destDir = Path.Combine(destDir, Guid.NewGuid().ToString());
+        //    string jsonPath = Path.Combine(destDir, "project.json");
+        //    await JsonHelper.JsonSerializeAsync(info, jsonPath);
+        //    return destDir;
+        //}
+
         /// <summary>
-        /// 创建草稿,返回壁纸目录
+        /// 获取一个草稿目录
         /// </summary>
-        /// <param name="wallpaperSaveDir"></param>
+        /// <param name="parentDir"></param>
         /// <returns></returns>
-        public static async Task<string> CreateWallpaperDraft(string destDir, WallpaperProjectInfo info)
+        public static string GetDraftDir(string parentDir)
         {
-            destDir = Path.Combine(destDir, Guid.NewGuid().ToString());
-            string jsonPath = Path.Combine(destDir, "project.json");
-            await JsonHelper.JsonSerializeAsync(info, jsonPath);
+            string destDir = Path.Combine(parentDir, Guid.NewGuid().ToString());
             return destDir;
         }
 
-        public static Task<BaseApiResult<WallpaperModel>> UpdateWallpaper(WallpaperModel source, WallpaperModel newWP)
+        /// <summary>
+        /// 更新工程信息
+        /// </summary>
+        /// <param name="destDir"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public static async Task UpdateProjectInfo(string destDir, WallpaperProjectInfo info)
         {
-            throw new NotImplementedException();
+            string jsonPath = Path.Combine(destDir, "project.json");
+            await JsonHelper.JsonSerializeAsync(info, jsonPath);
         }
 
         public static Task<BaseApiResult<WallpaperModel>> CreateWallpaper(string path)
@@ -206,6 +224,8 @@ namespace Giantapp.LiveWallpaper.Engine
 
                 if (IsBusyState(nameof(SetupPlayer)))
                     return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Busy, null, wallpaper);
+
+                Debug.WriteLine("ShowWallpaper {0} {1}", wallpaper.RunningData.AbsolutePath, string.Join("", screens));
 
                 if (screens.Length == 0)
                     screens = Screens;
