@@ -38,7 +38,8 @@ namespace Giantapp.LiveWallpaper.Engine
         Busy,
         Failed,
         Exception,
-        NoFFmpeg
+        NoFFmpeg,
+        NoPermission
     }
     public class BaseApiResult<T> : BaseApiResult
     {
