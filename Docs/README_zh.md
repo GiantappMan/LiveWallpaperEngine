@@ -58,8 +58,7 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 
 ## 其他注意事项：
 * 本项目在win10环境开发，win7没有兼容可以自己提交PR。
-* 和桌面整理软件冲突，我不用该类软件，所以也没有想去解决，可以自己提交PR修复。
-* Fences兼容问题，可以先启动巨应壁纸再启动fences。需要调整一下开机顺序，自己琢磨下。
+* 有时会和桌面整理软件冲突，例如Fences。
 * 开启360、腾讯管家等杀毒全家桶软件，有可能无法嵌入桌面。
 
 ---
