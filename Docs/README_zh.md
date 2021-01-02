@@ -47,8 +47,12 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 * 有时会和桌面整理软件冲突，例如Fences。
 * 开启360、腾讯管家等杀毒全家桶软件，有可能无法嵌入桌面。
 
-## 如果对你有帮助请star支持一下
-
 ## 分支管理
 - master 开发中的版本，可能有各种报错
 - 1.x 目前线上稳定版本
+
+## 作者
+- [DaZiYuan](https://github.com/DaZiYuan)
+
+## 如果对你有帮助请star支持一下
+
