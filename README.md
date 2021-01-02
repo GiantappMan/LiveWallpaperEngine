@@ -1,11 +1,12 @@
 # LiveWallpaperEngine 
 
-This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
-
 [中文文档](https://github.com/giant-app/LiveWallpaperEngine/blob/master/Docs/README_zh.md)
 
 ## Features：
 Windows10 Live Wallpaper Minimalist API
+
+## App:
+[LiveWallpaper](https://livewallpaper.giantapp.cn/)
 
 ## Example：
 ```csharp
@@ -49,6 +50,12 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 
 ## If it helps you please give me a star
 
+---
+
 ## Branch management
 - master The version under development may have various errors
 - 1.x Current online stable version
+
+---
+
+This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
