@@ -1,4 +1,4 @@
-# LiveWallpaperEngine 巨应壁纸引擎
+# 巨应壁纸引擎
 
 ---
 
