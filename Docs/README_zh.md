@@ -1,16 +1,10 @@
 # 巨应壁纸引擎
 
----
-
 ## 功能：
 Windows10 动态壁纸极简API
 
----
-
 ## 应用展示：
 [巨应壁纸](https://livewallpaper.giantapp.cn)
-
----
 
 ## 示例：
 ```csharp
@@ -27,8 +21,6 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.html"},WallpaperM
 WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperManager.Screens[0])
 ```
 
----
-
 ## 功能目标：
 - [x] 无UI壁纸引擎
 - [x] 多屏幕
@@ -39,13 +31,9 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperMa
 - [x] 系统图片壁纸
 - [x] 音量设置
 
----
-
 ## 对于开源的期望:
 - 欢迎提交PR和Issue。
 - 不建议商业项目使用。
-
----
 
 ## 运行效果：
 * 本仓库自带demo，运行即可。  
@@ -54,18 +42,12 @@ WallpaperApi.ShowWallpaper(new WallpaperModel() { Path = "/xxx.png"},WallpaperMa
 LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 ```
 
----
-
 ## 其他注意事项：
 * 本项目在win10环境开发，win7没有兼容可以自己提交PR。
 * 有时会和桌面整理软件冲突，例如Fences。
 * 开启360、腾讯管家等杀毒全家桶软件，有可能无法嵌入桌面。
 
----
-
 ## 如果对你有帮助请star支持一下
-
----
 
 ## 分支管理
 - master 开发中的版本，可能有各种报错
