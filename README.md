@@ -55,7 +55,7 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 - 1.x Current online stable version
 
 ## Maintainer
-[DaZiYuan](https://github.com/DaZiYuan)
+- [DaZiYuan](https://github.com/DaZiYuan)
 ---
 
 This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
