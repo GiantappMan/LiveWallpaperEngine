@@ -47,15 +47,13 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 * Sometimes it conflicts with desktop organization software, such as Fences.
 * Open the antivirus family bucket software, it may not be embedded in the desktop.
 
-## If it helps you please give me a star
-
-
 ## Branch management
 - master The version under development may have various errors
 - 1.x Current online stable version
 
-## Maintainer
+## Author
 - [DaZiYuan](https://github.com/DaZiYuan)
----
+
+## If it helps you please give me a star
 
 This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
