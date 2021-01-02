@@ -54,5 +54,6 @@ LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples
 - master The version under development may have various errors
 - 1.x Current online stable version
 
+---
 
 This document is translated by Google. If you find any grammatical problems, please don’t be stingy with your PR.
