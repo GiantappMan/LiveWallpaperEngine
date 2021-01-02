@@ -8,7 +8,7 @@ Windows10 动态壁纸极简API
 ---
 
 ## 应用展示：
-(巨应壁纸)[https://livewallpaper.giantapp.cn]
+[巨应壁纸](https://livewallpaper.giantapp.cn)
 
 ---
 
