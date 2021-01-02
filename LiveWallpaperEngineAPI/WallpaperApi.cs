@@ -69,6 +69,38 @@ namespace Giantapp.LiveWallpaper.Engine
             _uiDispatcher.Invoke(a);
         }
 
+        public static async Task<BaseApiResult<WallpaperModel>> GetWallpaper(string path)
+        {
+            try
+            {
+                if (!EnterBusyState(nameof(GetWallpaper)))
+                    return new BaseApiResult<WallpaperModel>() { Ok = false, Error = ErrorType.Busy };
+
+                if (!File.Exists(path))
+                    return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Failed);
+
+                string projectDir = Path.GetDirectoryName(path);
+                string projectFile = Path.Combine(projectDir, "project.json");
+                if (!File.Exists(projectFile))
+                    return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Failed);
+
+                using FileStream fs = File.OpenRead(projectFile);
+                var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
+
+                var wp = CreateWallpaperModel(path, info);
+
+                return new BaseApiResult<WallpaperModel>() { Data = wp, Ok = true };
+            }
+            catch (Exception ex)
+            {
+                return new BaseApiResult<WallpaperModel>() { Ok = false, Error = ErrorType.Exception, Message = ex.Message };
+            }
+            finally
+            {
+                QuitBusyState(nameof(GetWallpaper));
+            }
+        }
+
         public static async Task<BaseApiResult<List<WallpaperModel>>> GetWallpapers(string dir)
         {
             try
@@ -206,8 +238,11 @@ namespace Giantapp.LiveWallpaper.Engine
             r.RunningData.Type = currentRender?.SupportType;
 
             if (info != null)
+            {
                 r.Info = info;
-
+                if (string.IsNullOrEmpty(info.LocalID))
+                    r.Info.LocalID = absolutePath;
+            }
             r.Info.File = Path.GetFileName(absolutePath);
             return r;
         }
