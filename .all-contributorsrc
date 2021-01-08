@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "DaZiYuan",
+      "name": "代码抄写狮",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/80653?v=4",
+      "profile": "https://www.mscoder.cn/",
+      "contributions": [
+        "code",
+        "maintenance",
+        "bug",
+        "projectManagement"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "LiveWallpaperEngine",
+  "projectOwner": "giant-app",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
