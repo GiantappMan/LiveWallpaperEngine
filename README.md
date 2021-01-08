@@ -1,6 +1,6 @@
 # LiveWallpaperEngine 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [中文文档](https://github.com/giant-app/LiveWallpaperEngine/blob/master/Docs/README_zh.md)
@@ -71,6 +71,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://www.mscoder.cn/"><img src="https://avatars3.githubusercontent.com/u/80653?v=4?s=100" width="100px;" alt=""/><br /><sub><b>代码抄写狮</b></sub></a><br /><a href="https://github.com/giant-app/LiveWallpaperEngine/commits?author=DaZiYuan" title="Code">💻</a> <a href="#maintenance-DaZiYuan" title="Maintenance">🚧</a> <a href="https://github.com/giant-app/LiveWallpaperEngine/issues?q=author%3ADaZiYuan" title="Bug reports">🐛</a> <a href="#projectManagement-DaZiYuan" title="Project Management">📆</a></td>
+    <td align="center"><a href="https://www.addesp.com"><img src="https://avatars2.githubusercontent.com/u/44437200?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ADD-SP</b></sub></a><br /><a href="https://github.com/giant-app/LiveWallpaperEngine/commits?author=ADD-SP" title="Code">💻</a></td>
   </tr>
 </table>
 
