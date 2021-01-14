@@ -14,7 +14,9 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
     public static class MaximizedMonitor
     {
         static Process _cp;
-        static List<Screen> maximizedScreens = new List<Screen>();
+        static List<Screen> _maximizedScreens = new List<Screen>();
+
+        public static List<Screen> MaximizedScreens { get => _maximizedScreens; }
 
         public static event EventHandler<AppMaximizedEvent> AppMaximized;
 
@@ -24,14 +26,14 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
                 _cp = Process.GetCurrentProcess();
 
             new OtherProgramChecker(_cp.Id).CheckMaximized(out List<Screen> fullscreenWindow);
-            if (maximizedScreens.Count == fullscreenWindow.Count)
+            if (_maximizedScreens.Count == fullscreenWindow.Count)
                 return;
 
-            maximizedScreens = fullscreenWindow;
+            _maximizedScreens = fullscreenWindow;
 
             AppMaximized?.Invoke(null, new AppMaximizedEvent()
             {
-                MaximizedScreens = maximizedScreens
+                MaximizedScreens = _maximizedScreens
             });
         }
     }

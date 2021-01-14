@@ -302,6 +302,14 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
 
                 ApplyAudioSource();
+
+                MaximizedMonitor.Check();
+                if (MaximizedMonitor.MaximizedScreens.Count > 0)
+                {
+                    //窗口已经最大化，处理暂停等操作
+                    await HandleWindowMaximized(MaximizedMonitor.MaximizedScreens);
+                }
+
                 return BaseApiResult<WallpaperModel>.SuccessState(wallpaper);
             }
             catch (Exception ex)
@@ -689,7 +697,12 @@ namespace Giantapp.LiveWallpaper.Engine
         }
         private static async void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {
-            var maximizedScreens = e.MaximizedScreens.Select((m, i) => m.DeviceName).ToList();
+            await HandleWindowMaximized(e.MaximizedScreens);
+        }
+
+        private static async Task HandleWindowMaximized(List<Screen> screens)
+        {
+            var maximizedScreens = screens.Select((m, i) => m.DeviceName).ToList();
             bool anyScreenMaximized = maximizedScreens.Count > 0;
             foreach (var item in Options.ScreenOptions)
             {
