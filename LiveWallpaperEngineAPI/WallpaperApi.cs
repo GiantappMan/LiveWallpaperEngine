@@ -283,6 +283,9 @@ namespace Giantapp.LiveWallpaper.Engine
 
                 foreach (var screenItem in screens)
                 {
+                    //设备现有屏幕名称，不包含输入的屏幕
+                    if (!Screens.Contains(screenItem))
+                        continue;
                     //当前屏幕没有壁纸
                     if (!CurrentWalpapers.ContainsKey(screenItem))
                         CurrentWalpapers.Add(screenItem, null);
