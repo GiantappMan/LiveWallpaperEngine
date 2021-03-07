@@ -712,6 +712,9 @@ namespace Giantapp.LiveWallpaper.Engine
                 string currentScreen = item.Screen;
                 bool currentScreenMaximized = maximizedScreens.Contains(currentScreen) || Options.AppMaximizedEffectAllScreen && anyScreenMaximized;
 
+                if (!CurrentWalpapers.ContainsKey(currentScreen))
+                    continue;
+
                 switch (item.WhenAppMaximized)
                 {
                     case ActionWhenMaximized.Pause:
