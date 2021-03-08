@@ -126,6 +126,11 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 是否支持鼠标事件，exe和web才行。其他类型设置无效
         /// </summary>
         public bool EnableMouseEvent { get; set; } = true;
+
+        /// <summary>
+        /// 是否启用硬件解码，video才行。其他类型无效
+        /// </summary>
+        public bool HardwareDecoding { get; set; } = true;
     }
     public class WallpaperRunningData
     {

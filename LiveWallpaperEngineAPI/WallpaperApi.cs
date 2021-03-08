@@ -173,19 +173,6 @@ namespace Giantapp.LiveWallpaper.Engine
             return BaseApiResult.ErrorState(ErrorType.Failed);
         }
 
-        ///// <summary>
-        ///// 创建草稿,返回壁纸目录
-        ///// </summary>
-        ///// <param name="wallpaperSaveDir"></param>
-        ///// <returns></returns>
-        //public static async Task<string> CreateWallpaperDraft(string destDir, WallpaperProjectInfo info)
-        //{
-        //    destDir = Path.Combine(destDir, Guid.NewGuid().ToString());
-        //    string jsonPath = Path.Combine(destDir, "project.json");
-        //    await JsonHelper.JsonSerializeAsync(info, jsonPath);
-        //    return destDir;
-        //}
-
         /// <summary>
         /// 获取一个草稿目录
         /// </summary>
@@ -207,11 +194,6 @@ namespace Giantapp.LiveWallpaper.Engine
         {
             string jsonPath = Path.Combine(destDir, "project.json");
             await JsonHelper.JsonSerializeAsync(info, jsonPath);
-        }
-
-        public static Task<BaseApiResult<WallpaperModel>> CreateWallpaper(string path)
-        {
-            throw new NotImplementedException();
         }
 
         public static WallpaperType GetWallpaperType(string wallpaper)
@@ -361,11 +343,11 @@ namespace Giantapp.LiveWallpaper.Engine
 
                     Options = options;
 
-                    ExplorerMonitor.ExplorerCreated -= ExplorerMonitor_ExpolrerCreated;
+                    ExplorerMonitor.ExplorerChanged -= ExplorerMonitor_ExpolrerCreated;
                     MaximizedMonitor.AppMaximized -= MaximizedMonitor_AppMaximized;
 
-                    if (options.AutoRestartWhenExplorerCrash == true)
-                        ExplorerMonitor.ExplorerCreated += ExplorerMonitor_ExpolrerCreated;
+                    //if (options.AutoRestartWhenExplorerCrash == true)
+                    ExplorerMonitor.ExplorerChanged += ExplorerMonitor_ExpolrerCreated;
 
                     bool enableMaximized = options.ScreenOptions.ToList().Exists(m => m.WhenAppMaximized != ActionWhenMaximized.Play);
                     if (enableMaximized)
@@ -693,10 +675,17 @@ namespace Giantapp.LiveWallpaper.Engine
             _timer?.Start();
         }
 
-        private static void ExplorerMonitor_ExpolrerCreated(object sender, EventArgs e)
+        private static async void ExplorerMonitor_ExpolrerCreated(object sender, bool crashed)
         {
-            //重启
-            Application.Restart();
+            if (crashed)
+            {
+                await CloseWallpaper(Screens);
+            }
+            else
+            {
+                //重启
+                Application.Restart();
+            }
         }
         private static async void MaximizedMonitor_AppMaximized(object sender, AppMaximizedEvent e)
         {

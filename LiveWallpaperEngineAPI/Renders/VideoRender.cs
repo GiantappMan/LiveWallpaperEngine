@@ -13,8 +13,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
 
         }
 
-        protected override ProcessStartInfo GetRenderExeInfo(string path)
+        protected override ProcessStartInfo GetRenderExeInfo(WallpaperModel model)
         {
+            string path = model.RunningData.AbsolutePath;
             //文档：https://mpv.io/manual/stable/
             string playerPath = Path.Combine(WallpaperApi.Options.ExternalPlayerFolder, $@"{PlayerFolderName}\mpv.exe");
             if (!File.Exists(playerPath))
@@ -24,9 +25,15 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             if (info.Length == 0)
                 return null;
 
+            string args = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000";
+            if (!model.Option.HardwareDecoding)
+            {
+                args = $"\"{path}\" --hwdec=no --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000";
+            }
+
             ProcessStartInfo r = new ProcessStartInfo(playerPath)
             {
-                Arguments = $"\"{path}\" --hwdec=auto --panscan=1.0 --loop-file=inf --fs --geometry=-10000:-10000",
+                Arguments = args,
                 UseShellExecute = false
             };
             return r;

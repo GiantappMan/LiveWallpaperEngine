@@ -8,15 +8,15 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
     /// </summary>
     public static class ExplorerMonitor
     {
-        private static DateTime? _lastTriggerTime;
-
         public static Process ExploreProcess { get; private set; }
+        public static bool Crashed { get; private set; }
 
-        public static event EventHandler ExplorerCreated;
+        public static event EventHandler<bool> ExplorerChanged;
 
         static ExplorerMonitor()
         {
             ExploreProcess = GetExplorer();
+            Crashed = ExploreProcess == null;
         }
 
         public static void Check()
@@ -25,18 +25,22 @@ namespace Giantapp.LiveWallpaper.Engine.Utils
             if (ExploreProcess == null || ExploreProcess.HasExited)
             {
                 ExploreProcess = GetExplorer();
-                _lastTriggerTime = DateTime.Now;
-            }
-
-            if (_lastTriggerTime != null)
-            {
-                var workw = WallpaperHelper.GetWorkerW();
-                if (workw != IntPtr.Zero)
+                bool nowCrashed = ExploreProcess == null;
+                if (Crashed != nowCrashed)
                 {
-                    ExplorerCreated?.Invoke(null, new EventArgs());
-                    _lastTriggerTime = null;
+                    Crashed = nowCrashed;
+                    ExplorerChanged?.Invoke(null, Crashed);
                 }
             }
+            //if (_lastTriggerTime != null)
+            //{
+            //    var workw = WallpaperHelper.GetWorkerW();
+            //    if (workw != IntPtr.Zero)
+            //    {
+            //        ExplorerChanged?.Invoke(null, new EventArgs());
+            //        _lastTriggerTime = null;
+            //    }
+            //}
         }
 
         private static Process GetExplorer()

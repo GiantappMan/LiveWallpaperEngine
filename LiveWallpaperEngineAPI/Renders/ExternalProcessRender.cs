@@ -45,7 +45,7 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             List<RenderInfo> infos = new List<RenderInfo>();
             List<Task> tmpTasks = new List<Task>();
 
-            ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper.RunningData.AbsolutePath));
+            ProcessStartInfo pInfo = await Task.Run(() => GetRenderExeInfo(wallpaper));
             if (pInfo == null)
                 return BaseApiResult<List<RenderInfo>>.ErrorState(ErrorType.NoPlayer);
 
@@ -93,9 +93,9 @@ namespace Giantapp.LiveWallpaper.Engine.Renders
             return BaseApiResult<List<RenderInfo>>.SuccessState(infos);
         }
 
-        protected virtual ProcessStartInfo GetRenderExeInfo(string path)
+        protected virtual ProcessStartInfo GetRenderExeInfo(WallpaperModel model)
         {
-            return new ProcessStartInfo(path);
+            return new ProcessStartInfo(model.RunningData.AbsolutePath);
         }
         protected virtual Task<RenderProcess> StartProcess(ProcessStartInfo info, CancellationToken ct)
         {
