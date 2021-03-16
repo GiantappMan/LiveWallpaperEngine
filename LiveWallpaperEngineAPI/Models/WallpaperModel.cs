@@ -120,7 +120,7 @@ namespace Giantapp.LiveWallpaper.Engine
         Web,
         Exe
     }
-    public class WallpaperOption
+    public class WallpaperOption : IEquatable<WallpaperOption>
     {
         /// <summary>
         /// 是否支持鼠标事件，exe和web才行。其他类型设置无效
@@ -131,6 +131,64 @@ namespace Giantapp.LiveWallpaper.Engine
         /// 是否启用硬件解码，video才行。其他类型无效
         /// </summary>
         public bool HardwareDecoding { get; set; } = true;
+
+        public static bool operator ==(WallpaperOption lhs, WallpaperOption rhs)
+        {
+            if (lhs is null)
+            {
+                if (rhs is null)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            var r = lhs.EnableMouseEvent == rhs.EnableMouseEvent
+                && lhs.HardwareDecoding == rhs.HardwareDecoding;
+
+            return r;
+        }
+
+        public static bool operator !=(WallpaperOption lhs, WallpaperOption rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as WallpaperOption);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(EnableMouseEvent, HardwareDecoding);
+        }
+
+        public bool Equals(WallpaperOption p)
+        {
+            // If parameter is null, return false.
+            if (p is null)
+            {
+                return false;
+            }
+
+            // Optimization for a common success case.
+            if (ReferenceEquals(this, p))
+            {
+                return true;
+            }
+
+            // If run-time types are not exactly the same, return false.
+            if (GetType() != p.GetType())
+            {
+                return false;
+            }
+            var r = EnableMouseEvent == p.EnableMouseEvent
+                          && HardwareDecoding == p.HardwareDecoding;
+
+            return r;
+        }
     }
     public class WallpaperRunningData
     {

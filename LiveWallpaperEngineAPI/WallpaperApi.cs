@@ -80,14 +80,10 @@ namespace Giantapp.LiveWallpaper.Engine
                     return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Failed);
 
                 string projectDir = Path.GetDirectoryName(path);
-                string projectFile = Path.Combine(projectDir, "project.json");
-                if (!File.Exists(projectFile))
+
+                var wp = await CreateWallpaperModelFromDir(Path.GetDirectoryName(path));
+                if (wp == null)
                     return BaseApiResult<WallpaperModel>.ErrorState(ErrorType.Failed);
-
-                using FileStream fs = File.OpenRead(projectFile);
-                var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
-
-                var wp = CreateWallpaperModel(path, info);
 
                 return new BaseApiResult<WallpaperModel>() { Data = wp, Ok = true };
             }
@@ -121,9 +117,8 @@ namespace Giantapp.LiveWallpaper.Engine
                 var files = await Task.Run(() => dirInfo.GetFiles("project.json", SearchOption.AllDirectories).OrderByDescending(m => m.CreationTime));
                 foreach (var item in files)
                 {
-                    using FileStream fs = File.OpenRead(item.FullName);
-                    var info = await JsonSerializer.DeserializeAsync<WallpaperProjectInfo>(fs);
-                    var wp = CreateWallpaperModel(item.FullName.Replace("project.json", info.File), info);
+                    //获取列表不读取option，以加快速度
+                    var wp = await CreateWallpaperModelFromDir(Path.GetDirectoryName(item.FullName), false);
                     result.Add(wp);
                 }
 
@@ -202,31 +197,60 @@ namespace Giantapp.LiveWallpaper.Engine
             return currentRender.SupportType;
         }
 
-        public static Task<BaseApiResult<WallpaperModel>> ShowWallpaper(string absolutePath, params string[] screens)
+        public static async Task<BaseApiResult<WallpaperModel>> ShowWallpaper(string wallpaperPath, params string[] screens)
         {
-            return ShowWallpaper(CreateWallpaperModel(absolutePath), screens);
+            var wpModel = await CreateWallpaperModelFromDir(Path.GetDirectoryName(wallpaperPath));
+            var res = await ShowWallpaper(wpModel, screens);
+            return res;
         }
 
-        public static WallpaperModel CreateWallpaperModel(string absolutePath, WallpaperProjectInfo info = null)
+        public static async Task<WallpaperOption> GetWallpaperOption(string dir, WallpaperOption defaultValue = null)
         {
-            var r = new WallpaperModel();
+            string optionPath = Path.Combine(dir, "option.json");
+            var result = await ReadJsonObj(optionPath, defaultValue);
+            return result;
+        }
 
-            r.RunningData.AbsolutePath = absolutePath;
+        /// <summary>
+        /// 更新一个壁纸的参数
+        /// </summary>
+        /// <param name="wallpaperDir"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static async Task UpdateWallpaperOption(string wallpaperDir, WallpaperOption option)
+        {
+            string optionPath = Path.Combine(wallpaperDir, "option.json");
+            await JsonHelper.JsonSerializeAsync(option, optionPath);
+        }
 
-            var saveDir = Path.GetDirectoryName(absolutePath);
-            r.RunningData.Dir = saveDir;
+        public static async Task<WallpaperModel> CreateWallpaperModelFromDir(string dir, bool readOption = true)
+        {
+            string projectFile = Path.Combine(dir, "project.json");
+            if (!File.Exists(projectFile))
+                return null;
 
-            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(absolutePath));
-            r.RunningData.Type = currentRender?.SupportType;
+            WallpaperProjectInfo info = await ReadJsonObj<WallpaperProjectInfo>(projectFile, null);
+            if (info == null)
+                return null;
 
-            if (info != null)
+            string wallpaperPath = Path.Combine(dir, info.File);
+            if (string.IsNullOrEmpty(info.LocalID))
+                info.LocalID = wallpaperPath;
+
+            var res = new WallpaperModel();
+            res.Info = info;
+
+            if (readOption)
             {
-                r.Info = info;
-                if (string.IsNullOrEmpty(info.LocalID))
-                    r.Info.LocalID = absolutePath;
+                res.Option = await GetWallpaperOption(dir, new WallpaperOption());
             }
-            r.Info.File = Path.GetFileName(absolutePath);
-            return r;
+
+            res.RunningData.AbsolutePath = wallpaperPath;
+            res.RunningData.Dir = dir;
+            var currentRender = RenderManager.GetRenderByExtension(Path.GetExtension(wallpaperPath));
+            res.RunningData.Type = currentRender?.SupportType;
+
+            return res;
         }
 
         public static async Task<BaseApiResult<WallpaperModel>> ShowWallpaper(WallpaperModel wallpaper, params string[] screens)
@@ -274,8 +298,10 @@ namespace Giantapp.LiveWallpaper.Engine
 
                     var existWallpaper = CurrentWalpapers[screenItem];
 
-                    //壁纸 路径相同
-                    if (existWallpaper != null && existWallpaper.RunningData.AbsolutePath == wallpaper.RunningData.AbsolutePath)
+                    //壁纸 路径并且参数相同，直接过滤
+                    if (existWallpaper != null &&
+                        existWallpaper.RunningData.AbsolutePath == wallpaper.RunningData.AbsolutePath &&
+                        existWallpaper.Option == wallpaper.Option)
                         continue;
 
                     //关闭之前的壁纸
@@ -379,6 +405,35 @@ namespace Giantapp.LiveWallpaper.Engine
             return BaseApiResult.SuccessState();
         }
 
+        public static async Task<BaseApiResult> StopSetupPlayer()
+        {
+            try
+            {
+                if (!EnterBusyState(nameof(StopSetupPlayer)))
+                    return BaseApiResult.BusyState();
+
+                _ctsSetupPlayer?.Cancel();
+
+                while (IsBusyState(nameof(SetupPlayer)))
+                {
+                    await Task.Delay(1000);
+                }
+                return BaseApiResult.SuccessState();
+            }
+            catch (Exception ex)
+            {
+                return BaseApiResult.ExceptionState(ex);
+            }
+            finally
+            {
+                QuitBusyState(nameof(StopSetupPlayer));
+            }
+        }
+
+        #endregion
+
+        #region private
+
         private static async Task<BaseApiResult> InnertSetupPlayer(WallpaperType type, string url)
         {
             BaseApiResult result = null;
@@ -420,35 +475,28 @@ namespace Giantapp.LiveWallpaper.Engine
             }
             return result;
         }
-
-        public static async Task<BaseApiResult> StopSetupPlayer()
+        private static async Task<T> ReadJsonObj<T>(string path, T defaultVlaue = default) where T : class
         {
+            T res = null;
             try
             {
-                if (!EnterBusyState(nameof(StopSetupPlayer)))
-                    return BaseApiResult.BusyState();
-
-                _ctsSetupPlayer?.Cancel();
-
-                while (IsBusyState(nameof(SetupPlayer)))
+                if (File.Exists(path))
                 {
-                    await Task.Delay(1000);
+                    using FileStream fs = File.OpenRead(path);
+                    res = await JsonSerializer.DeserializeAsync<T>(fs);
                 }
-                return BaseApiResult.SuccessState();
             }
             catch (Exception ex)
             {
-                return BaseApiResult.ExceptionState(ex);
+                Debug.WriteLine(ex);
             }
             finally
             {
-                QuitBusyState(nameof(StopSetupPlayer));
+                if (res == null)
+                    res = defaultVlaue;
             }
+            return res;
         }
-
-        #endregion
-
-        #region private
         //离开busy状态
         private static void QuitBusyState(string method)
         {
@@ -457,14 +505,12 @@ namespace Giantapp.LiveWallpaper.Engine
 
             _busyMethods.TryRemove(method, out _);
         }
-
         private static bool IsBusyState(string method)
         {
             if (_busyMethods.ContainsKey(method))
                 return true;
             return false;
         }
-
         //进入busy状态，失败返回false
         private static bool EnterBusyState(string method)
         {
@@ -634,13 +680,11 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-
         private static async Task InnerCloseWallpaper(params string[] screens)
         {
             foreach (var m in RenderManager.Renders)
                 await m.CloseWallpaperAsync(screens);
         }
-
         private static void StartTimer(bool enable)
         {
             if (enable)
@@ -662,7 +706,6 @@ namespace Giantapp.LiveWallpaper.Engine
                 }
             }
         }
-
         #endregion
 
         #region callback
