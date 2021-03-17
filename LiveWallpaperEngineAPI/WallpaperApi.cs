@@ -241,9 +241,9 @@ namespace Giantapp.LiveWallpaper.Engine
             res.Info = info;
 
             if (readOption)
-            {
                 res.Option = await GetWallpaperOption(dir, new WallpaperOption());
-            }
+            else
+                res.Option = null;
 
             res.RunningData.AbsolutePath = wallpaperPath;
             res.RunningData.Dir = dir;
