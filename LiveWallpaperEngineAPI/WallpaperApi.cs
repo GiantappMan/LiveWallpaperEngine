@@ -200,6 +200,14 @@ namespace Giantapp.LiveWallpaper.Engine
         public static async Task<BaseApiResult<WallpaperModel>> ShowWallpaper(string wallpaperPath, params string[] screens)
         {
             var wpModel = await CreateWallpaperModelFromDir(Path.GetDirectoryName(wallpaperPath));
+            if (wpModel == null)
+                wpModel = new WallpaperModel()
+                {
+                    RunningData = new WallpaperRunningData()
+                    {
+                        AbsolutePath = wallpaperPath
+                    }
+                };
             var res = await ShowWallpaper(wpModel, screens);
             return res;
         }
