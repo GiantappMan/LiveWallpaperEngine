@@ -28,6 +28,12 @@ namespace Giantapp.LiveWallpaper.Engine
 
         #endregion
 
+        static WallpaperApi()
+        {
+            //怀疑某些系统用不了
+            WallpaperHelper.DoSomeMagic();
+        }
+
         #region property
 
         public static string[] Screens { get; private set; }
